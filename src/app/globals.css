@@ -1150,3 +1150,29 @@ td {
 .art-has-address .artwork-copy {gap:.8cqw;}
 .art-has-address .artwork-names {font-size:min(var(--art-name-size),6.5cqw);}
 .art-has-address .artwork-overline {font-size:3cqw;}
+
+/* Long-name and address-safe layout. Adaptive typography only changes text, never flattens artwork. */
+.artwork-card.art-dense .artwork-copy {gap:.6cqw;}
+.artwork-card.art-dense .artwork-names {font-size:min(var(--art-name-size), 5.4cqw);line-height:1.05;}
+.artwork-card.art-dense .artwork-names em {font-size:.62em;padding:.1cqw 0;}
+.artwork-card.art-dense .artwork-kicker {font-size:2cqw;letter-spacing:.25cqw;line-height:1.2;}
+.artwork-card.art-dense .artwork-overline {font-size:2.8cqw;line-height:1.2;}
+.artwork-card.art-dense .artwork-message {font-size:min(var(--art-message-size),2.5cqw);line-height:1.22;}
+.artwork-card.art-dense .artwork-date {font-size:3.5cqw;line-height:1.2;}
+.artwork-card.art-dense .artwork-time {font-size:2.6cqw;line-height:1.2;}
+.artwork-card.art-dense .artwork-venue {font-size:min(var(--art-venue-size),2.8cqw);line-height:1.2;}
+.artwork-card.art-dense .artwork-address {font-size:min(var(--art-address-size),2.2cqw);line-height:1.2;}
+.artwork-card.art-dense .artwork-rule {font-size:2.8cqw;line-height:1;}
+.artwork-card.art-dense .artwork-couple {width:9cqw;height:9cqw;margin:0;}
+.artwork-card.art-dense.art-has-photo .artwork-copy {gap:.35cqw;}
+/* Every card retains a protected central text area above illustrated ornamentation. */
+.art-palace.art-dense .artwork-copy {top:27%;bottom:27%;}
+.art-nikah.art-dense .artwork-copy {top:27%;bottom:28%;}
+.art-rose.art-dense .artwork-copy {top:30%;bottom:26%;}
+.art-south-indian.art-dense .artwork-copy {top:36%;bottom:20%;}
+.art-hindu.art-dense .artwork-copy {top:36%;bottom:18%;}
+.art-rajasthani.art-dense .artwork-copy {top:39%;bottom:18%;}
+.art-emerald.art-dense .artwork-copy {top:31%;bottom:27%;}
+.art-maroon-heritage.art-dense .artwork-copy {top:33%;bottom:25%;}
+.art-pastel.art-dense .artwork-copy {top:28%;bottom:25%;}
+.art-white-gold.art-dense .artwork-copy {top:31%;bottom:22%;}

@@ -25,12 +25,16 @@ function getWhen(value: string) {
   };
 }
 function calcNameSize(value: string) {
-  const count = Math.max(...value.split(/\s+/).map(s => s.length), value.length / 1.9);
-  if (count > 35) return "3.2cqw";
-  if (count > 26) return "4cqw";
-  if (count > 18) return "5.2cqw";
-  if (count > 13) return "6.3cqw";
-  return "8.2cqw";
+  // Full character count matters as much as the longest word. Multi-word names
+  // used to appear oversized because each individual word was short.
+  const length = value.trim().length;
+  const longestWord = Math.max(0, ...value.trim().split(/\s+/).map(word => word.length));
+  if (length > 38 || longestWord > 24) return "3cqw";
+  if (length > 28 || longestWord > 18) return "3.6cqw";
+  if (length > 21 || longestWord > 15) return "4.3cqw";
+  if (length > 16 || longestWord > 11) return "5.1cqw";
+  if (length > 12 || longestWord > 9) return "6.2cqw";
+  return "7.7cqw";
 }
 export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 February 2027", venue = "The Rose Palace · Jaipur", message, photo = "", address = ""}: ArtworkCardProps) {
   const template = findArtworkTemplate(theme);
@@ -40,6 +44,7 @@ export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 Febr
   const groom = names[1]?.trim() || "Groom";
   const invitation = (message?.trim() || "Together with our families, we joyfully invite you to celebrate our wedding.").slice(0,140);
   const nameSize = calcNameSize(bride.length > groom.length ? bride : groom);
+  const dense = Boolean(photo) || address.length > 25 || venue.length > 55 || invitation.length > 90 || bride.length + groom.length > 32;
   const venueSize = venue.length > 150 ? "1.6cqw" : venue.length > 100 ? "1.9cqw" : venue.length > 75 ? "2.5cqw" : "3.4cqw";
   const vars = {
     "--art-name-size": nameSize,
@@ -50,7 +55,7 @@ export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 Febr
     "--art-supporting-font": template.font.supporting,
   } as CSSProperties;
   return (
-    <article className={`artwork-card art-${template.layout} ${photo ? "art-has-photo" : ""} ${address ? "art-has-address" : ""}`}
+    <article className={`artwork-card art-${template.layout} ${photo ? "art-has-photo" : ""} ${address ? "art-has-address" : ""} ${dense ? "art-dense" : ""}`}
       style={vars} data-testid={`art-${template.id}`} aria-label={template.name + " invitation"}>
       <img className="artwork-background" src={template.artwork} alt="" aria-hidden="true" draggable={false} />
       <div className="artwork-copy">

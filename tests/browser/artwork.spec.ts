@@ -79,6 +79,27 @@ for (const [productId, productName] of designs) {
       await expect(page.getByLabel("Venue address")).toHaveValue("Lake Road, Udaipur, Rajasthan, India 313001");
       const background = card.locator("img.artwork-background");
       await expect.poll(() => background.evaluate((node:HTMLImageElement) => node.complete && node.naturalWidth > 0)).toBe(true);
+      const geometry = await card.evaluate((root) => {
+        const container = root.querySelector(".artwork-copy") as HTMLElement;
+        const elements = Array.from(container.children) as HTMLElement[];
+        const outer = root.getBoundingClientRect();
+        const inner = container.getBoundingClientRect();
+        const positioned = elements.map(node => ({
+          label: node.className || node.tagName,
+          rect: node.getBoundingClientRect(),
+        }));
+        // Browsers can differ in subpixel rounding by one CSS pixel.
+        const withinSafeArea = container.scrollHeight <= container.clientHeight + 2;
+        const withinCard = inner.left >= outer.left - 1 && inner.right <= outer.right + 1 &&
+          inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1;
+        const visualCollision = positioned.some((item, index) => index > 0 &&
+          item.rect.top < positioned[index - 1].rect.bottom - 1);
+        return {withinSafeArea,withinCard,visualCollision,
+          scrollHeight: container.scrollHeight,clientHeight: container.clientHeight};
+      });
+      expect(geometry.withinCard).toBe(true);
+      expect(geometry.withinSafeArea).toBe(true);
+      expect(geometry.visualCollision).toBe(false);
       const box = await card.boundingBox();
       expect(box).toBeTruthy();
       expect(box!.width).toBeLessThanOrEqual(390);
