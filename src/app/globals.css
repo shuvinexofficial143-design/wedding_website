@@ -1087,3 +1087,19 @@ td {
 .art-white-gold .artwork-rule {display:none;}
 .art-white-gold .artwork-date {font-weight:400;}
 .art-white-gold .artwork-footer {bottom:11cqw;color:#b09c73;}
+
+.art-hindu {color:#933c29;}
+.art-hindu .artwork-copy {top:35%;bottom:18%;left:24%;right:24%;gap:1.35cqw;}
+.art-hindu .artwork-names {font-size:min(var(--art-name-size),7.7cqw);color:#ac4937;}
+.art-hindu .artwork-kicker {font:600 5cqw/1.3 'Noto Serif Devanagari',Georgia,serif;letter-spacing:0;}
+.art-hindu .artwork-overline {font-size:3.1cqw;color:#b07745;}
+.art-hindu .artwork-message {color:#9b624a;}
+.art-hindu .artwork-date {color:#ac4937;}
+.art-hindu .artwork-footer {bottom:9.3cqw;font:3.2cqw 'Noto Serif Devanagari',Georgia,serif;color:#aa6934;}
+.art-rajasthani {color:#a2574b;}
+.art-rajasthani .artwork-copy {top:39%;bottom:17%;left:24%;right:24%;gap:1.2cqw;}
+.art-rajasthani .artwork-names {font-size:min(var(--art-name-size),7.4cqw);color:#ac6244;font-style:italic;}
+.art-rajasthani .artwork-kicker {font-size:3.3cqw;color:#a96347;letter-spacing:.25cqw;}
+.art-rajasthani .artwork-overline {font-style:italic;font-size:3.2cqw;}
+.art-rajasthani .artwork-message {color:#935b48;}
+.art-rajasthani .artwork-footer {bottom:12cqw;color:#99673f;}

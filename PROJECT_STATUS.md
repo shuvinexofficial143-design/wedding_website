@@ -64,3 +64,7 @@
 - Published `Luxury Maroon Heritage` and `White & Gold Minimal` in catalog, with individual /public/card-art SVG, editable DOM layers, template metadata and different composition styles.
 - Both templates reuse existing paid editor and PNG/PDF; no payment/auth/schema/storage infrastructure changed at this milestone.
 - Build, browser and visual checks are being run by GitHub Actions on pushed commits. Prices remain unapproved proposals and Cashfree live disabled.
+
+### Illustrated cards — Hindu / Rajasthani milestone (2026-11-16)
+- Published Traditional Hindu Wedding and Rajasthani Royal Wedding with original detailed SVG artwork, editable live DOM text and individual layouts.
+- Protected verified-paid editor reused. CI validation triggered by this push.
