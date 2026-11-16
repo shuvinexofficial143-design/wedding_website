@@ -62,18 +62,21 @@ for (const [productId, productName] of designs) {
       await page.getByLabel("Wedding date").fill("2028-04-11");
       await page.getByLabel("Wedding time (India)").fill("14:45");
       await page.getByLabel("Venue",{exact:true}).fill("Royal Lakeside Palace, Udaipur, Rajasthan");
+      await page.getByLabel("Venue address").fill("Lake Road, Udaipur, Rajasthan, India 313001");
       await page.getByLabel(/Invitation message/).fill("With the blessings of our beloved families, please join us for a very special day.");
       await expect(card).toContainText("Kavya Devraj Singh");
       await expect(card).toContainText("11 April 2028");
       await expect(card).toContainText("2:45 PM IST");
       await expect(card).toContainText("Royal Lakeside Palace");
       await expect(card).toContainText("beloved families");
+      await expect(card.getByTestId("editable-address")).toContainText("Lake Road");
       await expect.poll(() => {
         const row = database.prepare("SELECT details FROM orders WHERE id=?").get(id)!;
         return JSON.parse(row.details as string).cardMessage as string;
       },{timeout:20000}).toContain("beloved");
       await page.reload();
       await expect(page.getByLabel(/Invitation message/)).toContainText("beloved families");
+      await expect(page.getByLabel("Venue address")).toHaveValue("Lake Road, Udaipur, Rajasthan, India 313001");
       const background = card.locator("img.artwork-background");
       await expect.poll(() => background.evaluate((node:HTMLImageElement) => node.complete && node.naturalWidth > 0)).toBe(true);
       const box = await card.boundingBox();

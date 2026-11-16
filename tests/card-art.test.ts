@@ -24,6 +24,7 @@ test("ten unique, original and published illustrated cards with physical vector 
     assert.equal(t.published,true);
     assert.equal(t.textLayers.message.maxLength,140);
     assert.equal(t.textLayers.venue.maxLength,200);
+    assert.equal(t.textLayers.address.maxLength,180);
     assert.ok(t.price > 0);
     assert.equal(findArtworkTemplate(t.theme)?.id,t.id);
     const art=path.join(process.cwd(),"public",t.artwork);
@@ -35,11 +36,11 @@ test("ten unique, original and published illustrated cards with physical vector 
     assert.ok(product,t.id+" not in catalog");
     const html=renderToStaticMarkup(createElement(Invite,{
       theme:t.theme,names:["Ananya","Aarav"],date:"2028-04-11 · 14:45",
-      venue:"The Royal Pavilion, Jaipur",message:"Please join our celebration.",
+      venue:"The Royal Pavilion, Jaipur",address:"Palace Road, Rajasthan",message:"Please join our celebration.",
     }));
     assert.ok(html.includes("artwork-background"));
     assert.ok(html.includes(t.artwork));
-    for(const str of ["Ananya","Aarav","11 April 2028","2:45 PM IST","The Royal Pavilion, Jaipur","Please join our celebration."]){
+    for(const str of ["Ananya","Aarav","11 April 2028","2:45 PM IST","The Royal Pavilion, Jaipur","Palace Road, Rajasthan","Please join our celebration."]){
       assert.ok(html.includes(str),t.id+" missing "+str);
     }
   }
