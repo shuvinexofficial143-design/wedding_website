@@ -1,2 +1,36 @@
-import {user,sameOrigin} from '@/lib/auth';import {getOrder,limit} from '@/lib/db';import {createPayment,verifyPayment} from '@/lib/cashfree';import {readJson} from '@/lib/validation';
-export async function POST(req:Request,{params}:{params:Promise<{id:string}>}){if(!sameOrigin(req))return Response.json({error:'Invalid origin'},{status:403});const u=await user();if(!u)return Response.json({error:'Sign in first'},{status:401});const{id}=await params;const order=getOrder(id);if(!order||order.user_id!==u.id)return Response.json({error:'Order not found'},{status:404});if(!limit(`payment:${u.id}`,30,60000))return Response.json({error:'Please wait and retry.'},{status:429});try{const body=await readJson(req,1024);if(body.action==='verify')return Response.json(await verifyPayment(order));if(order.status==='paid')return Response.json({paid:true});if(order.status!=='pending')return Response.json({error:'Order expired. Create a new order from the product page.'},{status:409});return Response.json({session:await createPayment(order),mode:'sandbox'});}catch(e){return Response.json({error:(e as Error).message},{status:503});}}
+import { user, sameOrigin } from "@/lib/auth";
+import { getOrder, limit } from "@/lib/db";
+import { createPayment, verifyPayment } from "@/lib/cashfree";
+import { readJson } from "@/lib/validation";
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  if (!sameOrigin(req))
+    return Response.json({ error: "Invalid origin" }, { status: 403 });
+  const u = await user();
+  if (!u) return Response.json({ error: "Sign in first" }, { status: 401 });
+  const { id } = await params;
+  const order = getOrder(id);
+  if (!order || order.user_id !== u.id)
+    return Response.json({ error: "Order not found" }, { status: 404 });
+  if (!limit(`payment:${u.id}`, 30, 60000))
+    return Response.json({ error: "Please wait and retry." }, { status: 429 });
+  try {
+    const body = await readJson(req, 1024);
+    if (body.action === "verify")
+      return Response.json(await verifyPayment(order));
+    if (order.status === "paid") return Response.json({ paid: true });
+    if (order.status !== "pending")
+      return Response.json(
+        { error: "Order expired. Create a new order from the product page." },
+        { status: 409 },
+      );
+    return Response.json({
+      session: await createPayment(order),
+      mode: "sandbox",
+    });
+  } catch (e) {
+    return Response.json({ error: (e as Error).message }, { status: 503 });
+  }
+}

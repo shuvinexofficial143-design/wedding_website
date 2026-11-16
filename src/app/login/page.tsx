@@ -1,1 +1,12 @@
-import {AuthForm} from '@/components/auth-form';export default function Login(){return <section className="section narrow"><span className="eyebrow">YOUR CELEBRATION STARTS HERE</span><h1>Welcome <i>back.</i></h1><AuthForm/></section>}
+import { AuthForm } from "@/components/auth-form";
+export default function Login() {
+  return (
+    <section className="section narrow">
+      <span className="eyebrow">YOUR CELEBRATION STARTS HERE</span>
+      <h1>
+        Welcome <i>back.</i>
+      </h1>
+      <AuthForm />
+    </section>
+  );
+}

@@ -1,30 +1,38 @@
 # Project status
 
 ## Completed Features
+
 - Repository inspected: empty, no existing branches or data.
 - Next.js, TypeScript, Tailwind foundation.
 - Original responsive homepage, navigation and invitation artwork (CSS; no copied assets).
 
 ## Currently Working On
+
 - Phases 5–6 implemented; end-to-end desktop/mobile testing in progress.
 
 ## Pending Tasks
+
 - Catalog, previews, editor, persistence, exports, secure payments, authenticated orders/admin, deployment.
 
 ## Latest Commit SHA
-- Verified predecessor: 2f1b6c7909fc390bdd28b06171fb97006c8176a3 (development). Each checkpoint records its predecessor; use git log -1 for current SHA.
+
+- Verified predecessor: 243832b040b771d1227675dc42ed3837ffe09c3d (development). Each checkpoint records its predecessor; use git log -1 for current SHA.
 
 ## Testing Results
+
 - Homepage, catalog, accounts, editor and Cashfree integration lint and production build passed.
 
 ## Known Bugs
+
 - No email verification/password reset yet. Sandbox gateway end-to-end test requires credentials. No production endpoint exists.
 
 ## Required Credentials / Blockers
+
 - Cashfree sandbox credentials; production payments must remain disabled pending explicit permission.
 - Database, authentication/email provider, object storage, support WhatsApp number, final business identity and prices, hosting target.
 
 ## Exact Next Step
+
 - Validate homepage, push development branch, implement catalog and preview destinations.
 
 - Phase 2: four category filters, six products, preview routes, support configuration and clearly marked draft policies.
@@ -36,3 +44,7 @@
 - Animated invitation publication, unpublish, countdown, gallery, maps, private RSVP collection.
 - Admin-only managed order fulfillment, website publication and private MP4 delivery with upload validation.
 - Four unit security tests passed; full build/lint passed. Browser Chromium download failed; installed system Chromium is available and is being used instead.
+
+- API integration flow PASSED: account creation, server-controlled price, duplicate pending order, paid editor gate, ownership isolation, origin rejection, unsigned webhook rejection, revision conflicts, publication/unpublish, RSVP privacy, explicit admin role, managed website delivery and invalid MP4 rejection.
+- Local visual/browser suite BLOCKED by Chromium socket() EPERM; GitHub Actions workflow added to run it in CI. Do not report browser/export rendering as verified yet.
+- Docker deployment instructions and WhatsApp adapter contract prepared. Hosting and business configuration still required.
