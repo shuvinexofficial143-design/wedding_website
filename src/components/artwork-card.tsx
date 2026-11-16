@@ -39,10 +39,11 @@ export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 Febr
   const groom = names[1]?.trim() || "Groom";
   const invitation = (message?.trim() || "Together with our families, we joyfully invite you to celebrate our wedding.").slice(0,140);
   const nameSize = calcNameSize(bride.length > groom.length ? bride : groom);
-  const venueSize = venue.length > 140 ? "2cqw" : venue.length > 75 ? "2.5cqw" : "3.4cqw";
+  const venueSize = venue.length > 150 ? "1.6cqw" : venue.length > 100 ? "1.9cqw" : venue.length > 75 ? "2.5cqw" : "3.4cqw";
   const vars = {
     "--art-name-size": nameSize,
     "--art-venue-size": venueSize,
+    "--art-message-size": invitation.length > 105 ? "1.9cqw" : invitation.length > 80 ? "2.3cqw" : invitation.length > 55 ? "2.6cqw" : "3.1cqw",
     "--art-names-font": template.font.names,
     "--art-supporting-font": template.font.supporting,
   } as CSSProperties;
@@ -51,8 +52,8 @@ export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 Febr
       style={vars} data-testid={`art-${template.id}`} aria-label={template.name + " invitation"}>
       <img className="artwork-background" src={template.artwork} alt="" aria-hidden="true" draggable={false} />
       <div className="artwork-copy">
-        <p className="artwork-kicker">{template.layout === "palace" ? "A ROYAL WEDDING CELEBRATION" : "YOU ARE CORDIALLY INVITED"}</p>
-        <p className="artwork-overline">{template.layout === "palace" ? "With the blessings of our families" : "A beautiful beginning..."}</p>
+        <p className="artwork-kicker">{template.kicker ?? (template.layout === "palace" ? "A ROYAL WEDDING CELEBRATION" : "YOU ARE CORDIALLY INVITED")}</p>
+        <p className="artwork-overline">{template.overline ?? (template.layout === "palace" ? "With the blessings of our families" : "A beautiful beginning...")}</p>
         <h2 className="artwork-names" data-testid="editable-names">
           <span>{bride}</span><em>&amp;</em><span>{groom}</span>
         </h2>
@@ -65,7 +66,7 @@ export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 Febr
         {time && <p className="artwork-time">{time}</p>}
         <p className="artwork-venue" data-testid="editable-venue">{venue}</p>
       </div>
-      <p className="artwork-footer" aria-hidden="true">{template.layout === "palace" ? "✧  LOVE • FAMILY • FOREVER  ✧" : "CELEBRATING LOVE  ·  TOGETHER FOREVER"}</p>
+      <p className="artwork-footer" aria-hidden="true">{template.footer ?? (template.layout === "palace" ? "✧  LOVE • FAMILY • FOREVER  ✧" : "CELEBRATING LOVE  ·  TOGETHER FOREVER")}</p>
     </article>
   );
 }

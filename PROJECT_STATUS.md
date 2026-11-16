@@ -58,3 +58,9 @@
 - Added unit regression tests for legacy catalog preservation, original artwork and editable text, plus Playwright 1440px/390px previews, mobile editor persistence and actual download signatures for every card.
 - Verified: GitHub Actions run 43869254907 completed successfully. ESLint PASS; unit tests PASS; Next.js production build PASS; Playwright Chromium 9/9 browser tests PASS (including all premium mobile editor and PNG/PDF export checks).
 - Infrastructure reminder: existing SQLite order storage needs a persistent disk; ephemeral serverless storage is not production safe.
+
+### Original illustrated card products — milestone 2 (2026-11-16)
+
+- Published `Luxury Maroon Heritage` and `White & Gold Minimal` in catalog, with individual /public/card-art SVG, editable DOM layers, template metadata and different composition styles.
+- Both templates reuse existing paid editor and PNG/PDF; no payment/auth/schema/storage infrastructure changed at this milestone.
+- Build, browser and visual checks are being run by GitHub Actions on pushed commits. Prices remain unapproved proposals and Cashfree live disabled.

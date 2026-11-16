@@ -21,6 +21,9 @@ export type ArtworkTemplate = {
     photo: { enabled: boolean };
   };
   layout: string;
+  kicker?: string;
+  overline?: string;
+  footer?: string;
 };
 const layers = (align: "center" | "left" = "center"): ArtworkTemplate["textLayers"] => ({
   bride: { align, maxLength: 70 },
@@ -61,6 +64,42 @@ export const cardTemplates: readonly ArtworkTemplate[] = [
     font: { names: "'Palatino Linotype', 'Book Antiqua', Georgia, serif", supporting: "'Palatino Linotype', Georgia, serif" },
     textLayers: layers(),
     layout: "rose",
+  },
+  {
+    id: "luxury-maroon-heritage",
+    theme: "art-luxury-maroon-heritage",
+    name: "Luxury Maroon Heritage",
+    category: "cards",
+    thumbnail: "/card-art/luxury-maroon-heritage.svg",
+    artwork: "/card-art/luxury-maroon-heritage.svg",
+    price: 549,
+    published: true,
+    tagline: "ZARDOZI HERITAGE",
+    description: "Burgundy silk-inspired zardozi paisley embroidery, jharokha arch, gilded stonework and rich royal detailing.",
+    font: {names: "Georgia, 'Times New Roman', serif", supporting: "Georgia,serif"},
+    textLayers: layers(),
+    layout: "maroon-heritage",
+    kicker: "A HERITAGE WEDDING",
+    overline: "An evening written in gold",
+    footer: "THE CELEBRATION OF A LIFETIME",
+  },
+  {
+    id: "white-gold-minimal",
+    theme: "art-white-gold-minimal",
+    name: "White & Gold Minimal",
+    category: "cards",
+    thumbnail: "/card-art/white-gold-minimal.svg",
+    artwork: "/card-art/white-gold-minimal.svg",
+    price: 399,
+    published: true,
+    tagline: "MODERN GOLD ATELIER",
+    description: "Modern editorial ivory invitation with restrained golden Art Deco lines, circular emblem and minimalist botanical gold engraving.",
+    font: {names: "'Palatino Linotype',Georgia,serif", supporting: "Georgia,serif"},
+    textLayers: layers("left"),
+    layout: "white-gold",
+    kicker: "THE WEDDING OF",
+    overline: "An elegant beginning",
+    footer: "LOVE IN ITS PUREST FORM",
   },
 ];
 export function findArtworkTemplate(theme: string): ArtworkTemplate | undefined {

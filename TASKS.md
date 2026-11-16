@@ -26,3 +26,5 @@
 - [ ] Approve provisional premium card prices before real commercial use
 - [ ] Run verified Cashfree sandbox checkout with merchant credentials
 - [ ] Do not enable production Cashfree without explicit owner consent
+
+- [x] Illustrated artwork, catalog and live preview: Luxury Maroon Heritage / White & Gold Minimal
