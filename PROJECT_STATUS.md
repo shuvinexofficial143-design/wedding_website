@@ -6,19 +6,19 @@
 - Original responsive homepage, navigation and invitation artwork (CSS; no copied assets).
 
 ## Currently Working On
-- Phase 2 catalog and preview routes complete; validation in progress.
+- Phases 3–4 implemented; security and browser testing in progress.
 
 ## Pending Tasks
 - Catalog, previews, editor, persistence, exports, secure payments, authenticated orders/admin, deployment.
 
 ## Latest Commit SHA
-- Verified predecessor: b765b9ff0f23ac30696450c9ac35bf9ed3835bb4 (development). Each checkpoint records its predecessor; use git log -1 for current SHA.
+- Verified predecessor: 8d410c2cf18b95202791dc0de4cebbdaa8b58a88 (development). Each checkpoint records its predecessor; use git log -1 for current SHA.
 
 ## Testing Results
-- Homepage lint and production build passed.
+- Homepage, catalog, accounts, editor and Cashfree integration lint and production build passed.
 
 ## Known Bugs
-- Checkout and customer accounts are next; no live payments accepted.
+- No email verification/password reset yet. Sandbox gateway end-to-end test requires credentials. No production endpoint exists.
 
 ## Required Credentials / Blockers
 - Cashfree sandbox credentials; production payments must remain disabled pending explicit permission.
@@ -28,3 +28,7 @@
 - Validate homepage, push development branch, implement catalog and preview destinations.
 
 - Phase 2: four category filters, six products, preview routes, support configuration and clearly marked draft policies.
+
+- Accounts with scrypt passwords, hashed opaque sessions, reserved admin emails and mutation origin checks.
+- SQLite order persistence (requires persistent disk in deployment), paid-only autosaving editor with conflict detection, photos, PNG/PDF export.
+- Cashfree sandbox server orders, signed raw-body webhooks, amount/currency matching, unique payment IDs; no production endpoint.
