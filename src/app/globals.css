@@ -1120,3 +1120,20 @@ td {
 .art-nikah .artwork-date {color:#9f7c48;}
 .art-nikah .artwork-rule {color:#c4a068;}
 .art-nikah .artwork-footer {color:#ddc58b;bottom:10.3cqw;}
+
+.art-south-indian {color:#8e5736;}
+.art-south-indian .artwork-copy {top:35%;bottom:22%;left:26%;right:26%;gap:1.25cqw;}
+.art-south-indian .artwork-kicker {color:#a76c3b;font-size:3.1cqw;}
+.art-south-indian .artwork-overline {font-size:3.2cqw;}
+.art-south-indian .artwork-names {color:#9e5734;font-size:min(var(--art-name-size),7.4cqw);}
+.art-south-indian .artwork-date {color:#a96a32;}
+.art-south-indian .artwork-footer {color:#bb8e57;bottom:11cqw;}
+.art-emerald {color:#f2dfb1;}
+.art-emerald .artwork-copy {top:33%;bottom:22%;left:24%;right:24%;gap:1.45cqw;}
+.art-emerald .artwork-names {color:#ecd49b;font-size:min(var(--art-name-size),7.3cqw);font-variant:small-caps;}
+.art-emerald .artwork-kicker {color:#d0b071;letter-spacing:.85cqw;font-size:2.5cqw;}
+.art-emerald .artwork-overline {color:#e1d2a8;font-style:italic;font-size:4cqw;}
+.art-emerald .artwork-message {color:#ecddbb;}
+.art-emerald .artwork-rule {color:#edca7b;}
+.art-emerald .artwork-date {color:#f3dfad;font-weight:400;}
+.art-emerald .artwork-footer {color:#d6b772;bottom:12cqw;}

@@ -32,3 +32,6 @@
 - [x] Illustrated Traditional Hindu Wedding + Rajasthani Royal Wedding cards: catalog, live preview, editor and export integration
 
 - [x] Illustrated Pastel Watercolor Floral + Elegant Muslim Nikah Invitation: separate original artwork and editable export
+
+- [x] Illustrated South Indian Traditional Wedding + Luxury Dark Emerald: SVG artwork, catalog, live preview and export integration
+- [ ] Run final all-ten individual artwork loading, mobile, paid editor, PNG/PDF download and screenshot review

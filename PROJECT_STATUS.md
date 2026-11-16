@@ -72,3 +72,8 @@
 ### Illustrated cards — Pastel / Nikah milestone (2026-11-16)
 - Published Pastel Watercolor Floral and Elegant Muslim Nikah Invitation in catalog with unique original vectors and editable live preview layered over artwork.
 - Existing authentication and payment gate unchanged; CI validation triggered.
+
+### Illustrated cards — South Indian / Emerald milestone (2026-11-16)
+- Published South Indian Traditional Wedding and Luxury Dark Emerald Wedding: unique original SVG artworks, responsive typography and the same authenticated paid editor/export pipeline.
+- The original three premium designs and nine original other products remain untouched.
+- Full new ten-card regression and screenshot review still required before launch claims.
