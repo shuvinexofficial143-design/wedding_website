@@ -931,15 +931,15 @@ td {
   box-shadow: inset 0 0 0 1.4cqw #fffaf8, inset 0 0 0 1.55cqw #e4bec5;
   pointer-events: none;
 }
-.floral-top,.floral-bottom { position: absolute; z-index: 2; width: 53%; height: auto; pointer-events: none; }
-.floral-top { top: -2%; left: -2%; }
-.floral-bottom { bottom: -2%; right: -2%; transform: rotate(180deg); }
+.floral-top,.floral-bottom { position: absolute; z-index: 2; width: 46%; height: auto; pointer-events: none; }
+.floral-top { top: -3%; left: -3%; }
+.floral-bottom { bottom: -3%; right: -3%; transform: rotate(180deg); }
 .floral-spray-art { width: 100%; height: auto; filter: drop-shadow(0 .6cqw .7cqw #98465a24); }
 .floral-inner {
-  position: absolute; inset: 19cqw 12cqw 17cqw;
+  position: absolute; inset: 22cqw 12cqw 18cqw;
   z-index: 3;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 3.2cqw;
+  gap: 2.7cqw;
   text-shadow: 0 .4cqw 1cqw #fff9f4;
 }
 .floral-kicker { font: 600 3.1cqw Arial,sans-serif; letter-spacing: 1.15cqw; color: #9b6c76; }
@@ -984,14 +984,14 @@ td {
 }
 .ti-content {
   position: absolute; z-index: 3;
-  top: 25cqw; bottom: 15cqw; left: 11cqw; right: 11cqw;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.4cqw;
+  top: 31cqw; bottom: 16cqw; left: 11cqw; right: 11cqw;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.45cqw;
 }
-.ti-blessing { font: 4cqw/1.4 Georgia,serif; color: #a56e2c; }
-.indian-mandala { width: 24cqw; height: auto; color: #c18b30; }
-.ti-heading { font: 700 9.5cqw/1.2 "Noto Serif Devanagari", "Mangal", Georgia,serif; color: #9f302b; }
+.ti-blessing { font: 3.5cqw/1.35 Georgia,serif; color: #a56e2c; }
+.indian-mandala { width: 20cqw; height: auto; color: #c18b30; }
+.ti-heading { font: 700 8.5cqw/1.2 "Noto Serif Devanagari", "Mangal", Georgia,serif; color: #9f302b; }
 .ti-invite { font: 2.75cqw/1.45 Arial,sans-serif; letter-spacing: .58cqw; color: #9b6947; }
-.ti-names { font: 400 9cqw/1.08 Georgia,serif; color: #8c2929; }
+.ti-names { font: 400 8cqw/1.08 Georgia,serif; color: #8c2929; }
 .ti-names em { font-size: 4.6cqw; padding: 1cqw 0; color: #c18b30; }
 .ti-announcement { font: 2.7cqw/1.35 Arial,sans-serif; letter-spacing: .4cqw; max-width: 63cqw; }
 .ti-date-container {
@@ -1005,8 +1005,8 @@ td {
 .ti-venue { font: 3.8cqw/1.35 Georgia,serif; max-width: 67cqw; overflow-wrap: anywhere; }
 .ti-footer { font: 3.2cqw/1.3 "Noto Serif Devanagari", "Mangal",Georgia,serif; color: #ad6c34; }
 .ti-bottom-tile { position: absolute; bottom: 6cqw; width: 100%; left: 0; font-size: 5cqw; color: #e0bb6c; }
-.premium-traditional-indian:has(.premium-couple-photo) .ti-content { gap: 1.4cqw; }
-.premium-traditional-indian:has(.premium-couple-photo) .indian-mandala { width: 17cqw; }
+.premium-traditional-indian:has(.premium-couple-photo) .ti-content { gap: .8cqw; top: 30cqw; }
+.premium-traditional-indian:has(.premium-couple-photo) .indian-mandala { width: 14cqw; }
 .premium-traditional-indian:has(.premium-couple-photo) .ti-names { font-size: 7.5cqw; }
 
 /* Responsive containers: no viewport-sized fixed art, so browser and export render consistently. */
