@@ -68,3 +68,7 @@
 ### Illustrated cards — Hindu / Rajasthani milestone (2026-11-16)
 - Published Traditional Hindu Wedding and Rajasthani Royal Wedding with original detailed SVG artwork, editable live DOM text and individual layouts.
 - Protected verified-paid editor reused. CI validation triggered by this push.
+
+### Illustrated cards — Pastel / Nikah milestone (2026-11-16)
+- Published Pastel Watercolor Floral and Elegant Muslim Nikah Invitation in catalog with unique original vectors and editable live preview layered over artwork.
+- Existing authentication and payment gate unchanged; CI validation triggered.

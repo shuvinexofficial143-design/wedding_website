@@ -30,3 +30,5 @@
 - [x] Illustrated artwork, catalog and live preview: Luxury Maroon Heritage / White & Gold Minimal
 
 - [x] Illustrated Traditional Hindu Wedding + Rajasthani Royal Wedding cards: catalog, live preview, editor and export integration
+
+- [x] Illustrated Pastel Watercolor Floral + Elegant Muslim Nikah Invitation: separate original artwork and editable export

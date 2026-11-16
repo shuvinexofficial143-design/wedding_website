@@ -1103,3 +1103,20 @@ td {
 .art-rajasthani .artwork-overline {font-style:italic;font-size:3.2cqw;}
 .art-rajasthani .artwork-message {color:#935b48;}
 .art-rajasthani .artwork-footer {bottom:12cqw;color:#99673f;}
+
+.art-pastel {color:#82708d;}
+.art-pastel .artwork-copy {top:28%;bottom:23%;left:26%;right:26%;gap:1.9cqw;}
+.art-pastel .artwork-names {font-style:italic;font-size:min(var(--art-name-size),7.8cqw);color:#9d7094;}
+.art-pastel .artwork-kicker {font-size:2.4cqw;color:#a18ba6;}
+.art-pastel .artwork-overline {font-size:4.1cqw;font-style:italic;color:#ac8baa;}
+.art-pastel .artwork-message {color:#7c7883;}
+.art-pastel .artwork-date {color:#997f99;}
+.art-pastel .artwork-footer {color:#b599b1;bottom:11.5cqw;}
+.art-nikah {color:#446d65;}
+.art-nikah .artwork-copy {top:29%;bottom:21%;left:24%;right:24%;gap:1.85cqw;}
+.art-nikah .artwork-kicker {color:#af8950;font-size:2.9cqw;letter-spacing:1.2cqw;}
+.art-nikah .artwork-names {font-size:min(var(--art-name-size),7.9cqw);color:#2f685e;}
+.art-nikah .artwork-overline {font-size:3.2cqw;color:#816e50;}
+.art-nikah .artwork-date {color:#9f7c48;}
+.art-nikah .artwork-rule {color:#c4a068;}
+.art-nikah .artwork-footer {color:#ddc58b;bottom:10.3cqw;}
