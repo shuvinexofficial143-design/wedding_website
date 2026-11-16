@@ -48,3 +48,13 @@
 - API integration flow PASSED: account creation, server-controlled price, duplicate pending order, paid editor gate, ownership isolation, origin rejection, unsigned webhook rejection, revision conflicts, publication/unpublish, RSVP privacy, explicit admin role, managed website delivery and invalid MP4 rejection.
 - Local visual/browser suite BLOCKED by Chromium socket() EPERM; GitHub Actions workflow added to run it in CI. Do not report browser/export rendering as verified yet.
 - Docker deployment instructions and WhatsApp adapter contract prepared. Hosting and business configuration still required.
+
+## 2026-11-16 — Premium editable cards milestone
+
+- Implemented three unique, self-contained card artworks: Royal Gold (gilded palace arch/crown), Floral Pink (rose bouquet stationery), Traditional Indian (marigold toran and mandala).
+- Catalog identifiers: `royal-gold-wedding`, `floral-pink-wedding`, `traditional-indian-wedding`. Proposed launch prices are INR 499 / 449 / 499; owner must approve before any real sales.
+- All three reuse the existing paid-order editor, server-side save and live preview for names, wedding date, time, venue and optional photo. Existing HD PNG and PDF export is reused. Public preview remains a sample, not a paid editor bypass.
+- Legacy products, protected editor access, authentication, database and Cashfree sandbox implementation left intact. Live payment processing was not enabled.
+- Added unit regression tests for legacy catalog preservation, original artwork and editable text, plus Playwright 1440px/390px previews, mobile editor persistence and actual download signatures for every card.
+- Await GitHub Actions completion for new browser/export test verification; do not report those as passing before a successful run.
+- Infrastructure reminder: existing SQLite order storage needs a persistent disk; ephemeral serverless storage is not production safe.
