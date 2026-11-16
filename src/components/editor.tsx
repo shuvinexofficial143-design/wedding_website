@@ -181,6 +181,12 @@ export function Editor({
         )}
         {category === "cards" && (
           <label>
+            Venue address
+            <input type="text" maxLength={180} value={details.address} onChange={(event) => change("address", event.target.value)} placeholder="Street, area, city, state, PIN code" />
+          </label>
+        )}
+        {category === "cards" && (
+          <label>
             Invitation message (up to 140 characters)
             <textarea maxLength={140} value={details.cardMessage} onChange={(e) => change("cardMessage", e.target.value)} />
           </label>
@@ -343,6 +349,7 @@ export function Editor({
             venue={details.venue}
             photo={details.photo}
             message={details.cardMessage}
+            address={details.address}
           />
         </div>
         <p style={{ textAlign: "center", fontSize: 11, marginTop: 20 }}>

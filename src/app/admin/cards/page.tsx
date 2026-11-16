@@ -21,7 +21,7 @@ export default async function AdminCards() {
                 <td><img src={t.thumbnail} alt={t.name+" decorative background"} width={74} height={104} style={{objectFit:"cover"}} /></td>
                 <td><strong>{t.name}</strong><p><code>{t.id}</code></p><small>Layout: {t.layout}</small><p><small>{t.category} · {t.artwork}</small></p></td>
                 <td>₹{t.price} <small>proposed</small></td>
-                <td>{["bride", "groom", "date", "time", "venue", "message", ...(t.textLayers.photo.enabled?["photo"]:[])].join(", ")}<p><small>Font: {t.font.names}</small></p></td>
+                <td>{["bride", "groom", "date", "time", "venue", "address", "message", ...(t.textLayers.photo.enabled?["photo"]:[])].join(", ")}<p><small>Font: {t.font.names}</small></p></td>
                 <td>{t.published?"Published":"Unpublished"}</td>
                 <td><Link className="text-link" href={`/preview/${t.id}`}>Full preview ↗</Link></td>
               </tr>

@@ -9,6 +9,7 @@ export type ArtworkCardProps = {
   venue?: string;
   message?: string;
   photo?: string;
+  address?: string;
 };
 function getWhen(value: string) {
   const match = /^(\d{4}-\d{2}-\d{2})(?:\s*·\s*(\d{2}:\d{2}))?/.exec(value);
@@ -31,7 +32,7 @@ function calcNameSize(value: string) {
   if (count > 13) return "6.3cqw";
   return "8.2cqw";
 }
-export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 February 2027", venue = "The Rose Palace · Jaipur", message, photo = ""}: ArtworkCardProps) {
+export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 February 2027", venue = "The Rose Palace · Jaipur", message, photo = "", address = ""}: ArtworkCardProps) {
   const template = findArtworkTemplate(theme);
   if (!template) return null;
   const {day,time} = getWhen(date);
@@ -43,12 +44,13 @@ export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 Febr
   const vars = {
     "--art-name-size": nameSize,
     "--art-venue-size": venueSize,
+    "--art-address-size": address.length > 130 ? "1.5cqw" : address.length > 85 ? "1.9cqw" : "2.5cqw",
     "--art-message-size": invitation.length > 105 ? "1.9cqw" : invitation.length > 80 ? "2.3cqw" : invitation.length > 55 ? "2.6cqw" : "3.1cqw",
     "--art-names-font": template.font.names,
     "--art-supporting-font": template.font.supporting,
   } as CSSProperties;
   return (
-    <article className={`artwork-card art-${template.layout} ${photo ? "art-has-photo" : ""}`}
+    <article className={`artwork-card art-${template.layout} ${photo ? "art-has-photo" : ""} ${address ? "art-has-address" : ""}`}
       style={vars} data-testid={`art-${template.id}`} aria-label={template.name + " invitation"}>
       <img className="artwork-background" src={template.artwork} alt="" aria-hidden="true" draggable={false} />
       <div className="artwork-copy">
@@ -65,6 +67,7 @@ export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 Febr
         <p className="artwork-date">{day}</p>
         {time && <p className="artwork-time">{time}</p>}
         <p className="artwork-venue" data-testid="editable-venue">{venue}</p>
+        {address && <p className="artwork-address" data-testid="editable-address">{address}</p>}
       </div>
       <p className="artwork-footer" aria-hidden="true">{template.footer ?? (template.layout === "palace" ? "✧  LOVE • FAMILY • FOREVER  ✧" : "CELEBRATING LOVE  ·  TOGETHER FOREVER")}</p>
     </article>

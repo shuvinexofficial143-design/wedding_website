@@ -1145,3 +1145,8 @@ td {
 .art-nikah .artwork-copy {top:24%;bottom:30%;}
 .art-rose .artwork-copy {top:31%;bottom:22%;}
 .artwork-card .artwork-names span {max-width:100%; overflow-wrap:anywhere;}
+
+.artwork-address {font:var(--art-address-size)/1.3 var(--art-supporting-font);letter-spacing:.05cqw;}
+.art-has-address .artwork-copy {gap:.8cqw;}
+.art-has-address .artwork-names {font-size:min(var(--art-name-size),6.5cqw);}
+.art-has-address .artwork-overline {font-size:3cqw;}

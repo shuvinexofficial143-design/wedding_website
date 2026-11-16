@@ -43,6 +43,7 @@ export function GuestInvitation({
           venue={details.venue}
           photo={details.photo}
           message={details.cardMessage}
+          address={details.address}
         />
       </div>
       <section className="guest-section">

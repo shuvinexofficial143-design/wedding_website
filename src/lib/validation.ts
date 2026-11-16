@@ -11,6 +11,7 @@ export const detailsSchema = z.object({
   venue: text(200).min(1),
   story: text(2000).default(""),
   cardMessage: text(140).default("Together with our families, we joyfully invite you to celebrate our wedding."),
+  address: text(180).default(""),
   photo: z
     .string()
     .max(1500000)
@@ -45,6 +46,7 @@ export const defaultDetails: Details = {
   venue: "The Rose Palace · Jaipur",
   story: "",
   cardMessage: "Together with our families, we joyfully invite you to celebrate our wedding.",
+  address: "",
   photo: "",
   maps: "",
   gallery: [],

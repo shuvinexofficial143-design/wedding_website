@@ -17,6 +17,7 @@ export type ArtworkTemplate = {
     date: { align: "center" | "left" };
     time: { align: "center" | "left" };
     venue: { align: "center" | "left"; maxLength: 200 };
+    address: { align: "center" | "left"; maxLength: 180 };
     message: { align: "center" | "left"; maxLength: 140 };
     photo: { enabled: boolean };
   };
@@ -31,6 +32,7 @@ const layers = (align: "center" | "left" = "center"): ArtworkTemplate["textLayer
   date: { align },
   time: { align },
   venue: { align, maxLength: 200 },
+  address: { align, maxLength: 180 },
   message: { align, maxLength: 140 },
   photo: { enabled: true },
 });

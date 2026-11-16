@@ -10,6 +10,7 @@ export function Invite({
   venue = "The Rose Palace · Jaipur",
   photo = "",
   message = "",
+  address = "",
 }: {
   theme?: string;
   animated?: boolean;
@@ -18,9 +19,10 @@ export function Invite({
   venue?: string;
   photo?: string;
   message?: string;
+  address?: string;
 }) {
   if (findArtworkTemplate(theme)) {
-    return <ArtworkCard theme={theme} names={names} date={date} venue={venue} photo={photo} message={message} />;
+    return <ArtworkCard theme={theme} names={names} date={date} venue={venue} photo={photo} message={message} address={address} />;
   }
   if (isPremiumTheme(theme)) {
     return <PremiumCard theme={theme} names={names} date={date} venue={venue} photo={photo} />;
