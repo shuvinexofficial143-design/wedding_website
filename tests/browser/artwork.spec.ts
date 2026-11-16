@@ -111,7 +111,10 @@ for (const [productId, productName] of designs) {
         const bytes = await readFile(await download.path());
         expect(bytes.subarray(0,4).toString("hex")).toBe(magic);
         expect(bytes.length).toBeGreaterThan(15000);
-        if (label === "HD PNG") expect(bytes.readUInt32BE(16)).toBeGreaterThanOrEqual(1600);
+        if (label === "HD PNG") {
+          expect(bytes.readUInt32BE(16)).toBeGreaterThanOrEqual(1600);
+          await download.saveAs("test-results/art-" + productId + "-export.png");
+        }
       }
       await card.screenshot({path:"test-results/art-"+productId+"-edited-mobile.png"});
     } finally {
