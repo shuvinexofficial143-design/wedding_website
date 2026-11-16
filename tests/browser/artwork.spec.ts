@@ -81,7 +81,11 @@ for (const [productId, productName] of designs) {
       await expect.poll(() => background.evaluate((node:HTMLImageElement) => node.complete && node.naturalWidth > 0)).toBe(true);
       const geometry = await card.evaluate((root) => {
         const container = root.querySelector(".artwork-copy") as HTMLElement;
-        const elements = Array.from(container.children) as HTMLElement[];
+        const elements = (Array.from(container.children) as HTMLElement[]).filter(node => {
+          const style = window.getComputedStyle(node);
+          const rect = node.getBoundingClientRect();
+          return style.display !== "none" && style.visibility !== "hidden" && rect.height > 0 && rect.width > 0;
+        });
         const outer = root.getBoundingClientRect();
         const inner = container.getBoundingClientRect();
         const positioned = elements.map(node => ({

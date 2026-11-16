@@ -23,6 +23,8 @@ export function Editor({
   const [details, setDetails] = useState(initial);
   const [status, setStatus] = useState("All changes saved");
   const [token, setToken] = useState(initialToken);
+  const [shareOrigin, setShareOrigin] = useState("");
+  useEffect(() => { setShareOrigin(window.location.origin); }, []);
   const [busy, setBusy] = useState(false);
   const revision = useRef(initialRevision);
   const lastSaved = useRef(JSON.stringify(initial));
@@ -314,7 +316,7 @@ export function Editor({
             <p>
               <a
                 className="text-link"
-                href={`https://wa.me/?text=${encodeURIComponent(`You’re invited! ${typeof window === "undefined" ? "" : window.location.origin}/i/${token}`)}`}
+                href={`https://wa.me/?text=${encodeURIComponent(`You’re invited! ${shareOrigin}/i/${token}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
