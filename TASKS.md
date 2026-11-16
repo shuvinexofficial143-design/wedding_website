@@ -1,0 +1,11 @@
+# Implementation checklist
+- [x] Verify existing repository and branches
+- [x] Phase 1: Next.js setup, responsive homepage, navigation
+- [ ] Phase 2: catalogs, product pages, previews
+- [ ] Phase 3: paid customer editor, durable saving, PNG/PDF export
+- [ ] Phase 4: Cashfree sandbox, verified unlock, signed idempotent webhook
+- [ ] Phase 5: animated invitations and shareable publication
+- [ ] Phase 6: website/video orders, authenticated customer and admin dashboards
+- [ ] Phase 7: WhatsApp integration preparation, end-to-end testing, deployment
+- [ ] Configure business identity, approved prices, support number and legal policies
+- [ ] Enable real payments only after explicit owner permission
