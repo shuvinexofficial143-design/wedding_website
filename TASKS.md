@@ -34,4 +34,9 @@
 - [x] Illustrated Pastel Watercolor Floral + Elegant Muslim Nikah Invitation: separate original artwork and editable export
 
 - [x] Illustrated South Indian Traditional Wedding + Luxury Dark Emerald: SVG artwork, catalog, live preview and export integration
-- [ ] Run final all-ten individual artwork loading, mobile, paid editor, PNG/PDF download and screenshot review
+- [x] Run final all-ten artwork loading, mobile, paid editor, PNG/PDF exports and visual screenshot review — 29/29 Chromium tests passed (GitHub Actions 43879360764)
+- [x] Fix long-name/title/address overlaps with responsive density classes and bounds regression
+- [x] Verify actual 1800px PNG exports for all ten artworks against mobile card previews
+- [x] Create read-only protected admin template registry at /admin/cards
+- [ ] Verify latest production Vercel deployment and configure durable order storage before taking real payments
+- [ ] Extend admin studio to durable secured create/publish/unpublish workflow after persistent data infrastructure is agreed

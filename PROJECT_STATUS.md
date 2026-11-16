@@ -1,5 +1,17 @@
 # Project status
 
+## Latest verified milestone — 16 November 2026 (10 original artwork cards)
+
+- Ten new original **1000 × 1400 SVG** artwork cards are integrated into the catalog and existing protected paid editor. The prior Royal Gold, Floral Pink and Traditional Indian templates were preserved; no existing product records were removed.
+- Each card has a unique template ID, vector artwork and thumbnail, separately editable name/date/time/venue/address/message layers, a per-template font/layout definition, optional couple-photo slot and explicit published flag in the code-reviewed registry.
+- Protected `/admin/cards` shows card IDs, prices, artwork, text-layer settings and publish status. It is **read-only** by design: persistent admin upload/publish actions need a durable datastore and were not added.
+- Visual QA: all ten artwork cards were captured at desktop (1440px) and mobile (390px), plus each mobile edited version. Long multiword names, venue and address are rendered with adaptive density and bounds/collision tests. Reviewed all ten actual 1800 × 2497 PNG exports against browser previews (no missing backgrounds found; minor browser/resampling differences remain).
+- CI **PASS** on source commit `10127b3cbf8e75b2183233d88df00d6be5f93d2a`, [GitHub Actions run 43879360764](https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/43879360764): ESLint, unit tests, Next.js production build, and **29/29 Playwright browser tests**, including 10 paid editable/export checks and 10 desktop/mobile artwork tests.
+- Existing login, payment verification, orders, private RSVP and other functions are covered by the same regression workflow. Cashfree production payments **remain disabled**. Merchant prices are only proposals.
+- Release blockers: the supplied Vercel production deployment could not be verified from the available account/project access; customer-order SQLite durability on ephemeral hosting is still unproven. Never advertise production checkout or start Cashfree live payments until durable storage and merchant launch are approved.
+- Technical template guide: `docs/CARD_TEMPLATES.md`.
+
+
 ## Completed Features
 
 - Repository inspected: empty, no existing branches or data.
