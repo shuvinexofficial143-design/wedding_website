@@ -30,6 +30,8 @@ jobs:
         if: always()
         with:
           name: premium-card-visuals
-          path: test-results/premium-*.png
+          path: |
+            test-results/premium-*.png
+            test-results/art-*.png
           if-no-files-found: ignore
           retention-days: 7
