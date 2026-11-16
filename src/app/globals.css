@@ -1137,3 +1137,11 @@ td {
 .art-emerald .artwork-rule {color:#edca7b;}
 .art-emerald .artwork-date {color:#f3dfad;font-weight:400;}
 .art-emerald .artwork-footer {color:#d6b772;bottom:12cqw;}
+
+/* Visual QA: reserve bottom architecture and protect text against botanical art. */
+.artwork-card .artwork-footer { display:none; }
+.art-maroon-heritage .artwork-footer { display:block; }
+.art-palace .artwork-copy {top:25%;bottom:29%;}
+.art-nikah .artwork-copy {top:24%;bottom:30%;}
+.art-rose .artwork-copy {top:31%;bottom:22%;}
+.artwork-card .artwork-names span {max-width:100%; overflow-wrap:anywhere;}
