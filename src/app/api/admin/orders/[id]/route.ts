@@ -1,0 +1,103 @@
+import { randomBytes } from "node:crypto";
+import { z } from "zod";
+import { user, isAdmin, sameOrigin } from "@/lib/auth";
+import { db, getOrder } from "@/lib/db";
+import { products } from "@/lib/catalog";
+import { detailsSchema, readJson } from "@/lib/validation";
+const url = z
+  .string()
+  .max(500)
+  .refine(
+    (v) =>
+      !v ||
+      (() => {
+        try {
+          const u = new URL(v);
+          return u.protocol === "https:" && !u.username && !u.password;
+        } catch {
+          return false;
+        }
+      })(),
+  );
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  if (!sameOrigin(req))
+    return Response.json({ error: "Invalid origin" }, { status: 403 });
+  const u = await user();
+  if (!u || !isAdmin(u))
+    return Response.json({ error: "Admin access required" }, { status: 403 });
+  const { id } = await params;
+  const o = getOrder(id);
+  if (!o || o.status !== "paid")
+    return Response.json({ error: "Paid order not found" }, { status: 404 });
+  try {
+    const d = z
+      .object({
+        fulfillment: z.enum([
+          "details_received",
+          "in_progress",
+          "preview_ready",
+          "delivered",
+        ]),
+        previewUrl: url.nullish(),
+        finalUrl: url.nullish(),
+        publish: z.boolean(),
+      })
+      .parse(await readJson(req, 4096));
+    const p = products.find((p) => p.id === o.product_id)!;
+    let token = o.public_token,
+      published = o.published;
+    let finalUrl = d.finalUrl || o.final_url;
+    const previewUrl = d.previewUrl || o.preview_url;
+    if (d.publish) {
+      if (p.category !== "websites")
+        throw new Error("Only website orders can be published by this action");
+      const details = detailsSchema.parse(JSON.parse(o.details));
+      token = token || randomBytes(24).toString("hex");
+      published = JSON.stringify(details);
+      finalUrl = `${new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").origin}/i/${token}`;
+    }
+    if (d.fulfillment === "delivered" && p.category === "websites" && !finalUrl)
+      throw new Error(
+        "Add a final website link or publish the submitted details first",
+      );
+    if (
+      d.fulfillment === "delivered" &&
+      p.category === "videos" &&
+      !o.video_path
+    )
+      throw new Error("Upload the completed MP4 first");
+    if (d.fulfillment === "preview_ready" && !previewUrl && !finalUrl)
+      throw new Error("Provide a preview link first");
+    db()
+      .prepare(
+        "UPDATE orders SET fulfillment=?,preview_url=?,final_url=?,public_token=?,published=? WHERE id=?",
+      )
+      .run(
+        d.fulfillment,
+        previewUrl || null,
+        finalUrl || null,
+        token,
+        published,
+        id,
+      );
+    db()
+      .prepare(
+        "INSERT INTO audit(admin_id,order_id,action,created) VALUES(?,?,?,?)",
+      )
+      .run(u.id, id, `fulfillment:${d.fulfillment}`, Date.now());
+    return Response.json({ ok: true });
+  } catch (e) {
+    return Response.json(
+      {
+        error:
+          e instanceof z.ZodError
+            ? "Check the submitted details and HTTPS URLs."
+            : (e as Error).message,
+      },
+      { status: 400 },
+    );
+  }
+}

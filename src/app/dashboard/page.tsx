@@ -1,0 +1,113 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { user, isAdmin } from "@/lib/auth";
+import { db, type Order } from "@/lib/db";
+import { products } from "@/lib/catalog";
+import { Logout } from "@/components/auth-form";
+export default async function Dashboard() {
+  const u = await user();
+  if (!u) redirect("/login?next=/dashboard");
+  const orders = db()
+    .prepare("SELECT * FROM orders WHERE user_id=? ORDER BY created DESC")
+    .all(u.id) as Order[];
+  return (
+    <section className="section">
+      <div className="section-head">
+        <div>
+          <span className="eyebrow">YOUR PERSONAL COLLECTION</span>
+          <h1>
+            My <i>invitations.</i>
+          </h1>
+          <p>{u.email}</p>
+        </div>
+        <div>
+          <Logout />
+          {isAdmin(u) && (
+            <Link className="button" href="/admin">
+              Admin dashboard
+            </Link>
+          )}
+        </div>
+      </div>
+      {!orders.length ? (
+        <div className="notice">
+          Your love story starts with a design.{" "}
+          <Link className="text-link" href="/catalog">
+            Explore the collection ↗
+          </Link>
+        </div>
+      ) : (
+        <div className="order-grid">
+          {orders.map((o) => (
+            <article className="order-card" key={o.id}>
+              <span className="eyebrow">
+                {o.status === "paid"
+                  ? "SANDBOX PAYMENT VERIFIED"
+                  : "AWAITING PAYMENT"}
+              </span>
+              <h2>{products.find((p) => p.id === o.product_id)?.name}</h2>
+              <p>
+                ₹{o.amount / 100} ·{" "}
+                {new Date(o.created).toLocaleDateString("en-IN")}
+              </p>
+              <p>Delivery: {o.fulfillment.replaceAll("_", " ")}</p>
+              <div className="actions">
+                <Link
+                  className="button"
+                  href={
+                    o.status === "paid"
+                      ? `/editor/${o.id}`
+                      : `/checkout/${o.product_id}?order=${o.id}`
+                  }
+                >
+                  {o.status === "paid"
+                    ? "Open invitation"
+                    : "Continue checkout"}
+                </Link>
+                {o.public_token && (
+                  <Link className="text-link" href={`/i/${o.public_token}`}>
+                    Published invitation
+                  </Link>
+                )}
+              </div>
+              <p>
+                <Link className="text-link" href={`/dashboard/${o.id}/rsvps`}>
+                  View guest replies
+                </Link>
+              </p>
+              {o.preview_url && (
+                <p>
+                  <a
+                    href={o.preview_url}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Website preview ↗
+                  </a>
+                </p>
+              )}
+              {o.final_url && (
+                <p>
+                  <a
+                    href={o.final_url}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Final website ↗
+                  </a>
+                </p>
+              )}
+              {o.video_path && (
+                <p>
+                  <a className="text-link" href={`/api/orders/${o.id}/video`}>
+                    Download your MP4
+                  </a>
+                </p>
+              )}
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}

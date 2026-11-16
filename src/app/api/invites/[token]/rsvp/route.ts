@@ -1,0 +1,52 @@
+import { randomUUID } from "node:crypto";
+import { z } from "zod";
+import { sameOrigin, digest } from "@/lib/auth";
+import { db, limit, type Order } from "@/lib/db";
+import { readJson } from "@/lib/validation";
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ token: string }> },
+) {
+  if (!sameOrigin(req))
+    return Response.json({ error: "Invalid origin" }, { status: 403 });
+  const { token } = await params;
+  const o = db()
+    .prepare("SELECT id FROM orders WHERE public_token=? AND status='paid'")
+    .get(token) as Order | undefined;
+  if (!o)
+    return Response.json({ error: "Invitation unavailable" }, { status: 404 });
+  try {
+    const d = z
+      .object({
+        name: z.string().trim().min(1).max(100),
+        attendance: z.enum(["yes", "no"]),
+        guests: z.number().int().min(1).max(10),
+        website: z.string().max(0),
+      })
+      .parse(await readJson(req, 2048));
+    if (
+      !limit(`rsvp:${o.id}`, 100, 3600000) ||
+      !limit(`rsvp:${o.id}:${digest(d.name.toLowerCase())}`, 3, 3600000)
+    )
+      return Response.json(
+        { error: "Please wait before sending another RSVP." },
+        { status: 429 },
+      );
+    db()
+      .prepare("INSERT INTO rsvps VALUES(?,?,?,?,?,?)")
+      .run(
+        randomUUID(),
+        o.id,
+        d.name,
+        d.attendance,
+        d.attendance === "no" ? 0 : d.guests,
+        Date.now(),
+      );
+    return Response.json({ ok: true });
+  } catch {
+    return Response.json(
+      { error: "Please check your name and guest count." },
+      { status: 400 },
+    );
+  }
+}

@@ -1,0 +1,111 @@
+"use client";
+/* Full reload refreshes server-rendered authentication state. */
+/* eslint-disable @next/next/no-location-assign-relative-destination */
+import { useState } from "react";
+export function AuthForm() {
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  return (
+    <>
+      <div className="filters">
+        <button
+          className={`filter ${mode === "login" ? "active" : ""}`}
+          onClick={() => setMode("login")}
+        >
+          Sign in
+        </button>
+        <button
+          className={`filter ${mode === "register" ? "active" : ""}`}
+          onClick={() => setMode("register")}
+        >
+          Create account
+        </button>
+      </div>
+      <form
+        className="form"
+        onSubmit={async (e) => {
+          e.preventDefault();
+          setBusy(true);
+          setError("");
+          const fd = new FormData(e.currentTarget);
+          try {
+            const r = await fetch("/api/auth", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                action: mode,
+                email: fd.get("email"),
+                password: fd.get("password"),
+              }),
+            });
+            const data = await r.json();
+            if (!r.ok) throw new Error(data.error);
+            const next = new URLSearchParams(location.search).get("next");
+            location.href =
+              next && /^\/(?!\/)/.test(next) && !next.includes("\\")
+                ? next
+                : "/dashboard";
+          } catch (err) {
+            setError((err as Error).message);
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        <label>
+          Email
+          <input
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            maxLength={254}
+          />
+        </label>
+        <label>
+          Password (12 characters minimum)
+          <input
+            name="password"
+            type="password"
+            autoComplete={
+              mode === "login" ? "current-password" : "new-password"
+            }
+            minLength={12}
+            maxLength={128}
+            required
+          />
+        </label>
+        <button className="button" disabled={busy}>
+          {busy
+            ? "Please wait…"
+            : mode === "login"
+              ? "Sign in"
+              : "Create account"}
+        </button>
+        <p role="status">{error}</p>
+      </form>
+      <p className="notice">
+        Pre-launch accounts: email verification and password recovery are not
+        configured yet. Do not use a password shared with another service.
+      </p>
+    </>
+  );
+}
+export function Logout() {
+  return (
+    <button
+      className="text-link"
+      onClick={async () => {
+        const r = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "logout" }),
+        });
+        if (r.ok) location.href = "/";
+      }}
+    >
+      Sign out
+    </button>
+  );
+}
