@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { isPremiumTheme, PremiumCard } from "./premium-card";
 export function Invite({
   theme = "rose",
   animated = false,
@@ -14,6 +15,9 @@ export function Invite({
   venue?: string;
   photo?: string;
 }) {
+  if (isPremiumTheme(theme)) {
+    return <PremiumCard theme={theme} names={names} date={date} venue={venue} photo={photo} />;
+  }
   return (
     <div className={`invite ${theme} ${animated ? "animated" : ""}`}>
       <div className="invite-border">

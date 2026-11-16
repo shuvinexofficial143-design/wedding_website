@@ -27,6 +27,36 @@ export const categories = [
 ] as const;
 export const products = [
   {
+    id: "royal-gold-wedding",
+    name: "Royal Gold Wedding Card",
+    category: "cards" as Category,
+    price: 499,
+    theme: "royal-gold",
+    tag: "NEW · PREMIUM ROYAL COLLECTION",
+    description:
+      "Midnight-blue royal palace arch, engraved golden crown and refined gold typography. Edit your names, wedding date, time, venue and photo.",
+  },
+  {
+    id: "floral-pink-wedding",
+    name: "Floral Pink Wedding Card",
+    category: "cards" as Category,
+    price: 449,
+    theme: "floral-pink",
+    tag: "NEW · PREMIUM FLORAL COLLECTION",
+    description:
+      "Soft blush stationery with hand-drawn rose bouquets, botanical leaves and romantic editorial lettering. Personalise every important detail.",
+  },
+  {
+    id: "traditional-indian-wedding",
+    name: "Traditional Indian Wedding Card",
+    category: "cards" as Category,
+    price: 499,
+    theme: "traditional-indian",
+    tag: "NEW · PREMIUM HERITAGE COLLECTION",
+    description:
+      "A vibrant Indian shubh vivah design with kumkum-red borders, marigold toran, sacred mandala and auspicious motifs.",
+  },
+  {
     id: "gulmohar",
     name: "Gulmohar",
     category: "cards" as Category,

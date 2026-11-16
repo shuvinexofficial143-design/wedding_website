@@ -815,3 +815,211 @@ td {
   box-shadow: 0 5px 20px #0002;
   padding: 14px 20px;
 }
+
+
+/* Premium card studio — three distinct designs, vector decorations and export-safe text. */
+.premium-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  overflow: hidden;
+  isolation: isolate;
+  container-type: inline-size;
+  text-align: center;
+}
+.premium-card .premium-names { margin: 0; overflow-wrap: anywhere; max-width: 100%; }
+.premium-card .premium-names span { display: block; }
+.premium-card .premium-names em { display: block; font-weight: 400; }
+.premium-card p { margin: 0; }
+.premium-card .premium-couple-photo {
+  object-fit: cover;
+  border-radius: 50%;
+  width: 18cqw;
+  height: 18cqw;
+  border: .7cqw solid currentColor;
+  margin: 1cqw auto;
+}
+
+/* I. Royal Gold — midnight navy, gilded palace arch and crown engraving. */
+.premium-royal-gold {
+  background:
+    radial-gradient(ellipse at 50% 9%, #4d5151 0%, transparent 49%),
+    repeating-linear-gradient(130deg, #101f28 0, #101f28 3px, #132732 4px, #132732 5px);
+  color: #f8e8bc;
+  padding: 5cqw 7cqw;
+}
+.rg-outline {
+  position: absolute;
+  inset: 3cqw;
+  border: .5cqw solid #b99549;
+  outline: .16cqw solid #c8a865;
+  outline-offset: 1.5cqw;
+  pointer-events: none;
+}
+.rg-outline::before, .rg-outline::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: .4cqw;
+  background: #d0b06c;
+}
+.rg-outline::before { top: 1.4cqw; }
+.rg-outline::after { bottom: 1.4cqw; }
+.rg-corner {
+  position: absolute;
+  z-index: 4;
+  color: #d6b66b;
+  font-size: 11cqw;
+  line-height: 1;
+  text-shadow: 0 0 5px #deb65c44;
+}
+.rg-top-left { left: 1.5cqw; top: 2cqw; }
+.rg-top-right { right: 1.5cqw; top: 2cqw; }
+.rg-bottom-left { left: 1.5cqw; bottom: 1.5cqw; }
+.rg-bottom-right { right: 1.5cqw; bottom: 1.5cqw; }
+.rg-arch {
+  position: absolute;
+  inset: 7cqw 10cqw 11cqw;
+  border: .35cqw solid #c7a15a;
+  border-radius: 45% 45% 2cqw 2cqw / 22% 22% 2cqw 2cqw;
+  box-shadow: inset 0 0 0 1.3cqw #172833, inset 0 0 0 1.55cqw #8a723e,
+    0 0 0 1cqw #09182244;
+  padding: 11cqw 5cqw 5cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.3cqw;
+  background: linear-gradient(180deg, #1a3038 0%, #11232e 55%, #101b24 100%);
+}
+.royal-crest { width: 31cqw; height: auto; flex-shrink: 0; color: #d5ae5e; }
+.rg-kicker { color: #dabb79; font: 600 2.5cqw Arial, sans-serif; letter-spacing: .7cqw; }
+.rg-invitation { max-width: 62cqw; font: italic 3.9cqw/1.45 Georgia, serif; color: #eee0c7; }
+.rg-names { font: 400 10cqw/1 Georgia, serif; letter-spacing: -.25cqw; color: #f2d79a; }
+.rg-names em { font-size: 6cqw; color: #d1a45a; padding: .8cqw 0; }
+.rg-filigree {
+  width: 50cqw; display: flex; align-items: center; justify-content: center;
+  gap: 3cqw; font: 5cqw Georgia,serif; color: #d1ac64;
+}
+.rg-filigree span { width: 17cqw; height: .25cqw; background: linear-gradient(90deg, transparent, #c7a15a); }
+.rg-filigree span:last-child { transform: rotate(180deg); }
+.rg-date { font: 600 4.5cqw/1.3 Georgia,serif; color: #ffebbd; }
+.rg-time { font: 3.2cqw Arial,sans-serif; letter-spacing: .5cqw; color: #d6bb8b; }
+.rg-place { font: 3.7cqw/1.4 Georgia,serif; color: #f0dfc0; max-width: 63cqw; overflow-wrap: anywhere; }
+.rg-blessing { font: italic 2.8cqw Georgia,serif; color: #c8a970; }
+.rg-footer {
+  position: absolute; bottom: 5.4cqw; left: 0; right: 0;
+  font: 2.4cqw Arial,sans-serif; letter-spacing: .53cqw; color: #dfc086;
+}
+.premium-royal-gold:has(.premium-couple-photo) .rg-arch { gap: 1.2cqw; padding-top: 10cqw; }
+.premium-royal-gold:has(.premium-couple-photo) .royal-crest { width: 25cqw; }
+.premium-royal-gold:has(.premium-couple-photo) .rg-names { font-size: 8.2cqw; }
+
+/* II. Floral Pink — botanical corner bouquets, pearl paper and editorial type. */
+.premium-floral-pink {
+  color: #704656;
+  background:
+    radial-gradient(ellipse at 4% 12%, #f8dde4 0%, transparent 47%),
+    radial-gradient(ellipse at 94% 87%, #f2d2dd 0%, transparent 50%),
+    #fff7f1;
+}
+.floral-paper {
+  position: absolute; inset: 3.2cqw;
+  border: .25cqw solid #dcb3bc;
+  box-shadow: inset 0 0 0 1.4cqw #fffaf8, inset 0 0 0 1.55cqw #e4bec5;
+  pointer-events: none;
+}
+.floral-top,.floral-bottom { position: absolute; z-index: 2; width: 53%; height: auto; pointer-events: none; }
+.floral-top { top: -2%; left: -2%; }
+.floral-bottom { bottom: -2%; right: -2%; transform: rotate(180deg); }
+.floral-spray-art { width: 100%; height: auto; filter: drop-shadow(0 .6cqw .7cqw #98465a24); }
+.floral-inner {
+  position: absolute; inset: 19cqw 12cqw 17cqw;
+  z-index: 3;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3.2cqw;
+  text-shadow: 0 .4cqw 1cqw #fff9f4;
+}
+.floral-kicker { font: 600 3.1cqw Arial,sans-serif; letter-spacing: 1.15cqw; color: #9b6c76; }
+.floral-handwritten { font: italic 5cqw "Palatino Linotype", "Book Antiqua", Georgia,serif; color: #ad7082; }
+.floral-names { font: italic 11.5cqw/1.02 "Palatino Linotype", "Book Antiqua", Georgia,serif; color: #824e63; }
+.floral-names em { font: italic 7cqw Georgia,serif; color: #be8795; padding: 1cqw; }
+.floral-rule {
+  display: flex; align-items: center; gap: 2cqw; font-size: 6cqw; color: #ae7184; width: 52cqw;
+}
+.floral-rule span { height: .25cqw; flex: 1; background: #cfa0ac; }
+.floral-message { font: italic 3.8cqw/1.4 Georgia,serif; max-width: 62cqw; }
+.floral-date { font: 600 5.1cqw/1.25 Georgia,serif; color: #8d5268; }
+.floral-time { font: 3.2cqw Arial,sans-serif; letter-spacing: .5cqw; }
+.floral-venue { font: 4cqw/1.32 Georgia,serif; max-width: 65cqw; overflow-wrap: anywhere; }
+.floral-ending { font: italic 3.2cqw Georgia,serif; color: #a67683; margin-top: 1cqw !important; }
+.premium-floral-pink:has(.premium-couple-photo) .floral-inner { inset-top: 16cqw; gap: 1.6cqw; }
+.premium-floral-pink:has(.premium-couple-photo) .floral-names { font-size: 9cqw; }
+
+/* III. Traditional Indian — kumkum, marigold toran, geometric border and mandala. */
+.premium-traditional-indian {
+  color: #883725;
+  background:
+    repeating-linear-gradient(45deg, #a2372b 0, #a2372b 1cqw, #b84a30 1cqw, #b84a30 2cqw);
+  padding: 4.7cqw;
+}
+.ti-frame {
+  position: absolute; inset: 4cqw;
+  background: #fff4d8;
+  border: 1cqw solid #d6a54b;
+  outline: .3cqw solid #7f2921;
+  outline-offset: -2.5cqw;
+  box-shadow: inset 0 0 0 1.2cqw #f9eac2, inset 0 0 0 1.5cqw #dcb269;
+}
+.ti-frame::after {
+  content: ""; position: absolute; inset: 3cqw;
+  border: .23cqw dashed #cda368;
+}
+.indian-toran {
+  position: absolute; z-index: 2;
+  width: 85%; height: auto; top: 6%; left: 7.5%;
+  filter: drop-shadow(0 1cqw 1cqw #7a33102a);
+}
+.ti-content {
+  position: absolute; z-index: 3;
+  top: 25cqw; bottom: 15cqw; left: 11cqw; right: 11cqw;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.4cqw;
+}
+.ti-blessing { font: 4cqw/1.4 Georgia,serif; color: #a56e2c; }
+.indian-mandala { width: 24cqw; height: auto; color: #c18b30; }
+.ti-heading { font: 700 9.5cqw/1.2 "Noto Serif Devanagari", "Mangal", Georgia,serif; color: #9f302b; }
+.ti-invite { font: 2.75cqw/1.45 Arial,sans-serif; letter-spacing: .58cqw; color: #9b6947; }
+.ti-names { font: 400 9cqw/1.08 Georgia,serif; color: #8c2929; }
+.ti-names em { font-size: 4.6cqw; padding: 1cqw 0; color: #c18b30; }
+.ti-announcement { font: 2.7cqw/1.35 Arial,sans-serif; letter-spacing: .4cqw; max-width: 63cqw; }
+.ti-date-container {
+  display: flex; align-items: center; justify-content: space-around; gap: 1cqw;
+  padding: 2cqw 3cqw; border-top: .3cqw solid #ba8a44; border-bottom: .3cqw solid #ba8a44;
+  width: 65cqw; font: 4.1cqw Georgia,serif; color: #9b3c2a;
+}
+.ti-date-container strong { display: block; font-weight: normal; }
+.ti-date-container small { display: block; font: 3cqw Arial,sans-serif; margin-top: 1.3cqw; }
+.ti-date-container > span { color: #c58e2d; font-size: 4cqw; }
+.ti-venue { font: 3.8cqw/1.35 Georgia,serif; max-width: 67cqw; overflow-wrap: anywhere; }
+.ti-footer { font: 3.2cqw/1.3 "Noto Serif Devanagari", "Mangal",Georgia,serif; color: #ad6c34; }
+.ti-bottom-tile { position: absolute; bottom: 6cqw; width: 100%; left: 0; font-size: 5cqw; color: #e0bb6c; }
+.premium-traditional-indian:has(.premium-couple-photo) .ti-content { gap: 1.4cqw; }
+.premium-traditional-indian:has(.premium-couple-photo) .indian-mandala { width: 17cqw; }
+.premium-traditional-indian:has(.premium-couple-photo) .ti-names { font-size: 7.5cqw; }
+
+/* Responsive containers: no viewport-sized fixed art, so browser and export render consistently. */
+.product-art .premium-card { box-shadow: 0 14px 30px #37251b2a; transition: transform .25s; }
+.product:hover .premium-card { transform: rotate(-1deg) scale(1.012); }
+.detail-grid > .premium-card { width: 100%; max-width: 390px; margin-inline: auto; box-shadow: 0 18px 55px #37251b24; }
+.editor-preview .premium-card { max-width: 430px; margin-inline: auto; box-shadow: 0 12px 35px #37251b24; }
+.guest-invite .premium-card { margin-inline: auto; }
+@media (max-width: 800px) {
+  .editor-preview .premium-card { max-width: 340px; }
+  .detail-grid > .premium-card { max-width: 370px; }
+}
+@media (max-width: 480px) {
+  .product-art:has(.premium-card) { padding: 28px 50px; }
+  .editor-preview .premium-card { max-width: min(100%, 340px); }
+}
