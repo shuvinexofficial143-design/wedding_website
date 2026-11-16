@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS sessions(token TEXT PRIMARY KEY,user_id TEXT REFERENC
 CREATE TABLE IF NOT EXISTS limits(key TEXT PRIMARY KEY,count INTEGER NOT NULL,expires INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS orders(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id),product_id TEXT NOT NULL,amount INTEGER NOT NULL,phone TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'pending',payment_id TEXT UNIQUE,payment_session TEXT,details TEXT NOT NULL DEFAULT '{}',revision INTEGER NOT NULL DEFAULT 0,published TEXT,public_token TEXT UNIQUE,fulfillment TEXT NOT NULL DEFAULT 'awaiting_details',preview_url TEXT,final_url TEXT,video_path TEXT,created INTEGER NOT NULL);
 CREATE UNIQUE INDEX IF NOT EXISTS one_pending_product ON orders(user_id,product_id) WHERE status='pending';
+CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY AUTOINCREMENT,admin_id TEXT NOT NULL,order_id TEXT NOT NULL,action TEXT NOT NULL,created INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS rsvps(id TEXT PRIMARY KEY,order_id TEXT REFERENCES orders(id),name TEXT NOT NULL,attendance TEXT NOT NULL,guests INTEGER NOT NULL,created INTEGER NOT NULL);
 `);}return database;}
 export type User={id:string;email:string};

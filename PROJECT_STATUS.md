@@ -6,13 +6,13 @@
 - Original responsive homepage, navigation and invitation artwork (CSS; no copied assets).
 
 ## Currently Working On
-- Phases 3–4 implemented; security and browser testing in progress.
+- Phases 5–6 implemented; end-to-end desktop/mobile testing in progress.
 
 ## Pending Tasks
 - Catalog, previews, editor, persistence, exports, secure payments, authenticated orders/admin, deployment.
 
 ## Latest Commit SHA
-- Verified predecessor: 8d410c2cf18b95202791dc0de4cebbdaa8b58a88 (development). Each checkpoint records its predecessor; use git log -1 for current SHA.
+- Verified predecessor: 2f1b6c7909fc390bdd28b06171fb97006c8176a3 (development). Each checkpoint records its predecessor; use git log -1 for current SHA.
 
 ## Testing Results
 - Homepage, catalog, accounts, editor and Cashfree integration lint and production build passed.
@@ -32,3 +32,7 @@
 - Accounts with scrypt passwords, hashed opaque sessions, reserved admin emails and mutation origin checks.
 - SQLite order persistence (requires persistent disk in deployment), paid-only autosaving editor with conflict detection, photos, PNG/PDF export.
 - Cashfree sandbox server orders, signed raw-body webhooks, amount/currency matching, unique payment IDs; no production endpoint.
+
+- Animated invitation publication, unpublish, countdown, gallery, maps, private RSVP collection.
+- Admin-only managed order fulfillment, website publication and private MP4 delivery with upload validation.
+- Four unit security tests passed; full build/lint passed. Browser Chromium download failed; installed system Chromium is available and is being used instead.
