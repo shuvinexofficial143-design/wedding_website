@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { redirect, notFound } from "next/navigation";
+import Link from "next/link";
 import { user, isAdmin } from "@/lib/auth";
 import { db, type Order } from "@/lib/db";
 import { products } from "@/lib/catalog";
@@ -23,6 +24,7 @@ export default async function Admin() {
       <p>
         Latest 100 orders. Payment status cannot be manually overridden here.
       </p>
+      <p><Link className="button" href="/admin/cards">Manage card template registry ↗</Link></p>
       {!orders.length && <p>No orders yet.</p>}
       {orders.map((o) => {
         const p = products.find((p) => p.id === o.product_id)!;
