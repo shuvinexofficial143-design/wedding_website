@@ -22,7 +22,7 @@
 - [x] Reuse real-time paid editor for both names, date, time and venue
 - [x] Reuse PNG/PDF export; add per-template automated export regression
 - [x] Add desktop/mobile layout and persistence browser tests
-- [ ] Confirm new GitHub Actions browser test suite and fix any failures
+- [x] Confirm new GitHub Actions browser test suite: 9/9 Playwright passed (run 43869254907)
 - [ ] Approve provisional premium card prices before real commercial use
 - [ ] Run verified Cashfree sandbox checkout with merchant credentials
 - [ ] Do not enable production Cashfree without explicit owner consent
