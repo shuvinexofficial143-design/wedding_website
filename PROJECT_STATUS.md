@@ -56,5 +56,5 @@
 - All three reuse the existing paid-order editor, server-side save and live preview for names, wedding date, time, venue and optional photo. Existing HD PNG and PDF export is reused. Public preview remains a sample, not a paid editor bypass.
 - Legacy products, protected editor access, authentication, database and Cashfree sandbox implementation left intact. Live payment processing was not enabled.
 - Added unit regression tests for legacy catalog preservation, original artwork and editable text, plus Playwright 1440px/390px previews, mobile editor persistence and actual download signatures for every card.
-- Await GitHub Actions completion for new browser/export test verification; do not report those as passing before a successful run.
+- Verified: GitHub Actions run 43869254907 completed successfully. ESLint PASS; unit tests PASS; Next.js production build PASS; Playwright Chromium 9/9 browser tests PASS (including all premium mobile editor and PNG/PDF export checks).
 - Infrastructure reminder: existing SQLite order storage needs a persistent disk; ephemeral serverless storage is not production safe.
