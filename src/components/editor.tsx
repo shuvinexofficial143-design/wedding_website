@@ -1,10 +1,13 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
 import { toPng } from "html-to-image";
 import { jsPDF } from "jspdf";
 import { Invite } from "./invite";
 import { type Details } from "@/lib/validation";
+const subscribeOrigin = () => () => {};
+const getClientOrigin = () => window.location.origin;
+const getServerOrigin = () => "";
 export function Editor({
   id,
   theme,
@@ -23,8 +26,7 @@ export function Editor({
   const [details, setDetails] = useState(initial);
   const [status, setStatus] = useState("All changes saved");
   const [token, setToken] = useState(initialToken);
-  const [shareOrigin, setShareOrigin] = useState("");
-  useEffect(() => { setShareOrigin(window.location.origin); }, []);
+  const shareOrigin = useSyncExternalStore(subscribeOrigin, getClientOrigin, getServerOrigin);
   const [busy, setBusy] = useState(false);
   const revision = useRef(initialRevision);
   const lastSaved = useRef(JSON.stringify(initial));

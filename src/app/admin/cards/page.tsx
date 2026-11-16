@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- local SVG artwork preview is preserved without optimization */
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { user, isAdmin } from "@/lib/auth";
