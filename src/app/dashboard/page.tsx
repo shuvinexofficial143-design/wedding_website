@@ -1,0 +1,1 @@
+import Link from 'next/link';export default function Dashboard(){return <section className="section narrow"><h1>My <i>invitations.</i></h1><p>Customer accounts and order access are being connected. No live orders are accepted yet.</p><Link className="button" href="/catalog">Explore designs ↗</Link></section>}
