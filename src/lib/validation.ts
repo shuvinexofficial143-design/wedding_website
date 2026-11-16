@@ -10,6 +10,7 @@ export const detailsSchema = z.object({
   time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
   venue: text(200).min(1),
   story: text(2000).default(""),
+  cardMessage: text(140).default("Together with our families, we joyfully invite you to celebrate our wedding."),
   photo: z
     .string()
     .max(1500000)
@@ -43,6 +44,7 @@ export const defaultDetails: Details = {
   time: "18:00",
   venue: "The Rose Palace · Jaipur",
   story: "",
+  cardMessage: "Together with our families, we joyfully invite you to celebrate our wedding.",
   photo: "",
   maps: "",
   gallery: [],

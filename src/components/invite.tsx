@@ -1,5 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { isPremiumTheme, PremiumCard } from "./premium-card";
+import { findArtworkTemplate } from "@/lib/card-templates";
+import { ArtworkCard } from "./artwork-card";
 export function Invite({
   theme = "rose",
   animated = false,
@@ -7,6 +9,7 @@ export function Invite({
   date = "21 February 2027",
   venue = "The Rose Palace · Jaipur",
   photo = "",
+  message = "",
 }: {
   theme?: string;
   animated?: boolean;
@@ -14,7 +17,11 @@ export function Invite({
   date?: string;
   venue?: string;
   photo?: string;
+  message?: string;
 }) {
+  if (findArtworkTemplate(theme)) {
+    return <ArtworkCard theme={theme} names={names} date={date} venue={venue} photo={photo} message={message} />;
+  }
   if (isPremiumTheme(theme)) {
     return <PremiumCard theme={theme} names={names} date={date} venue={venue} photo={photo} />;
   }

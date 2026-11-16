@@ -1,0 +1,71 @@
+/* eslint-disable @next/next/no-img-element */
+import type { CSSProperties } from "react";
+import { findArtworkTemplate } from "@/lib/card-templates";
+
+export type ArtworkCardProps = {
+  theme: string;
+  names?: string[];
+  date?: string;
+  venue?: string;
+  message?: string;
+  photo?: string;
+};
+function getWhen(value: string) {
+  const match = /^(\d{4}-\d{2}-\d{2})(?:\s*·\s*(\d{2}:\d{2}))?/.exec(value);
+  if (!match) return { day: value, time: "" };
+  const day = new Intl.DateTimeFormat("en-IN", {
+    day: "numeric", month: "long", year: "numeric", timeZone: "UTC",
+  }).format(new Date(match[1] + "T12:00:00Z"));
+  const hour = Number(match[2]?.slice(0, 2) ?? "0");
+  const minute = match[2]?.slice(3, 5) ?? "00";
+  return {
+    day,
+    time: match[2] ? `${hour % 12 || 12}:${minute} ${hour < 12 ? "AM" : "PM"} IST` : "",
+  };
+}
+function calcNameSize(value: string) {
+  const count = Math.max(...value.split(/\s+/).map(s => s.length), value.length / 1.9);
+  if (count > 35) return "3.2cqw";
+  if (count > 26) return "4cqw";
+  if (count > 18) return "5.2cqw";
+  if (count > 13) return "6.3cqw";
+  return "8.2cqw";
+}
+export function ArtworkCard({theme, names = ["Ananya", "Aarav"], date = "21 February 2027", venue = "The Rose Palace · Jaipur", message, photo = ""}: ArtworkCardProps) {
+  const template = findArtworkTemplate(theme);
+  if (!template) return null;
+  const {day,time} = getWhen(date);
+  const bride = names[0]?.trim() || "Bride";
+  const groom = names[1]?.trim() || "Groom";
+  const invitation = (message?.trim() || "Together with our families, we joyfully invite you to celebrate our wedding.").slice(0,140);
+  const nameSize = calcNameSize(bride.length > groom.length ? bride : groom);
+  const venueSize = venue.length > 140 ? "2cqw" : venue.length > 75 ? "2.5cqw" : "3.4cqw";
+  const vars = {
+    "--art-name-size": nameSize,
+    "--art-venue-size": venueSize,
+    "--art-names-font": template.font.names,
+    "--art-supporting-font": template.font.supporting,
+  } as CSSProperties;
+  return (
+    <article className={`artwork-card art-${template.layout} ${photo ? "art-has-photo" : ""}`}
+      style={vars} data-testid={`art-${template.id}`} aria-label={template.name + " invitation"}>
+      <img className="artwork-background" src={template.artwork} alt="" aria-hidden="true" draggable={false} />
+      <div className="artwork-copy">
+        <p className="artwork-kicker">{template.layout === "palace" ? "A ROYAL WEDDING CELEBRATION" : "YOU ARE CORDIALLY INVITED"}</p>
+        <p className="artwork-overline">{template.layout === "palace" ? "With the blessings of our families" : "A beautiful beginning..."}</p>
+        <h2 className="artwork-names" data-testid="editable-names">
+          <span>{bride}</span><em>&amp;</em><span>{groom}</span>
+        </h2>
+        {photo && template.textLayers.photo.enabled && (
+          <img className="artwork-couple" src={photo} alt="Uploaded couple" />
+        )}
+        <p className="artwork-message" data-testid="editable-message">{invitation}</p>
+        <span className="artwork-rule" aria-hidden="true">✦</span>
+        <p className="artwork-date">{day}</p>
+        {time && <p className="artwork-time">{time}</p>}
+        <p className="artwork-venue" data-testid="editable-venue">{venue}</p>
+      </div>
+      <p className="artwork-footer" aria-hidden="true">{template.layout === "palace" ? "✧  LOVE • FAMILY • FOREVER  ✧" : "CELEBRATING LOVE  ·  TOGETHER FOREVER"}</p>
+    </article>
+  );
+}

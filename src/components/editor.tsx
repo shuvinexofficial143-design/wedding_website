@@ -117,6 +117,11 @@ export function Editor({
     try {
       if (!(await save())) return;
       const element = preview.current;
+      await document.fonts.ready;
+      await Promise.all(Array.from(element.querySelectorAll("img")).map(async image => {
+        if (!image.complete) await new Promise<void>(resolve => { image.addEventListener("load", () => resolve(), { once: true }); image.addEventListener("error", () => resolve(), { once: true }); });
+        if (!image.naturalWidth) throw new Error("An artwork or photo failed to load.");
+      }));
       const png = await toPng(element, {
         pixelRatio: Math.max(3, 1800 / element.clientWidth),
         cacheBust: true,
@@ -173,6 +178,12 @@ export function Editor({
               />
             </label>
           ),
+        )}
+        {category === "cards" && (
+          <label>
+            Invitation message (up to 140 characters)
+            <textarea maxLength={140} value={details.cardMessage} onChange={(e) => change("cardMessage", e.target.value)} />
+          </label>
         )}
         <label>
           Your story
@@ -331,6 +342,7 @@ export function Editor({
             date={`${details.date} · ${details.time}`}
             venue={details.venue}
             photo={details.photo}
+            message={details.cardMessage}
           />
         </div>
         <p style={{ textAlign: "center", fontSize: 11, marginTop: 20 }}>

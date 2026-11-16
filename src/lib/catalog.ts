@@ -1,3 +1,4 @@
+import { cardTemplates } from "./card-templates";
 export type Category = "cards" | "animated" | "websites" | "videos";
 export const categories = [
   {
@@ -26,6 +27,7 @@ export const categories = [
   },
 ] as const;
 export const products = [
+  ...cardTemplates.filter((p) => p.published).map((p) => ({ id: p.id, name: p.name, category: p.category, price: p.price, theme: p.theme, tag: p.tagline, description: p.description })),
   {
     id: "royal-gold-wedding",
     name: "Royal Gold Wedding Card",
