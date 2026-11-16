@@ -5,17 +5,25 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 const designs = [
-  ["royal-golden-palace", "palace"],
-  ["pink-rose-floral", "rose"],
+  ["royal-golden-palace", "Royal Golden Palace"],
+  ["pink-rose-floral", "Pink Rose Floral"],
+  ["luxury-maroon-heritage", "Luxury Maroon Heritage"],
+  ["white-gold-minimal", "White & Gold Minimal"],
+  ["traditional-hindu-wedding", "Traditional Hindu Wedding"],
+  ["rajasthani-royal-wedding", "Rajasthani Royal Wedding"],
+  ["pastel-watercolor-floral", "Pastel Watercolor Floral"],
+  ["elegant-muslim-nikah", "Elegant Muslim Nikah Invitation"],
+  ["south-indian-traditional", "South Indian Traditional Wedding"],
+  ["luxury-dark-emerald", "Luxury Dark Emerald Wedding"],
 ] as const;
 const origin = "http://localhost:3000";
 
-for (const [productId, layout] of designs) {
+for (const [productId, productName] of designs) {
   test("illustrated artwork and editable preview in desktop/mobile: " + productId, async ({page}) => {
     for (const width of [1440, 390]) {
       await page.setViewportSize({width,height:920});
       await page.goto("/catalog?category=cards");
-      await expect(page.getByRole("heading", {name: layout === "palace" ? "Royal Golden Palace" : "Pink Rose Floral"})).toBeVisible();
+      await expect(page.getByRole("heading", {name: productName})).toBeVisible();
       await page.goto("/preview/" + productId);
       const card = page.getByTestId("art-" + productId);
       await expect(card).toBeVisible();
