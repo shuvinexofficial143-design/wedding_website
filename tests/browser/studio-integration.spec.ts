@@ -150,6 +150,19 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
     expect(guestPhoto.status()).toBe(200);
     expect(guestPhoto.headers()["content-type"]).toBe("image/png");
     expect(Buffer.from(await guestPhoto.body()).subarray(0,4).toString("hex")).toBe("89504e47");
+    // A fresh browser has no customer session and must still render only the shared card.
+    const guestBrowser=page.context().browser();
+    expect(guestBrowser).toBeTruthy();
+    const anonymous=await guestBrowser!.newContext({viewport:{width:390,height:844}});
+    try {
+      const mobileGuest=await anonymous.newPage();
+      await mobileGuest.goto(origin+invitationPath!);
+      await expect(mobileGuest.getByRole("heading",{name})).toBeVisible();
+      await expect(mobileGuest.locator(".layer-card")).toContainText("माधवी");
+      await expect(mobileGuest.locator(".layer-card img[alt='Couple photo']")).toHaveJSProperty("naturalWidth",80);
+      await mobileGuest.screenshot({path:"test-results/studio-guest-mobile.png",fullPage:true});
+    } finally { await anonymous.close(); }
+
     expect((await request.get("/api/invites/"+guestToken+"/assets/"+randomUUID())).status()).toBe(404);
     const rsvp=await request.post("/api/invites/"+guestToken+"/rsvp",{
       headers:{origin},
