@@ -13,7 +13,7 @@ export function AnimatedCustomerDetails({orderId,name,videoId,initial,initialRev
       <h2>{name}</h2><AnimatedVideoPreview videoId={videoId} title={name}/>
       <p>Delivery progress: <strong>{fulfillment.replaceAll("_"," ")}</strong></p>
       {deliveryUrl&&<p><a className="button" href={deliveryUrl} target="_blank" rel="noopener noreferrer">Open completed invitation ↗</a></p>}
-      <p>Your studio will personalise this video manually. Your design's private Canva file is never shared.</p>
+      <p>Your studio will personalise this video manually. Your design&apos;s private Canva file is never shared.</p>
     </div>
     <form className="animated-panel form" onSubmit={async e=>{
       e.preventDefault();setBusy(true);setFeedback("");
