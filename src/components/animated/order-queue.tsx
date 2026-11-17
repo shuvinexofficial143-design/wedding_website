@@ -13,7 +13,7 @@ export function AnimatedOrderQueue(){
  };void load();const refresh=setInterval(load,30000),tick=setInterval(()=>setNow(Date.now()),1000);
  return ()=>{active=false;clearInterval(refresh);clearInterval(tick)};},[]);
  const state=(job:Job)=>job.delivered_at?"delivered":job.deadlineAt&&now>job.deadlineAt?"overdue":job.started_at?"editing":"pending";
- const time=(deadline:number|null)=>deadline===null?"Timer pending":(deadline<now?"Overdue by ":"Remaining ")+
+ const time=(deadline:number|null,delivered:boolean)=>delivered?"Delivered":deadline===null?"Timer pending":now===0?"Calculating…":(deadline<now?"Overdue by ":"Remaining ")+
    Math.floor(Math.abs(deadline-now)/60000)+":"+String(Math.floor(Math.abs(deadline-now)%60000/1000)).padStart(2,"0");
  const visible=jobs.filter(j=>(status==="all"||state(j)===status||status==="queue"&&state(j)!=="delivered")&&
   (!search||[j.order_id,j.email,j.phone,j.template_name,j.template_style].some(t=>t.toLowerCase().includes(search.toLowerCase()))));
@@ -28,7 +28,7 @@ export function AnimatedOrderQueue(){
   <p role="status">{message}</p>
   <div className="animated-list">{visible.map(j=><article className="animated-item" key={j.order_id}>
    <div className="animated-order-line"><div><h3>{j.template_name}</h3><p>{j.template_style} · {j.email} · {j.phone}</p><small>Order: {j.order_id}</small></div>
-    <div><p className="animated-status">{state(j).toUpperCase()}</p><p className={"animated-timer "+(state(j)==="overdue"?"overdue":"")}>{time(j.deadlineAt)}</p></div></div>
+    <div><p className="animated-status">{state(j).toUpperCase()}</p><p className={"animated-timer "+(state(j)==="overdue"?"overdue":"")}>{time(j.deadlineAt,!!j.delivered_at)}</p></div></div>
    <Link className="button" href={"/admin/animated/orders/"+j.order_id}>Manage order ↗</Link>
   </article>)}</div>
   {!visible.length&&<p>No matching orders in this queue.</p>}

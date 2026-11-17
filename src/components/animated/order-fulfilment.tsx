@@ -24,8 +24,11 @@ export function AnimatedOrderFulfilment({initial}:{initial:Job}){
   "Special requests: "+(details.story||"")
  ].join("\n");
  const deadline=job.paid_at?job.paid_at+3600000:null;
- const delta=deadline===null?null:deadline-now;
- const format=delta===null?"Awaiting verified payment timestamp":(delta<0?"Overdue by ":"Time left ")+Math.floor(Math.abs(delta)/60000)+":"+String(Math.floor(Math.abs(delta)%60000/1000)).padStart(2,"0");
+ const delta=deadline===null || now===0 || !!job.delivered_at ? null : deadline-now;
+ const format=job.delivered_at?"Delivered":deadline===null?"Awaiting verified payment timestamp":
+   now===0?"Calculating delivery deadline…":
+   (delta!<0?"Overdue by ":"Time left ")+Math.floor(Math.abs(delta!)/60000)+":"+
+   String(Math.floor(Math.abs(delta!)%60000/1000)).padStart(2,"0");
  async function change(action:"copy"|"editing"|"delivered"){
   setBusy(true);setMessage("");
   try{

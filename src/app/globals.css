@@ -1203,3 +1203,6 @@ body:has(.editor-preview) .support-float { display:none; }
 .animated-timer.overdue {color:#9c2828}
 .animated-template-image {width:100%;max-height:250px;object-fit:cover;border-radius:10px}
 @media(max-width:760px){.animated-admin-grid {grid-template-columns:1fr}.animated-panel {padding:14px}.animated-order-line{align-items:flex-start;flex-direction:column}}
+
+/* Private production workspace: keep customer details and action buttons unobstructed. */
+body:has(.animated-admin-grid) .support-float{display:none}

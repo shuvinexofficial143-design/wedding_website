@@ -140,6 +140,8 @@ test("animated admin-only Canva registry, verified order queue, independent copy
     await expect(mobile.getByRole("link",{name:/Open Canva Template/})).toBeVisible();
     await expect(mobile.getByRole("button",{name:"Copy Customer Details"})).toBeVisible();
     await expect(mobile.getByRole("link",{name:"WhatsApp Customer"})).toBeVisible();
+    await expect(mobile.locator(".animated-timer")).toHaveText("Delivered");
+    await expect(mobile.locator(".support-float")).toBeHidden();
     expect(await mobile.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
     await mobile.screenshot({path:"test-results/animated-admin-mobile.png",fullPage:true});
   }finally{await adminMobile.close();}
