@@ -1,18 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { products } from "@/lib/catalog";
+import { studioProduct } from "@/lib/studio/repository";
+import { LayerCard } from "@/components/studio/layer-card";
 import { Invite } from "@/components/invite";
+export const dynamic = "force-dynamic";
 export default async function Product({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const p = products.find((p) => p.id === id);
+  const p = await studioProduct(id);
   if (!p) notFound();
   return (
     <section className="section detail-grid">
-      <Invite theme={p.theme} animated={p.category === "animated"} />
+      {p.document.renderer === "layers" ? <LayerCard document={p.document} /> : <Invite theme={p.theme} animated={p.category === "animated"} />}
       <div className="detail-copy">
         <span className="eyebrow">{p.tag}</span>
         <h1>{p.name}</h1>
