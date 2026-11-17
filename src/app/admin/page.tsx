@@ -10,11 +10,11 @@ export default async function Admin() {
   const u = await user();
   if (!u) redirect("/login?next=/admin");
   if (!isAdmin(u)) notFound();
-  const orders = db()
+  const orders = (await db()
     .prepare(
-      "SELECT orders.*,users.email FROM orders JOIN users ON users.id=orders.user_id ORDER BY created DESC LIMIT 100",
+      "SELECT orders.*,users.email,j.template_name AS animated_name,j.order_id AS animated_order_id FROM orders JOIN users ON users.id=orders.user_id LEFT JOIN animated_order_jobs j ON j.order_id=orders.id ORDER BY orders.created DESC LIMIT 100",
     )
-    .all() as (Order & { email: string })[];
+    .all()) as (Order & { email: string; animated_name: string|null; animated_order_id: string|null })[];
   return (
     <section className="section">
       <span className="eyebrow">PRIVATE OPERATIONS</span>
@@ -24,16 +24,16 @@ export default async function Admin() {
       <p>
         Latest 100 orders. Payment status cannot be manually overridden here.
       </p>
-      <p><Link className="button" href="/admin/cards">Manage card template registry ↗</Link></p>
+      <p className="actions"><Link className="button" href="/admin/cards">Manage card template registry ↗</Link><Link className="button" href="/admin/animated">Animated templates ↗</Link><Link className="button" href="/admin/animated/orders">Animated fulfilment queue ↗</Link></p>
       {!orders.length && <p>No orders yet.</p>}
       {orders.map((o) => {
-        const p = products.find((p) => p.id === o.product_id)!;
+        const p = products.find((p) => p.id === o.product_id);
         const d = JSON.parse(o.details) as Partial<Details>;
         return (
           <article className="order-card" key={o.id}>
             <div className="section-head">
               <div>
-                <h2>{p.name}</h2>
+                <h2>{o.animated_name || p?.name || "Advanced Card Studio design"}</h2>
                 <p>
                   {o.email} · {o.phone}
                 </p>
@@ -105,8 +105,10 @@ export default async function Admin() {
                 )}
               </div>
               {o.status === "paid" &&
-              ["websites", "videos"].includes(p.category) ? (
-                <AdminOrder id={o.id} category={p.category} />
+              ["websites", "videos"].includes(p?.category || "") ? (
+                <AdminOrder id={o.id} category={p!.category} />
+              ) : o.animated_order_id && o.status === "paid" ? (
+                <p><Link className="button" href={`/admin/animated/orders/${o.id}`}>Manage animated delivery ↗</Link></p>
               ) : (
                 <p>
                   {o.status === "paid"

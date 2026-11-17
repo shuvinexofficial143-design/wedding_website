@@ -1,18 +1,31 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { products } from "@/lib/catalog";
+import { studioProduct } from "@/lib/studio/repository";
+import {publicAnimatedById} from "@/lib/animated/repository";
+import {AnimatedVideoPreview} from "@/components/animated/video-preview";
+import { LayerCard } from "@/components/studio/layer-card";
 import { Invite } from "@/components/invite";
+export const dynamic = "force-dynamic";
 export default async function Preview({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const p = products.find((p) => p.id === id);
+  const animated=await publicAnimatedById(id);
+  if(animated)return <section className="section detail-grid">
+    <AnimatedVideoPreview videoId={animated.youtube_video_id} title={animated.name}/>
+    <div><span className="eyebrow">PUBLIC VIDEO SAMPLE</span><h1>{animated.name}</h1>
+      <p>The video is a public YouTube sample. Your personalised invitation is prepared after server-verified payment.</p>
+      <div className="actions"><Link className="button" href={`/products/${id}`}>Choose this design ↗</Link>
+      <Link className="text-link" href="/catalog">Back to collection</Link></div>
+    </div>
+  </section>;
+  const p = await studioProduct(id);
   if (!p) notFound();
   return (
     <section className="section detail-grid">
-      <Invite theme={p.theme} animated={p.category === "animated"} />
+      {p.document.renderer === "layers" ? <LayerCard document={p.document} /> : <Invite theme={p.theme} animated={p.category === "animated"} />}
       <div>
         <span className="eyebrow">
           SAMPLE PREVIEW ·{" "}

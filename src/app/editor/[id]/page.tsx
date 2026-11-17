@@ -3,6 +3,12 @@ import { user } from "@/lib/auth";
 import { getOrder } from "@/lib/db";
 import { products } from "@/lib/catalog";
 import { defaultDetails } from "@/lib/validation";
+import { db } from "@/lib/db";
+import { purchasedVersion } from "@/lib/studio/repository";
+import { type CardDocument } from "@/lib/studio/schema";
+import { CustomerStudioEditor } from "@/components/studio/customer-editor";
+import {ownedAnimatedJob} from "@/lib/animated/repository";
+import {AnimatedCustomerDetails} from "@/components/animated/customer-details";
 import { Editor } from "@/components/editor";
 export default async function EditorPage({
   params,
@@ -12,10 +18,43 @@ export default async function EditorPage({
   const { id } = await params;
   const u = await user();
   if (!u) redirect(`/login?next=/editor/${id}`);
-  const o = getOrder(id);
+  const o = (await getOrder(id));
   if (!o || o.user_id !== u.id) notFound();
   if (o.status !== "paid") redirect(`/checkout/${o.product_id}?order=${id}`);
-  const p = products.find((p) => p.id === o.product_id)!;
+  const animated=await ownedAnimatedJob(id,u.id);
+  if(animated)return <section className="section">
+    <span className="eyebrow">YOUR ANIMATED INVITATION</span>
+    <h1>Wedding <i>details.</i></h1>
+    <AnimatedCustomerDetails orderId={id} name={animated.template_name} videoId={animated.youtube_video_id}
+      initial={{...defaultDetails,...JSON.parse(o.details)}} initialRevision={o.revision}
+      fulfillment={o.fulfillment} deliveryUrl={animated.delivered_at?animated.delivery_url:null}/>
+  </section>;
+  const pinned = await purchasedVersion(id);
+  if (pinned?.content.renderer === "layers") {
+    const saved = await db().prepare(
+      "SELECT values_json,revision FROM customer_card_edits WHERE order_id=?",
+    ).get(id) as { values_json: string; revision: number } | undefined;
+    const { renderer: _renderer, legacyTheme: _legacyTheme, legacyProduct: _legacyProduct, legacyArtwork: _legacyArtwork, ...document } = pinned.content;
+    void _renderer; void _legacyTheme; void _legacyProduct; void _legacyArtwork;
+    return (
+      <section className="section">
+        <span className="eyebrow">YOUR PURCHASED CARD STUDIO</span>
+        <h1>Make it <i>yours.</i></h1>
+        <CustomerStudioEditor
+          orderId={id}
+          document={document as CardDocument}
+          templateVersion={pinned.version}
+          initialValues={saved ? JSON.parse(saved.values_json) : {}}
+          initialRevision={saved?.revision ?? 0}
+          initialToken={o.public_token}
+        />
+      </section>
+    );
+  }
+  const fallback = products.find(p => p.id === o.product_id);
+  const theme = pinned?.content.legacyTheme || fallback?.theme;
+  const category = pinned?.content.category || fallback?.category;
+  if (!theme || !category) notFound();
   return (
     <section className="section">
       <span className="eyebrow">YOUR INVITATION STUDIO</span>
@@ -24,8 +63,8 @@ export default async function EditorPage({
       </h1>
       <Editor
         id={id}
-        theme={p.theme}
-        category={p.category}
+        theme={theme}
+        category={category}
         initial={{ ...defaultDetails, ...JSON.parse(o.details) }}
         initialRevision={o.revision}
         initialToken={o.public_token}

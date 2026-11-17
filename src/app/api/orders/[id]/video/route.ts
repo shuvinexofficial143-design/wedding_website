@@ -16,7 +16,7 @@ export async function POST(
   if (!u || !isAdmin(u))
     return Response.json({ error: "Admin access required" }, { status: 403 });
   const { id } = await params;
-  const o = getOrder(id);
+  const o = (await getOrder(id));
   if (
     !o ||
     o.status !== "paid" ||
@@ -49,16 +49,16 @@ export async function POST(
       mode: 0o600,
       flag: "wx",
     });
-    db()
+    (await db()
       .prepare(
         "UPDATE orders SET video_path=?,fulfillment='delivered' WHERE id=?",
       )
-      .run(filename, id);
-    db()
+      .run(filename, id));
+    (await db()
       .prepare(
         "INSERT INTO audit(admin_id,order_id,action,created) VALUES(?,?,?,?)",
       )
-      .run(u.id, id, "video_uploaded", Date.now());
+      .run(u.id, id, "video_uploaded", Date.now()));
     return Response.json({ ok: true });
   } catch {
     return Response.json(
@@ -74,7 +74,7 @@ export async function GET(
   const u = await user();
   if (!u) return new Response("Sign in required", { status: 401 });
   const { id } = await params;
-  const o = getOrder(id);
+  const o = (await getOrder(id));
   if (
     !o ||
     o.status !== "paid" ||

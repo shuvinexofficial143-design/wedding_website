@@ -29,7 +29,7 @@ export async function PATCH(
   if (!u || !isAdmin(u))
     return Response.json({ error: "Admin access required" }, { status: 403 });
   const { id } = await params;
-  const o = getOrder(id);
+  const o = (await getOrder(id));
   if (!o || o.status !== "paid")
     return Response.json({ error: "Paid order not found" }, { status: 404 });
   try {
@@ -71,7 +71,7 @@ export async function PATCH(
       throw new Error("Upload the completed MP4 first");
     if (d.fulfillment === "preview_ready" && !previewUrl && !finalUrl)
       throw new Error("Provide a preview link first");
-    db()
+    (await db()
       .prepare(
         "UPDATE orders SET fulfillment=?,preview_url=?,final_url=?,public_token=?,published=? WHERE id=?",
       )
@@ -82,12 +82,12 @@ export async function PATCH(
         token,
         published,
         id,
-      );
-    db()
+      ));
+    (await db()
       .prepare(
         "INSERT INTO audit(admin_id,order_id,action,created) VALUES(?,?,?,?)",
       )
-      .run(u.id, id, `fulfillment:${d.fulfillment}`, Date.now());
+      .run(u.id, id, `fulfillment:${d.fulfillment}`, Date.now()));
     return Response.json({ ok: true });
   } catch (e) {
     return Response.json(

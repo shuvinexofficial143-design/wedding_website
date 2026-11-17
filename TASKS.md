@@ -40,3 +40,46 @@
 - [x] Create read-only protected admin template registry at /admin/cards
 - [ ] Verify latest production Vercel deployment and configure durable order storage before taking real payments
 - [ ] Extend admin studio to durable secured create/publish/unpublish workflow after persistent data infrastructure is agreed
+
+## Advanced studio milestones
+- [x] 1: Latest-main audit, PostgreSQL schema/adapter, safe import/dry-run/rollback tests
+- [x] 2: Durable storage and secure asset lifecycle (provider-neutral implementation; hosted acceptance pending)
+- [x] 3: Dynamic template database and legacy migration
+- [x] 4: Admin visual layer editor (browser mouse/touch, undo/redo, save/reload)
+- [x] 5: Unicode smart layout and collision tests (Hindi/English preview verified)
+- [x] 6: Paid customer editor integration (pinned snapshot, server layer allowlist and private photo ownership)
+- [x] 7: Publishing and immutable purchased version pinning (atomic purchase snapshot, unpublish-safe)
+- [x] 8: PNG/PDF export implementation and local browser magic-byte tests (hosted visual acceptance pending)
+- [x] 9: Local browser security and regression 33/33, run 44032663514 (final-head checks ongoing)
+- [ ] 10: Verified preview deployment and final documentation (provider access required)
+
+## Advanced studio continuation
+- [x] PostgreSQL adapter/schema and tested dry-run SQLite importer.
+- [x] Private durable storage adapter and validated upload pipeline.
+- [x] Immutable database templates and legacy registry preservation.
+- [x] Admin visual editor and Unicode layout engine implementation.
+- [x] Browser verification of new designer and touch controls (32/32 Chromium run 44031865089).
+- [x] Dynamic public catalog, order-time version pinning, customer layer editing (33/33 Chromium run 44032663514).
+- [x] Local PNG/PDF export, role/ownership and cross-version regression; hosted S3/PG acceptance still pending.
+- [ ] Hosted provider integration and verified preview deployment (credentials/project access required).
+
+### Pending hosted acceptance (not simulated)
+- [ ] Link the **correct** wedding Vercel project; verify a non-production feature-branch preview URL and deployment commit.
+- [ ] Provision and verify network PostgreSQL and private S3 credentials, bucket CORS, object lifecycle and backups without disclosing secrets.
+- [ ] Run full migration dry run against actual owned source backup, then user-approved cutover with rollback documentation.
+- [ ] Perform actual sandbox merchant checkout and private image upload from a hosted preview; no live Cashfree.
+- [ ] Repeat mobile desktop screenshot comparison, Hindi font and PNG/PDF visual inspection on the hosted preview.
+
+- [x] Additional mobile touch **resize**, not only drag — tested in passing Chromium run 44033583175
+- [x] Downloaded and inspected actual Studio desktop/mobile/customer screenshots from CI artifact 14306531197
+- [x] Scoped support floating pill off the Studio/Editor pages; regression assertion added
+- [ ] Verify final screenshot/UI hardening commit on CI and compare browser preview to PNG/PDF on an accessible Vercel preview
+
+### Dynamic public invitation share flow
+- [x] Publish/Unpublish actions for paid dynamic cards, with immutable purchased version and optimistic revision guard
+- [x] Public guest invitation route for newly designed cards, with RSVP and no requirement to log in
+- [x] Token-scoped image access with a strict visible-asset allowlist and immediate revocation
+- [x] Customer consent message for publicly shared photos and copy-link UI
+- [x] Verified shared-guest baseline in 33/33 Chromium CI run 44036222561
+- [x] Real customer PNG upload, anonymous 390px mobile guest screenshot, revoked image URL test: 33/33 Browser and 22 unit tests passed in run 44037053721
+- [ ] Verify hosted PostgreSQL + S3 upload and preview only after legitimate provider credentials/project access

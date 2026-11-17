@@ -10,13 +10,13 @@ export default async function Replies({
   const { id } = await params;
   const u = await user();
   if (!u) redirect("/login?next=/dashboard");
-  const o = getOrder(id);
+  const o = (await getOrder(id));
   if (!o || (o.user_id !== u.id && !isAdmin(u))) notFound();
-  const rows = db()
+  const rows = (await db()
     .prepare(
       "SELECT name,attendance,guests,created FROM rsvps WHERE order_id=? ORDER BY created DESC",
     )
-    .all(id) as {
+    .all(id)) as {
     name: string;
     attendance: string;
     guests: number;

@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {fitText,graphemes,clampLayer,rotatedBounds,collisionPairs,wrapText} from '../src/lib/studio/layout';
+import {layerSchema,newDocument,documentSchema} from '../src/lib/studio/schema';
+const layer=layerSchema.parse({id:randomUUID(),kind:'text',label:'Names',x:100,y:100,width:400,height:120,fontSize:72});
+const measure=(s:string,size:number)=>graphemes(s).length*size*.6;
+test('long Hindi and English names shrink and stay inside their text boxes',()=>{for(const text of ['श्रीमती अनन्या त्रिवेदी एवं श्री आर्यन प्रताप सिंह चौहान','Ananyashree Krishnamurthy-Rajagopalan','Aarav']){const result=fitText(layer,text,measure);assert.equal(result.overflow,false);assert.ok(result.lines.length*result.fontSize*layer.lineHeight<=layer.height);assert.ok(result.lines.every(s=>measure(s,result.fontSize)<=layer.width+.1));}assert.equal(fitText(layer,'अनन्या',measure).fontFamily,'Noto Serif Devanagari Variable');});
+test('impossible text is reported, graphemes and explicit newlines preserved',()=>{assert.equal(fitText({...layer,width:20,height:20},'Long text '.repeat(200),measure).overflow,true);assert.deepEqual(wrapText('One\nTwo',100,s=>s.length),['One','Two']);assert.equal(graphemes('क्षि').length,1);});
+test('rotation and resizing clamp to safe area; hidden decoration does not collide',()=>{const d=newDocument();const l=clampLayer({...layer,x:9999,y:-100,rotation:45,width:5000},d);const b=rotatedBounds(l);assert.ok(b.x>=d.safeInset&&b.y>=d.safeInset);assert.ok(b.x+b.width<=d.width-d.safeInset+.01);assert.ok(documentSchema.safeParse({...d,layers:[l]}).success);assert.equal(collisionPairs([layer,{...layer,id:randomUUID()}]).length,1);assert.equal(collisionPairs([layer,{...layer,id:randomUUID(),hidden:true}]).length,0);});

@@ -10,9 +10,9 @@ export async function POST(
   if (!sameOrigin(req))
     return Response.json({ error: "Invalid origin" }, { status: 403 });
   const { token } = await params;
-  const o = db()
+  const o = (await db()
     .prepare("SELECT id FROM orders WHERE public_token=? AND status='paid'")
-    .get(token) as Order | undefined;
+    .get(token)) as Order | undefined;
   if (!o)
     return Response.json({ error: "Invitation unavailable" }, { status: 404 });
   try {
@@ -25,14 +25,14 @@ export async function POST(
       })
       .parse(await readJson(req, 2048));
     if (
-      !limit(`rsvp:${o.id}`, 100, 3600000) ||
-      !limit(`rsvp:${o.id}:${digest(d.name.toLowerCase())}`, 3, 3600000)
+      !(await limit(`rsvp:${o.id}`, 100, 3600000)) ||
+      !(await limit(`rsvp:${o.id}:${digest(d.name.toLowerCase())}`, 3, 3600000))
     )
       return Response.json(
         { error: "Please wait before sending another RSVP." },
         { status: 429 },
       );
-    db()
+    (await db()
       .prepare("INSERT INTO rsvps VALUES(?,?,?,?,?,?)")
       .run(
         randomUUID(),
@@ -41,7 +41,7 @@ export async function POST(
         d.attendance,
         d.attendance === "no" ? 0 : d.guests,
         Date.now(),
-      );
+      ));
     return Response.json({ ok: true });
   } catch {
     return Response.json(

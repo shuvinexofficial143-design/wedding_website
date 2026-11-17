@@ -12,7 +12,7 @@ export default async function Return({
   const u = await user();
   if (!u) redirect("/login?next=/dashboard");
   if (!order_id) notFound();
-  const o = getOrder(order_id);
+  const o = (await getOrder(order_id));
   if (!o || o.user_id !== u.id) notFound();
   return (
     <section className="section narrow">

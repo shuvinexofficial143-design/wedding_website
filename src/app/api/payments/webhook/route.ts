@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const id = event?.data?.order?.order_id;
     if (typeof id !== "string")
       return new Response("Invalid order", { status: 400 });
-    const order = getOrder(id);
+    const order = (await getOrder(id));
     if (!order) return new Response("Unknown order", { status: 404 });
     if (event.type === "PAYMENT_SUCCESS_WEBHOOK") {
       const result = await verifyPayment(order);
