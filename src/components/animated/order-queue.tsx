@@ -4,7 +4,7 @@ import {useEffect,useState} from "react";
 type Job={order_id:string;template_name:string;template_style:string;paid_at:number|null;started_at:number|null;delivered_at:number|null;phone:string;email:string;state:string;deadlineAt:number|null};
 export function AnimatedOrderQueue(){
  const [jobs,setJobs]=useState<Job[]>([]),[status,setStatus]=useState("pending"),[search,setSearch]=useState("");
- const [now,setNow]=useState(Date.now()),[message,setMessage]=useState("");
+ const [now,setNow]=useState(0),[message,setMessage]=useState("");
  useEffect(()=>{let active=true;const load=async()=>{
   try{const r=await fetch("/api/admin/animated/orders",{cache:"no-store"});
    const d=await r.json();if(!r.ok)throw new Error(d.error);
