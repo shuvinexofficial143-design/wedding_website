@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { user, isAdmin } from "@/lib/auth";
 import { db, type Order } from "@/lib/db";
 import { products } from "@/lib/catalog";
+import { purchasedVersion } from "@/lib/studio/repository";
 import { Logout } from "@/components/auth-form";
 export default async function Dashboard() {
   const u = await user();
@@ -10,6 +11,7 @@ export default async function Dashboard() {
   const orders = (await db()
     .prepare("SELECT * FROM orders WHERE user_id=? ORDER BY created DESC")
     .all(u.id)) as Order[];
+  const snapshots = await Promise.all(orders.map(o => purchasedVersion(o.id)));
   return (
     <section className="section">
       <div className="section-head">
@@ -38,14 +40,14 @@ export default async function Dashboard() {
         </div>
       ) : (
         <div className="order-grid">
-          {orders.map((o) => (
+          {orders.map((o, index) => (
             <article className="order-card" key={o.id}>
               <span className="eyebrow">
                 {o.status === "paid"
                   ? "SANDBOX PAYMENT VERIFIED"
                   : "AWAITING PAYMENT"}
               </span>
-              <h2>{products.find((p) => p.id === o.product_id)?.name}</h2>
+              <h2>{snapshots[index]?.content.name || products.find((p) => p.id === o.product_id)?.name || "Saved invitation"}</h2>
               <p>
                 ₹{o.amount / 100} ·{" "}
                 {new Date(o.created).toLocaleDateString("en-IN")}
