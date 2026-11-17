@@ -3,6 +3,7 @@ import { user, sameOrigin } from "@/lib/auth";
 import { db, getOrder, limit } from "@/lib/db";
 import { detailsSchema, readJson } from "@/lib/validation";
 import { products } from "@/lib/catalog";
+import { purchasedVersion } from "@/lib/studio/repository";
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -20,6 +21,8 @@ export async function PATCH(
       { error: "Verified payment is required" },
       { status: 403 },
     );
+  if ((await purchasedVersion(id))?.content.renderer === "layers")
+    return Response.json({ error: "Use the permitted layer editor for this purchased template" }, { status: 400 });
   if (!(await limit(`save:${u.id}`, 100, 60000)))
     return Response.json(
       { error: "Please wait before saving again" },

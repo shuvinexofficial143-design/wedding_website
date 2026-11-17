@@ -99,7 +99,7 @@ export function CustomerStudioEditor({
     } finally { setBusy(false); }
   }
   async function exportFile(format: "png" | "pdf") {
-    const root = preview.current;
+    const root = preview.current?.querySelector(".layer-card") as HTMLDivElement | null;
     if (!root) return;
     setBusy(true);
     try {
@@ -186,7 +186,7 @@ export function CustomerStudioEditor({
         </div>
       </div>
       <div className="editor-preview">
-        <div className="studio-customer-preview">
+        <div className="studio-customer-preview" ref={preview}>
           <LayerCard document={doc} values={values} onIssues={setLayoutIssues} />
         </div>
         <p style={{textAlign:"center",fontSize:12,marginTop:16}}>Live preview · Immutable purchased design v{templateVersion}</p>
