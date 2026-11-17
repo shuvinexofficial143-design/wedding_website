@@ -11,7 +11,14 @@ export function AnimatedTemplateManager(){
   if(!r.ok)throw new Error(data.error||"Unable to read templates");
   setItems(data.templates);
  };
- useEffect(()=>{load().catch(e=>setMessage(e.message));},[]);
+ useEffect(()=>{
+   let active=true;
+   void fetch("/api/admin/animated",{cache:"no-store"}).then(async r=>{
+      const data=await r.json();if(!r.ok)throw new Error(data.error||"Unable to read templates");
+      if(active)setItems(data.templates);
+   }).catch(e=>{if(active)setMessage(e.message)});
+   return ()=>{active=false};
+ },[]);
  function edit(row:Template){
   setSelected(row);setMessage("");
   setForm({styleNumber:row.style_number,name:row.name,category:row.category,pricePaise:row.price_paise,
