@@ -111,3 +111,11 @@
 - Tests: 14 unit/integration tests PASS, lint/build PASS. Includes all-product preservation, concurrent save conflict, old-version retention after unpublish and noneditable-layer rejection.
 - Initial async-database checkpoint passed existing full GitHub browser regression run 44018931927 (29 tests).
 - Latest verified predecessor: be3e1aa190ffeaa1fe3ac9602737d2b4674763c4. Next: visual drag/resize studio and shared Unicode rendering engine; public catalog/customer wiring follows.
+
+### Advanced studio milestones 4–5
+- Implemented authenticated visual designer with mouse/touch move and resize, layer properties, undo/redo, safe bounds, grid snapping, zoom, background/thumbnail uploads, immutable save, publish controls and version history.
+- Shared Unicode renderer measures text using loaded bundled fonts, shrinks/wraps long names by grapheme, detects overflow and collisions, and clamps rotated layers. Server rejects publishing colliding text boxes.
+- Validation: production build PASS; lint and 17 unit/integration tests PASS. New designer browser interactions still require browser tests. Existing legacy designs are preserved; customer/public dynamic wiring is the next milestone.
+- Latest verified predecessor: eb470ec67551a4beffd01bdec9b5996389b626c3. Current checkpoint SHA: git log -1 on feature/advanced-card-studio.
+- Blockers unchanged: hosted PostgreSQL/S3 and matching Vercel project not connected. No real payments enabled.
+- Exact next step: wire catalog and order-time version pinning, then paid customer layer editor and reliable export.

@@ -52,3 +52,13 @@
 - [ ] 8: Reliable PNG/PDF export
 - [ ] 9: Security and browser regression
 - [ ] 10: Verified preview deployment and final documentation (provider access required)
+
+## Advanced studio continuation
+- [x] PostgreSQL adapter/schema and tested dry-run SQLite importer.
+- [x] Private durable storage adapter and validated upload pipeline.
+- [x] Immutable database templates and legacy registry preservation.
+- [x] Admin visual editor and Unicode layout engine implementation.
+- [ ] Browser verification of new designer and touch controls.
+- [ ] Dynamic public catalog, order-time version pinning, customer layer editing.
+- [ ] Reliable shared export and complete security/browser regression.
+- [ ] Hosted provider integration and verified preview deployment (credentials/project access required).
