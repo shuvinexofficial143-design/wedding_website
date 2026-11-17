@@ -115,7 +115,7 @@ test("animated admin-only Canva registry, verified order queue, independent copy
     await mobile.getByLabel(/Password/).fill("Test-admin-only-password-2026!");
     await mobile.locator("form").getByRole("button",{name:"Sign in"}).click();
     await expect(mobile).toHaveURL(new RegExp("/admin/animated/orders/"+orderId));
-    await mobile.goto(origin+"/admin/animated/orders/"+orderId);
+    await mobile.waitForLoadState("domcontentloaded");
     await expect(mobile.getByRole("link",{name:/Open Canva Template/})).toBeVisible();
     await expect(mobile.getByRole("button",{name:"Copy Customer Details"})).toBeVisible();
     await expect(mobile.getByRole("link",{name:"WhatsApp Customer"})).toBeVisible();
