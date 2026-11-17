@@ -74,3 +74,12 @@
 - [x] Downloaded and inspected actual Studio desktop/mobile/customer screenshots from CI artifact 14306531197
 - [x] Scoped support floating pill off the Studio/Editor pages; regression assertion added
 - [ ] Verify final screenshot/UI hardening commit on CI and compare browser preview to PNG/PDF on an accessible Vercel preview
+
+### Dynamic public invitation share flow
+- [x] Publish/Unpublish actions for paid dynamic cards, with immutable purchased version and optimistic revision guard
+- [x] Public guest invitation route for newly designed cards, with RSVP and no requirement to log in
+- [x] Token-scoped image access with a strict visible-asset allowlist and immediate revocation
+- [x] Customer consent message for publicly shared photos and copy-link UI
+- [x] Verified shared-guest baseline in 33/33 Chromium CI run 44036222561
+- [ ] Confirm latest real customer PNG upload, anonymous mobile guest preview, revoked asset route and screenshot CI at head
+- [ ] Verify hosted PostgreSQL + S3 upload and preview only after legitimate provider credentials/project access
