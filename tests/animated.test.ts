@@ -24,6 +24,7 @@ test("animated template input rejects unsafe Canva hosts and wrong cost",()=>{
   assert.equal(canvaEditUrl.safeParse(bad).success,false);
  assert.equal(animatedInput.safeParse({...ok,pricePaise:-1}).success,false);
  assert.equal(animatedInput.safeParse({...ok,canvaUrl:"https://evil.test/"}).success,false);
+ assert.equal(animatedInput.safeParse({...ok,thumbnailUrl:ok.canvaUrl}).success,false);
 });
 test("60 minute delivery clock starts at verified paid timestamp, not order creation",()=>{
  assert.equal(fulfilmentState({paid_at:null,started_at:null,delivered_at:null},3600000),"pending");
