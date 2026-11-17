@@ -153,12 +153,10 @@ export const sampleFields: Record<string, string> = {
 export function layerText(
   layer: Layer,
   values: Record<string, string> = {},
-  fields: Record<string, string> = sampleFields,
+  fields: Record<string, string> = {},
 ) {
-  return (
-    values[layer.id] ??
-    (layer.field === "custom"
-      ? layer.value
-      : fields[layer.field] || layer.value || sampleFields[layer.field] || "")
-  );
+  // Customer overrides win. The admin's per-layer default is shown in the
+  // designer and public sample; generic sample names are the final fallback.
+  return values[layer.id] ??
+    (fields[layer.field] ?? (layer.value || sampleFields[layer.field] || ""));
 }
