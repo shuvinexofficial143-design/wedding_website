@@ -46,7 +46,9 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
   expect(create.status()).toBe(200);
   const {id}=await create.json();
   expect((await request.get("/preview/"+id)).status()).toBe(404);
-  expect((await request.get("/catalog")).text()).not.toContain(name);
+  const draftCatalog = await request.get("/catalog");
+  const draftHtml = await draftCatalog.text();
+  expect(draftHtml).not.toContain(name);
   expect((await request.get("/api/admin/cards/"+id)).status()).toBe(403);
   const publish=await admin.patch("/api/admin/cards/"+id,{
     data:{action:"published",revision:1,sortOrder:0,featured:true},
@@ -105,7 +107,7 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
     await expect(page.getByRole("status")).toHaveText("All changes saved",{timeout:20000});
     await page.reload();
     await expect(page.getByRole("textbox",{name:"Bride Name"})).toHaveValue("माधवी & Rahul");
-    expect(await page.locator(".layer-card").getAttribute("data-export-ready")).toBe("true");
+    await expect(page.locator(".layer-card")).toHaveAttribute("data-export-ready","true");
     const pngEvent=page.waitForEvent("download",{timeout:60000});
     await page.getByRole("button",{name:"HD PNG"}).click();
     const png=await pngEvent;
