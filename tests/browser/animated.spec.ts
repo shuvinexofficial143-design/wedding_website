@@ -45,7 +45,7 @@ test("animated admin-only Canva registry, verified order queue, independent copy
  const listing=await (await request.get("/catalog?category=animated")).text();
  expect(listing).toContain(name);
  expect(listing).not.toContain(originalCanva);
- const checkout=await request.get("/checkout/"+templateId);
+ const checkout=await request.get("/checkout/"+templateId,{maxRedirects:0});
  expect(checkout.status()).toBe(307);
  const buyer="animated-buyer-"+randomUUID()+"@example.test";
  expect((await page.request.post("/api/auth",{headers:{origin},data:{action:"register",email:buyer,password:"Test-customer-password-2026!"}})).status()).toBe(200);
@@ -100,7 +100,7 @@ test("animated admin-only Canva registry, verified order queue, independent copy
   const adminMobile=await browser.newContext({viewport:{width:390,height:844},storageState:await admin.storageState()});
   try {
     const mobile=await adminMobile.newPage();
-    await mobile.goto("/admin/animated/orders/"+orderId);
+    await mobile.goto(origin+"/admin/animated/orders/"+orderId);
     await expect(mobile.getByRole("link",{name:/Open Canva Template/})).toBeVisible();
     await expect(mobile.getByRole("button",{name:"Copy Customer Details"})).toBeVisible();
     await expect(mobile.getByRole("link",{name:"WhatsApp Customer"})).toBeVisible();
