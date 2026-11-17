@@ -58,7 +58,7 @@ test("partial or unknown public schema aborts with zero DDL and preserves existi
 test("a mid-migration DDL error rolls back every table created earlier in the transaction",async()=>{
   const pg=new PGlite();
   const connection={query:async(sql:string,params?:unknown[])=>{
-    if (/^CREATE TABLE IF NOT EXISTS assets\\b/i.test(sql))
+    if (/^CREATE TABLE IF NOT EXISTS assets\b/i.test(sql))
       throw new Error("simulated migration failure");
     const r=await pg.query<Record<string,unknown>>(sql,params);
     return {rows:r.rows};
