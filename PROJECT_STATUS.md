@@ -98,3 +98,9 @@
 - Latest verified predecessor: 498e1abea9ecb1cf2713f836a4fdcbcdc7c23fe7. Current checkpoint SHA is `git log -1` (self-reference is impossible).
 - Blockers: current connected Vercel account returned zero matching wedding projects. No durable PostgreSQL/S3 credentials discovered; no paid resource created.
 - Exact next step: secure S3-compatible assets and upload validation, then dynamic immutable templates and visual studio.
+
+### Advanced studio milestone 2
+- S3-compatible private object storage, signed upload/download APIs, checksum/size/type verification, image normalization and SVG rasterization implemented. Customer-owned assets are inaccessible to other accounts. Public access is limited to referenced published template artwork, never arbitrary uploaded photos.
+- Added immutable object keys, owner-scoped duplicate detection, guarded asset links, tombstone-first cleanup and quarantine lifecycle guidance. Local adapter is test-only and blocked on Vercel/production.
+- Validation: lint PASS, 12 tests PASS (including malicious SVG/disguised image rejection), production build PASS. Real S3 provider/CORS not tested without credentials.
+- Verified predecessor: 48ead2d8fc3298e27302536afeefb07a70158757. Next: dynamic template version repository, seed all legacy cards, version-pinned purchases.

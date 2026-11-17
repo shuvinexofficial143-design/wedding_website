@@ -17,3 +17,11 @@ Run `npm run db:migrate` against a separately provisioned database. Application 
 5. Before reopening writes, rollback means pointing application at the preserved SQLite snapshot. After PostgreSQL accepts new writes, freeze both stores and reconcile new records before any rollback. Do not blindly restore the old snapshot or run DROP TABLE; this would lose post-cutover orders.
 
 PGlite tests exercise a real embedded PostgreSQL engine, including dry run, successful preservation, and non-empty-target rejection. Network PostgreSQL/actual hosted migration remain untested until a provider is configured. No production database touched.
+
+## Durable asset setup
+
+Use an existing private S3-compatible bucket, credentials restricted to this bucket, HTTPS endpoint, exact site-origin CORS for PUT/GET/HEAD and Content-Type. No public ACL or permanent public customer-photo URLs. Set S3_* variables privately. Direct uploads use five-minute signed URLs with declared length/type, then a server completion step validates actual bytes/checksum and decodes/rasterizes images. SVG scripts, events and external references are rejected; accepted SVGs become inert PNGs. Immutable ready objects use owner/id/version paths; SHA256 deduplication is scoped to owner and purpose.
+
+Set a bucket lifecycle expiry on the `quarantine/` prefix (one day) to remove failed/replayed temporary uploads. App reads only ready validated assets. `node --import tsx scripts/cleanup-assets.ts` defaults to a dry run; `--apply` tombstones unreferenced assets older than seven days before deleting objects. Immutable template versions and purchased records retain their asset links so cleanup never removes referenced assets. Retain bucket versioning/backups according to merchant retention policy.
+
+ASSET_STORAGE=local is exclusively a development/test adapter and refuses Vercel/production. Hosted S3 upload/CORS and signed URLs require actual provider credentials and have not yet been exercised. Legacy local video delivery will be migrated to asset references in the customer/admin integration milestone; do not delete original upload directories.
