@@ -51,11 +51,11 @@ export default async function Catalog({
             </div>
           </Link>
         ))}
-      </div>
       {videos.map(p=><Link key={p.id} href={`/products/${p.id}`} className="product animated-listing">
         <div className="product-art animated-art"><img src={p.thumbnail_url} alt={p.name+" invitation preview"} loading="lazy"/><span className="preview-chip">Watch sample ▶</span></div>
         <div className="product-meta"><div><small>{p.style_number} · {p.category}</small><h3>{p.name}</h3></div><span>₹{p.price_paise/100}</span></div>
       </Link>)}
+      </div>
       {!list.length && !videos.length && (
         <p>
           No designs in this category.{" "}
