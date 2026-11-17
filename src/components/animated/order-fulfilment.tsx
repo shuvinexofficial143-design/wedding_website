@@ -9,7 +9,7 @@ type Job={
 export function AnimatedOrderFulfilment({initial}:{initial:Job}){
  const [job,setJob]=useState(initial),[copy,setCopy]=useState(initial.editing_copy_url||"");
  const [delivery,setDelivery]=useState(initial.delivery_url||"");
- const [now,setNow]=useState(Date.now()),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
+ const [now,setNow]=useState(0),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
  useEffect(()=>{const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer)},[]);
  const details=JSON.parse(job.details||"{}") as Record<string,unknown>;
  const detailLines=[
@@ -56,7 +56,7 @@ export function AnimatedOrderFulfilment({initial}:{initial:Job}){
    <p><strong>Step 2.</strong> Save the new order-specific copy URL here. Its URL must differ from the original.</p>
    <label>Editing copy URL<input type="url" placeholder="https://www.canva.com/design/.../edit" value={copy} onChange={e=>setCopy(e.target.value)}/></label>
    <div className="actions"><button className="button" disabled={busy} onClick={()=>void change("copy")}>Save Order Copy</button>
-    {job.editing_copy_url&&<a className="text-link" href={job.editing_copy_url} target="_blank" rel="noopener noreferrer">Open this order's copy ↗</a>}</div>
+    {job.editing_copy_url&&<a className="text-link" href={job.editing_copy_url} target="_blank" rel="noopener noreferrer">Open this order&apos;s copy ↗</a>}</div>
    <p><strong>Step 3.</strong> Apply the copied wedding details to the order-specific Canva copy.</p>
    <button className="button" disabled={busy||!!job.started_at||!!job.delivered_at} onClick={()=>void change("editing")}>Mark Editing</button>
    <p><strong>Step 4.</strong> Paste the completed invitation's HTTPS delivery link, then mark delivered.</p>
