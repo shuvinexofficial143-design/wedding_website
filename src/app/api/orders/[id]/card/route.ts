@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { randomBytes } from "node:crypto";
+import { studioPublicationSchema } from "@/lib/studio/publication";
 import { user, sameOrigin } from "@/lib/auth";
 import { db, getOrder, limit, transaction } from "@/lib/db";
 import { readJson } from "@/lib/validation";
@@ -29,6 +31,7 @@ export async function GET(_request: Request, { params }: Context) {
     "SELECT values_json,revision FROM customer_card_edits WHERE order_id=?",
   ).get(id) as {values_json:string;revision:number}|undefined;
   return Response.json({
+    publicToken: order.public_token || null,
     templateId: pinned.template_id,
     version: pinned.version,
     document: pinned.content,
@@ -50,7 +53,45 @@ export async function PATCH(request: Request, { params }: Context) {
   if (!(await limit(`card-save:${actor.id}`, 120, 60000)))
     return Response.json({ error: "Save rate limit reached" }, { status: 429 });
   try {
-    const body = saveSchema.parse(await readJson(request, 180_000));
+    const raw = await readJson(request, 180_000);
+    if (raw?.action === "publish" || raw?.action === "unpublish") {
+      const input = z.object({
+        action: z.enum(["publish", "unpublish"]),
+        revision: z.number().int().nonnegative().optional(),
+      }).strict().parse(raw);
+      return Response.json(await transaction(async () => {
+        if (input.action === "unpublish") {
+          await db().prepare(
+            "UPDATE orders SET public_token=NULL,published=NULL WHERE id=? AND user_id=? AND status='paid'",
+          ).run(id, actor.id);
+          return { token: null };
+        }
+        if (input.revision === undefined) throw new Error("Missing edit revision");
+        const snapshot = await purchasedVersion(id);
+        if (!snapshot || snapshot.content.renderer !== "layers" ||
+          snapshot.content.category !== "cards")
+          throw new Error("This purchased card cannot be shared");
+        const row = await db().prepare(
+          "SELECT values_json,revision FROM customer_card_edits WHERE order_id=?",
+        ).get(id) as {values_json:string;revision:number}|undefined;
+        if ((row?.revision ?? 0) !== input.revision)
+          throw new StudioConflict("This card changed in another tab. Reload before sharing.");
+        const values = editableValues(snapshot.content,
+          row ? JSON.parse(row.values_json) : {});
+        const published = studioPublicationSchema.parse({
+          kind: "studio-card", version: snapshot.version, values,
+        });
+        const current = await getOrder(id);
+        if (!current || current.user_id !== actor.id || current.status !== "paid")
+          throw new Error("Verified payment required");
+        const token = current.public_token || randomBytes(24).toString("hex");
+        await db().prepare(
+          "UPDATE orders SET public_token=?,published=? WHERE id=? AND user_id=? AND status='paid'",
+        ).run(token, JSON.stringify(published), id, actor.id);
+        return { token, templateVersion: snapshot.version, revision: input.revision };
+      }));
+    }
+    const body = saveSchema.parse(raw);
     const pinned = await purchasedVersion(id);
     if (!pinned || pinned.content.renderer !== "layers")
       return Response.json({ error: "Layer editor not available" }, { status: 404 });
