@@ -18,8 +18,11 @@ export function isPublishedStudioAsset(
   if (doc.backgroundAssetId === assetId) return true;
   return doc.layers.some(layer => {
     if (layer.hidden || layer.opacity <= 0) return false;
-    if (layer.kind === "image" && layer.assetId === assetId) return true;
-    return layer.kind === "image" && layer.editable &&
-      values[layer.id] === `/api/assets/${assetId}`;
+    if (layer.kind !== "image") return false;
+    const override = layer.editable ? values[layer.id] : undefined;
+    // A personalised photo replaces the default; it must not accidentally
+    // grant access to both files when only one is visible to a guest.
+    if (override) return override === `/api/assets/${assetId}`;
+    return layer.assetId === assetId;
   });
 }
