@@ -69,3 +69,8 @@
 - [ ] Run full migration dry run against actual owned source backup, then user-approved cutover with rollback documentation.
 - [ ] Perform actual sandbox merchant checkout and private image upload from a hosted preview; no live Cashfree.
 - [ ] Repeat mobile desktop screenshot comparison, Hindi font and PNG/PDF visual inspection on the hosted preview.
+
+- [x] Additional mobile touch **resize**, not only drag — tested in passing Chromium run 44033583175
+- [x] Downloaded and inspected actual Studio desktop/mobile/customer screenshots from CI artifact 14306531197
+- [x] Scoped support floating pill off the Studio/Editor pages; regression assertion added
+- [ ] Verify final screenshot/UI hardening commit on CI and compare browser preview to PNG/PDF on an accessible Vercel preview

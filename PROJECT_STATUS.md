@@ -134,3 +134,9 @@
 - Added `npm run deploy:check` structural preflight for Node 24+, PostgreSQL URL, S3 bucket/access, HTTPS origin, admin allowlist and sandbox-only Cashfree. This does **not** prove cloud connectivity, migration or runtime behavior.
 - Connected Vercel account inspection returned 8 unrelated projects and **zero deployments** for the feature branch. No wedding project or verified preview deployment was accessible. Hosted PostgreSQL, S3 and Cashfree sandbox merchant credentials were not available for real-provider tests. No live payment was enabled and no customer data was migrated/deleted.
 - Remaining release gates: authenticated provider test, correct Vercel account/project linkage, preview deployment, CORS/backup validation, real migration with source backups and merchant approval. No production release.
+
+### Visual QA follow-up — 17 November 2026
+
+- GitHub Actions [run 44033583175](https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/44033583175) passed **33/33 Chromium browser tests** and 20 Node unit/integration tests, lint and production build; this includes actual mobile touch resize and mouse drag/resize, PDF/PNG downloads, version preservation, private uploads, and both Hindi/English text.
+- GitHub Actions artifacts from [run 44033395730](https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/44033395730) were downloaded and reviewed: desktop and mobile designer screenshots plus customer card screenshot. Identified global fixed support pill intruding over the customer preview; added scoped CSS hide on Studio/Editor only and a Playwright visibility assertion. The downloadable export remains generated exclusively from the card element.
+- **Latest UI hardening requires the subsequent CI result**; hosted preview still cannot be verified until the user connects the matching Vercel project to this account.
