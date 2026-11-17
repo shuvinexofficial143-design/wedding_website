@@ -20,7 +20,7 @@ test("Preview migration target refuses production, other branches, mismatched da
     {DATABASE_URL_UNPOOLED:"postgresql://reader:test@"+endpoint+"/production"},
   ]) assert.throws(()=>assertPreviewMigrationTarget({...previewEnv,...bad}));
 });
-test("the exact production migration schema creates 16 Preview tables, is idempotent and preserves records",async()=>{
+test("the exact production migration schema creates 18 Preview tables, is idempotent and preserves records",async()=>{
   const pg=new PGlite();
   const client={query:async(sql:string,params?:unknown[])=>{
     const r=await pg.query<Record<string,unknown>>(sql,params);
@@ -29,7 +29,7 @@ test("the exact production migration schema creates 16 Preview tables, is idempo
   try {
     const one=await migrateFreshPreviewSchema(client,{skipLockForTest:true});
     assert.equal(one.created,true);
-    assert.equal(one.tableCount,16);
+    assert.equal(one.tableCount,18);
     assert.deepEqual(Object.keys(one.counts).sort(),[...EXPECTED_TABLES].sort());
     assert.equal(one.counts.schema_migrations,1);
     assert.equal(one.counts.users,0);
@@ -73,6 +73,22 @@ test("a mid-migration DDL error rolls back every table created earlier in the tr
     );
     assert.equal(result.rows[0].n,0);
   } finally {await pg.close();}
+});
+test("old Preview v2 schemas upgrade additively without changing customer rows", async()=>{
+  const pg=new PGlite();
+  const q=async(sql:string,params?:unknown[])=>{const r=await pg.query<Record<string,unknown>>(sql,params);return {rows:r.rows};};
+  try {
+    const old=schemaSql("postgres").split(";").map(x=>x.trim()).filter(Boolean)
+      .filter(x=>!x.includes("animated_"));
+    for(const stmt of old) await q(stmt);
+    await q("INSERT INTO public.schema_migrations(version,applied_at) VALUES(2,100)");
+    await q("INSERT INTO public.users(id,email,password,created) VALUES('preserve','before@example.test','hashed',100)");
+    const result=await migrateFreshPreviewSchema({query:q},{skipLockForTest:true});
+    assert.equal(result.tableCount,18);
+    assert.equal(result.counts.users,1);
+    assert.equal(result.created,false);
+    assert.equal((await q("SELECT COUNT(*)::int AS n FROM public.schema_migrations")).rows[0].n,2);
+  } finally{await pg.close();}
 });
 test("approved migration has no destructive schema statements",()=>{
   assert.doesNotMatch(schemaSql("postgres"),/\b(DROP|TRUNCATE|DELETE|UPDATE)\b/i);

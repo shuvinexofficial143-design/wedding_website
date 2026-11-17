@@ -38,7 +38,7 @@ export function assertPreviewMigrationTarget(env: Record<string,string|undefined
 
 /** Stable, reviewed table inventory; no drop/truncate statements are permitted. */
 export const EXPECTED_TABLES = [
-  "admin_audit_logs", "asset_links", "assets", "audit", "card_templates",
+  "admin_audit_logs", "animated_order_jobs", "animated_templates", "asset_links", "assets", "audit", "card_templates",
   "customer_card_edits", "limits", "orders", "payments", "purchased_products",
   "rsvps", "schema_migrations", "sessions", "template_versions", "users",
   "wedding_website_orders",
@@ -57,8 +57,8 @@ function sameTables(actual:string[]) {
   return actual.length === EXPECTED_TABLES.length &&
     actual.every((name,i)=>name === EXPECTED_TABLES[i]);
 }
-async function versionReady(client:PreviewSqlClient) {
-  const v=await client.query("SELECT version FROM public.schema_migrations WHERE version=$1",[SCHEMA_VERSION]);
+async function versionReady(client:PreviewSqlClient, version=SCHEMA_VERSION) {
+  const v=await client.query("SELECT version FROM public.schema_migrations WHERE version=$1",[version]);
   return v.rows.length === 1;
 }
 export async function verifyPreviewSchema(client:PreviewSqlClient) {
@@ -101,6 +101,15 @@ export async function migrateFreshPreviewSchema(client:PreviewSqlClient, options
       await client.query("ALTER TABLE public.card_templates ADD COLUMN IF NOT EXISTS revision INTEGER NOT NULL DEFAULT 1");
       await client.query("INSERT INTO public.schema_migrations(version,applied_at) VALUES($1,$2) ON CONFLICT(version) DO NOTHING",[SCHEMA_VERSION,Date.now()]);
       created=true;
+    } else if (before.length === EXPECTED_TABLES.length - 2 &&
+        before.every((name,i)=>name === EXPECTED_TABLES.filter(x => x !== "animated_order_jobs" && x !== "animated_templates")[i]) &&
+        await versionReady(client,2)) {
+      // Existing v2 Preview: forward-only two-table extension, no existing rows touched.
+      const additions=schemaSql("postgres").split(";").map(x=>x.trim()).filter(Boolean)
+        .filter(sql=>/^(CREATE TABLE IF NOT EXISTS animated_|CREATE INDEX IF NOT EXISTS animated_)/i.test(sql));
+      if (additions.length !== 4) throw new Error("Animated schema inventory mismatch");
+      for (const sql of additions) await client.query(sql);
+      await client.query("INSERT INTO public.schema_migrations(version,applied_at) VALUES($1,$2) ON CONFLICT(version) DO NOTHING",[SCHEMA_VERSION,Date.now()]);
     } else if (!sameTables(before) || !await versionReady(client)) {
       // Never write to an unknown, partial or existing older schema. Operators
       // must inspect it before authorising a separate forward-only upgrade.
