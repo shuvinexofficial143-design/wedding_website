@@ -3,6 +3,7 @@ import { DatabaseSync } from "node:sqlite";
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import sharp from "sharp";
 
 const origin = "http://localhost:3000";
 function fixtureDb() {
@@ -21,7 +22,7 @@ async function elevatedAdmin() {
   } finally { db.close(); }
   return client;
 }
-function design(name: string, brideId: string, lockedId: string) {
+function design(name: string, brideId: string, lockedId: string, photoId: string) {
   return {
     name, description:"Original browser-tested studio artwork",
     category:"cards",pricePaise:45900,tags:["original"],
@@ -32,6 +33,8 @@ function design(name: string, brideId: string, lockedId: string) {
        value:"Original Bride",x:100,y:230,width:800,height:130,fontSize:66},
       {id:lockedId,kind:"text",label:"Fixed Blessing",field:"custom",editable:false,
        value:"With our blessings",x:100,y:530,width:800,height:100,fontSize:30},
+      {id:photoId,kind:"image",label:"Couple photo",field:"photo",editable:true,
+       x:350,y:730,width:300,height:300},
     ],
   };
 }
@@ -39,8 +42,8 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
   test.setTimeout(120000);
   const admin=await elevatedAdmin();
   const name="Studio Browser "+randomUUID().slice(0,8);
-  const brideId=randomUUID(),lockedId=randomUUID();
-  const first=design(name,brideId,lockedId);
+  const brideId=randomUUID(),lockedId=randomUUID(),photoId=randomUUID();
+  const first=design(name,brideId,lockedId,photoId);
   const style="QA-"+randomUUID().slice(0,8).toUpperCase();
   const create=await admin.post("/api/admin/cards",{data:{styleNumber:style,document:first}});
   expect(create.status()).toBe(200);
@@ -108,6 +111,18 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
     await expect(page.getByRole("status")).toHaveText("All changes saved",{timeout:20000});
     await page.reload();
     await expect(page.getByRole("textbox",{name:"Bride Name"})).toHaveValue("माधवी & Rahul");
+    const photoFile=await sharp({create:{width:80,height:100,channels:3,
+      background:"#a4d3c1"}}).png().toBuffer();
+    await page.getByLabel("Upload Couple photo").setInputFiles({
+      name:"couple.png",mimeType:"image/png",buffer:photoFile,
+    });
+    await expect(page.getByRole("status")).toContainText("Photo uploaded privately",{timeout:20000});
+    await page.getByRole("button",{name:"Save details"}).click();
+    await expect(page.getByRole("status")).toHaveText("All changes saved",{timeout:20000});
+    const uploadedCard=await (await page.request.get("/api/orders/"+orderId+"/card")).json();
+    const customerPhotoId=uploadedCard.values[photoId].split("/").pop() as string;
+    expect((await request.get("/api/assets/"+customerPhotoId)).status()).toBe(404);
+    await expect(page.locator(".layer-card img[alt='Couple photo']")).toBeVisible();
     await expect(page.locator(".layer-card")).toHaveAttribute("data-export-ready","true");
     const pngEvent=page.waitForEvent("download",{timeout:60000});
     await page.getByRole("button",{name:"HD PNG"}).click();
@@ -131,6 +146,10 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
     expect(shareText).toContain("माधवी");
     expect(shareText).toContain("With our blessings");
     const guestToken=invitationPath!.split("/").pop()!;
+    const guestPhoto=await request.get("/api/invites/"+guestToken+"/assets/"+customerPhotoId);
+    expect(guestPhoto.status()).toBe(200);
+    expect(guestPhoto.headers()["content-type"]).toBe("image/png");
+    expect(Buffer.from(await guestPhoto.body()).subarray(0,4).toString("hex")).toBe("89504e47");
     expect((await request.get("/api/invites/"+guestToken+"/assets/"+randomUUID())).status()).toBe(404);
     const rsvp=await request.post("/api/invites/"+guestToken+"/rsvp",{
       headers:{origin},
@@ -164,6 +183,7 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
     await page.getByRole("button",{name:"Disable public link"}).click();
     await expect(page.getByRole("status")).toContainText("Sharing disabled");
     expect((await request.get(invitationPath!)).status()).toBe(404);
+    expect((await request.get("/api/invites/"+guestToken+"/assets/"+customerPhotoId)).status()).toBe(404);
     const nextOrder=await page.request.post("/api/orders",{
       headers:{origin},data:{productId:id,phone:"9876543210"},
     });
