@@ -32,7 +32,7 @@ export function TimelinePlayer({
       started = true;
       cancel();
       setReduced(media.matches);
-      if (media.matches || !Element.prototype.animate) {
+      if (!Element.prototype.animate) {
         setState("Motion reduced");
         return;
       }
@@ -50,14 +50,16 @@ export function TimelinePlayer({
           fill: "both",
         });
         a.startTime = now;
+        if (media.matches) a.finish();
         animations.current.push(a);
       }
-      setState("Playing");
+      setState(media.matches ? "Motion reduced" : "Playing");
       Promise.all(
         animations.current.map((a) => a.finished.catch(() => {})),
       ).then(() => {
         if (
           !disposed &&
+          !media.matches &&
           animations.current.every((a) => a.playState === "finished")
         )
           setState("Finished");

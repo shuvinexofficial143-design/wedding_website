@@ -161,3 +161,10 @@
 - Exact next step: add seeded original animated documents and browser play/pause/reduced-motion tests.
 
 - Milestone 1–2 validation: ESLint PASS, 29 unit/integration tests PASS, Next production build PASS; browser playback not yet run.
+
+### Animated compositions / admin controls checkpoint
+- Added six original geometric compositions with distinct palace-door, petal, envelope, mandap/diya, editorial and Nikah motion sequences. Seeded as additive immutable products motion-1 through motion-6; old 22 products remain intact.
+- Admin can configure layer presets, delay, duration, easing, duplicate templates, save versions and publish through existing protected APIs. Purchased animated invitations reuse the paid editor and token-scoped guest sharing. No MP4 export offered.
+- Local validation: lint PASS, 30 unit/integration tests PASS, production build PASS.
+- Local Playwright attempted: all six launches blocked before page execution by Chromium socket permission error. These are NOT passed browser tests. GitHub CI will run actual flows and screenshots.
+- Latest verified predecessor a43c6e090d180ac729dd1a1cd46df0c8ed8c2197. Next: CI/browser fixes, structured wedding website model and four layouts. No hosted migrations.

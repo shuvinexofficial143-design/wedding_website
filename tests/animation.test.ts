@@ -78,3 +78,26 @@ test("every preset has valid keyframes and document rejects dangling layer refer
     }).success,
   );
 });
+
+import { animatedTemplates } from "../src/lib/animation/templates";
+test("six original animation documents validate and have distinct compositions", () => {
+  const docs = animatedTemplates();
+  assert.equal(docs.length, 6);
+  assert.equal(new Set(docs.map((t) => t.id)).size, 6);
+  for (const t of docs) {
+    const result = documentSchema.safeParse(t.document);
+    assert.ok(
+      result.success,
+      result.success ? "" : JSON.stringify(result.error.issues),
+    );
+    assert.ok(t.document.animation!.tracks.length >= 7);
+    assert.ok(
+      t.document.layers.some((l) => l.editable && l.field === "partnerA"),
+    );
+  }
+  assert.equal(
+    new Set(docs.map((t) => t.document.layers.map((l) => l.label).join("|")))
+      .size,
+    6,
+  );
+});

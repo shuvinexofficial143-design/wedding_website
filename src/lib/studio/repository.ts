@@ -1,3 +1,4 @@
+import { animatedTemplates } from "../animation/templates";
 import { collisionPairs } from "./layout";
 import { randomUUID } from "node:crypto";
 import { db, transaction, type User } from "../db";
@@ -61,6 +62,23 @@ export function seedLegacyTemplates() {
           "INSERT INTO template_versions(template_id,version,document,created) VALUES(?,1,?,?) ON CONFLICT DO NOTHING",
         )
         .run(p.id, JSON.stringify(doc), Date.now());
+    }
+    for (const [i, t] of animatedTemplates().entries()) {
+      documentSchema.parse(t.document);
+      await db()
+        .prepare(
+          "INSERT INTO card_templates(id,style_number,status,head_version,published_version,sort_order,created,updated) VALUES(?,?,'published',1,1,?,?,?) ON CONFLICT(id) DO NOTHING",
+        )
+        .run(t.id, t.style, 50 + i, Date.now(), Date.now());
+      await db()
+        .prepare(
+          "INSERT INTO template_versions(template_id,version,document,created) VALUES(?,1,?,?) ON CONFLICT DO NOTHING",
+        )
+        .run(
+          t.id,
+          JSON.stringify({ ...t.document, renderer: "layers" }),
+          Date.now(),
+        );
     }
     await db()
       .prepare(
