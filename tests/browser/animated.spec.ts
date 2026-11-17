@@ -15,6 +15,14 @@ async function adminRequest(){
  }finally{db.close();}
  return client;
 }
+test.afterEach(()=>{
+  // Restore the shared CI fixture's reserved admin email after this test.
+  // Other legacy tests assign the same address to their own isolated users.
+  const db=fixtureDB();
+  try {
+    db.prepare("UPDATE users SET email='animated-retired-'||id||'@example.test',role='customer' WHERE email='admin@example.test'").run();
+  }finally{db.close();}
+});
 test("animated admin-only Canva registry, verified order queue, independent copy, delivery and mobile UI",async({page,request,browser})=>{
  test.setTimeout(150000);
  expect((await request.get("/api/admin/animated")).status()).toBe(403);
