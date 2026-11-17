@@ -19,7 +19,11 @@ export const animatedInput = z.object({
   thumbnailUrl: httpsUrl,
   youtubeUrl: z.string().trim().max(500),
   canvaUrl: canvaEditUrl,
-}).strict();
+}).strict().superRefine((data,ctx)=>{
+  const host=new URL(data.thumbnailUrl).hostname.toLowerCase();
+  if(host==="canva.com" || host==="www.canva.com" || data.thumbnailUrl===data.canvaUrl)
+    ctx.addIssue({code:"custom",path:["thumbnailUrl"],message:"Use a public image URL, never the private Canva design URL"});
+});
 export type AnimatedInput = z.infer<typeof animatedInput>;
 export function parseYouTubeId(value: string) {
   let url: URL;
