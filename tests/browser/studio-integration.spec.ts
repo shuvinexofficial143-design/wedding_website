@@ -98,6 +98,7 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
     ]);
     expect(writes.map(r=>r.status()).sort()).toEqual([200,409]);
     await page.goto("/editor/"+orderId);
+    await expect(page.locator(".support-float")).toBeHidden();
     await expect(page.getByText("Fixed Blessing",{exact:true})).toHaveCount(0);
     const bride=page.getByRole("textbox",{name:"Bride Name"});
     await expect(bride).toBeVisible();
