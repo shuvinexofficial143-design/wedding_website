@@ -9,12 +9,14 @@ export function LayerCard({
   fields,
   width,
   onIssues,
+  assetBasePath = "/api/assets/",
 }: {
   document: CardDocument;
   values?: Record<string, string>;
   fields?: Record<string, string>;
   width?: number;
   onIssues?: (issues: string[]) => void;
+  assetBasePath?: string;
 }) {
   const [layouts, setLayouts] = useState<Record<string, TextLayout>>({});
   const [fontError, setFontError] = useState("");
@@ -107,7 +109,7 @@ export function LayerCard({
       {doc.backgroundAssetId && (
         <img
           key={`${doc.backgroundAssetId}-${retry}`}
-          src={`/api/assets/${doc.backgroundAssetId}`}
+          src={`${assetBasePath}${doc.backgroundAssetId}`}
           alt="Invitation background"
           crossOrigin="anonymous"
           style={{
@@ -169,7 +171,9 @@ export function LayerCard({
                 (values[l.id] || l.assetId) && (
                   <img
                     key={retry}
-                    src={values[l.id] || `/api/assets/${l.assetId}`}
+                    src={values[l.id]
+                      ? values[l.id].replace(/^\/api\/assets\//, assetBasePath)
+                      : `${assetBasePath}${l.assetId}`}
                     alt={l.label}
                     style={{
                       width: "100%",
