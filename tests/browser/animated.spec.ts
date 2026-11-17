@@ -105,6 +105,22 @@ test("animated admin-only Canva registry, verified order queue, independent copy
   const customer=await (await page.request.get("/api/orders/"+orderId+"/animated")).json();
   expect(customer.deliveryUrl).toBe("https://delivery.example.test/our-invitation");
   expect(JSON.stringify(customer)).not.toContain("canva.com");
+  // Per-order Canva copies must not be silently reused, even when the link's
+  // tracking query differs. Payment is an isolated CI database fixture only.
+  const anotherOrder=await page.request.post("/api/orders",{headers:{origin},
+    data:{productId:templateId,phone:"9876543210"}});
+  expect(anotherOrder.status()).toBe(200);
+  const {id:otherOrderId}=await anotherOrder.json();
+  expect(otherOrderId).not.toBe(orderId);
+  db.prepare("UPDATE orders SET status='paid',payment_id=? WHERE id=?")
+    .run("fixture-"+otherOrderId,otherOrderId);
+  db.prepare("UPDATE animated_order_jobs SET paid_at=? WHERE order_id=?")
+    .run(Date.now(),otherOrderId);
+  const reusedCopy=await admin.patch("/api/admin/animated/orders/"+otherOrderId,{
+    data:{action:"copy",revision:0,editingCopyUrl:copyCanva+"?utm_source=another-order"},
+  });
+  expect(reusedCopy.status()).toBe(400);
+  expect((await reusedCopy.json()).error).toContain("already assigned");
   const adminMobile=await browser.newContext({viewport:{width:390,height:844}});
   try {
     const mobile=await adminMobile.newPage();
