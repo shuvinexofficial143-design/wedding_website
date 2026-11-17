@@ -119,3 +119,18 @@
 - Latest verified predecessor: eb470ec67551a4beffd01bdec9b5996389b626c3. Current checkpoint SHA: git log -1 on feature/advanced-card-studio.
 - Blockers unchanged: hosted PostgreSQL/S3 and matching Vercel project not connected. No real payments enabled.
 - Exact next step: wire catalog and order-time version pinning, then paid customer layer editor and reliable export.
+
+### Advanced Studio — continued integration and test milestone (17 November 2026)
+
+- All work remains on `feature/advanced-card-studio`, with PR #2 open and **no merge to main**.
+- Admin Card Designer real browser scenarios are implemented: pointer move/resize, undo/redo, mobile touch drag, Hindi+English text, original PNG background upload, saved draft/reload, role gate and malicious SVG rejection. A Hindi-preview precedence bug was repaired in `src/lib/studio/layout.ts`.
+- Verified GitHub Actions [run 44031865089](https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/44031865089) on commit `3aee02cd9602f7e5ea055d83d9c07ab4a00b89a3`: **32/32 Playwright browser tests**, ESLint, unit tests and Next.js build passed.
+- Public catalog, product and preview pages now use database-published template snapshots, preserving the existing legacy renderer. Draft/unpublished templates do not appear in public results.
+- Order creation atomically pins the selected published template version in `purchased_products`, without replacing a reused pending order's version or allowing client-supplied prices. Existing paid purchases remain tied to their old version after unpublish/republish.
+- New `/api/orders/[id]/card` and `CustomerStudioEditor` enforce order ownership, **paid only**, exact pinned snapshot and editable layer allowlist. SQLite fixture-only payment transitions are never exposed through app routes. Private photo references require authenticated ownership and validated ready assets; revisions detect concurrent saves.
+- Customer HTML-rendered layer preview, auto-save/reload, Hindi font readiness and client PNG/PDF export are covered by a new combined browser test.
+- Verified [run 44032663514](https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/44032663514) on commit `3d68a4af5089c01eca99279541e63d71b76637fb`: **33/33 Playwright browser tests**, 20 unit/integration tests, lint and production build passed, including the dynamic public and customer integration test.
+- Subsequent hardening added a server-side check to reject edits to hidden layers; related unit tests and final combined CI are running. Never substitute prior green runs for final-head verification.
+- Added `npm run deploy:check` structural preflight for Node 24+, PostgreSQL URL, S3 bucket/access, HTTPS origin, admin allowlist and sandbox-only Cashfree. This does **not** prove cloud connectivity, migration or runtime behavior.
+- Connected Vercel account inspection returned 8 unrelated projects and **zero deployments** for the feature branch. No wedding project or verified preview deployment was accessible. Hosted PostgreSQL, S3 and Cashfree sandbox merchant credentials were not available for real-provider tests. No live payment was enabled and no customer data was migrated/deleted.
+- Remaining release gates: authenticated provider test, correct Vercel account/project linkage, preview deployment, CORS/backup validation, real migration with source backups and merchant approval. No production release.

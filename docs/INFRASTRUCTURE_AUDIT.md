@@ -25,3 +25,11 @@ Use an existing private S3-compatible bucket, credentials restricted to this buc
 Set a bucket lifecycle expiry on the `quarantine/` prefix (one day) to remove failed/replayed temporary uploads. App reads only ready validated assets. `node --import tsx scripts/cleanup-assets.ts` defaults to a dry run; `--apply` tombstones unreferenced assets older than seven days before deleting objects. Immutable template versions and purchased records retain their asset links so cleanup never removes referenced assets. Retain bucket versioning/backups according to merchant retention policy.
 
 ASSET_STORAGE=local is exclusively a development/test adapter and refuses Vercel/production. Hosted S3 upload/CORS and signed URLs require actual provider credentials and have not yet been exercised. Legacy local video delivery will be migrated to asset references in the customer/admin integration milestone; do not delete original upload directories.
+
+## Continuous validation and preflight — 17 November 2026
+
+Run `npm run deploy:check` **after** loading private preview credentials into the deployment environment. It only validates structure and explicitly reports missing PostgreSQL/S3/site/admin settings; the command never prints values and never mutates resources. Cashfree is sandbox-only; merchant credentials are optional for a non-payment preview.
+
+Local `npm run test:e2e` uses isolated SQLite plus `ASSET_STORAGE=local`. The browser spec simulates paid orders via direct manipulation of the isolated test SQLite fixture; production APIs never expose this. The combined test checks administrator publish/unpublish, draft exclusion, purchased version immutability, paid/owner access, concurrent saves, protected/hidden layers, private image rules, Hindi text, and PNG/PDF headers. This cannot substitute for hosted PostgreSQL transaction, network S3/CORS, preview DNS or actual sandbox merchant tests.
+
+At the time of this continuation the connected Vercel account lists eight unrelated projects and no wedding project; feature branch deployments also return zero. Do not claim a Vercel preview is deployed without independent verified deployment id, branch, project and READY state.

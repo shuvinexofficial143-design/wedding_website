@@ -45,12 +45,12 @@
 - [x] 1: Latest-main audit, PostgreSQL schema/adapter, safe import/dry-run/rollback tests
 - [x] 2: Durable storage and secure asset lifecycle (provider-neutral implementation; hosted acceptance pending)
 - [x] 3: Dynamic template database and legacy migration
-- [ ] 4: Admin visual layer editor
-- [ ] 5: Unicode smart layout and collision tests
-- [ ] 6: Paid customer editor integration
-- [ ] 7: Publishing and immutable purchased version pinning
-- [ ] 8: Reliable PNG/PDF export
-- [ ] 9: Security and browser regression
+- [x] 4: Admin visual layer editor (browser mouse/touch, undo/redo, save/reload)
+- [x] 5: Unicode smart layout and collision tests (Hindi/English preview verified)
+- [x] 6: Paid customer editor integration (pinned snapshot, server layer allowlist and private photo ownership)
+- [x] 7: Publishing and immutable purchased version pinning (atomic purchase snapshot, unpublish-safe)
+- [x] 8: PNG/PDF export implementation and local browser magic-byte tests (hosted visual acceptance pending)
+- [x] 9: Local browser security and regression 33/33, run 44032663514 (final-head checks ongoing)
 - [ ] 10: Verified preview deployment and final documentation (provider access required)
 
 ## Advanced studio continuation
@@ -58,7 +58,14 @@
 - [x] Private durable storage adapter and validated upload pipeline.
 - [x] Immutable database templates and legacy registry preservation.
 - [x] Admin visual editor and Unicode layout engine implementation.
-- [ ] Browser verification of new designer and touch controls.
-- [ ] Dynamic public catalog, order-time version pinning, customer layer editing.
-- [ ] Reliable shared export and complete security/browser regression.
+- [x] Browser verification of new designer and touch controls (32/32 Chromium run 44031865089).
+- [x] Dynamic public catalog, order-time version pinning, customer layer editing (33/33 Chromium run 44032663514).
+- [x] Local PNG/PDF export, role/ownership and cross-version regression; hosted S3/PG acceptance still pending.
 - [ ] Hosted provider integration and verified preview deployment (credentials/project access required).
+
+### Pending hosted acceptance (not simulated)
+- [ ] Link the **correct** wedding Vercel project; verify a non-production feature-branch preview URL and deployment commit.
+- [ ] Provision and verify network PostgreSQL and private S3 credentials, bucket CORS, object lifecycle and backups without disclosing secrets.
+- [ ] Run full migration dry run against actual owned source backup, then user-approved cutover with rollback documentation.
+- [ ] Perform actual sandbox merchant checkout and private image upload from a hosted preview; no live Cashfree.
+- [ ] Repeat mobile desktop screenshot comparison, Hindi font and PNG/PDF visual inspection on the hosted preview.
