@@ -105,9 +105,16 @@ test("animated admin-only Canva registry, verified order queue, independent copy
   const customer=await (await page.request.get("/api/orders/"+orderId+"/animated")).json();
   expect(customer.deliveryUrl).toBe("https://delivery.example.test/our-invitation");
   expect(JSON.stringify(customer)).not.toContain("canva.com");
-  const adminMobile=await browser.newContext({viewport:{width:390,height:844},storageState:await admin.storageState()});
+  const adminMobile=await browser.newContext({viewport:{width:390,height:844}});
   try {
     const mobile=await adminMobile.newPage();
+    // Log in through the real browser form instead of assuming API request
+    // storageState cookies are reusable in a separate Chromium context.
+    await mobile.goto(origin+"/login?next=/admin/animated/orders/"+orderId);
+    await mobile.getByLabel("Email",{exact:true}).fill("admin@example.test");
+    await mobile.getByLabel(/Password/).fill("Test-admin-only-password-2026!");
+    await mobile.locator("form").getByRole("button",{name:"Sign in"}).click();
+    await expect(mobile).toHaveURL(new RegExp("/admin/animated/orders/"+orderId));
     await mobile.goto(origin+"/admin/animated/orders/"+orderId);
     await expect(mobile.getByRole("link",{name:/Open Canva Template/})).toBeVisible();
     await expect(mobile.getByRole("button",{name:"Copy Customer Details"})).toBeVisible();
