@@ -1,64 +1,22 @@
-import { DatabaseSync } from "node:sqlite";
-import { mkdirSync } from "node:fs";
-import path from "node:path";
-let database: DatabaseSync;
-export function db() {
-  if (!database) {
-    const file =
-      process.env.DATABASE_PATH ||
-      path.join(process.cwd(), "data", "wedding.sqlite");
-    mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 });
-    database = new DatabaseSync(file);
-    database.exec(`PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;
-CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY,email TEXT UNIQUE NOT NULL,password TEXT NOT NULL,created INTEGER NOT NULL,role TEXT NOT NULL DEFAULT 'customer');
-CREATE TABLE IF NOT EXISTS sessions(token TEXT PRIMARY KEY,user_id TEXT REFERENCES users(id),expires INTEGER NOT NULL);
-CREATE TABLE IF NOT EXISTS limits(key TEXT PRIMARY KEY,count INTEGER NOT NULL,expires INTEGER NOT NULL);
-CREATE TABLE IF NOT EXISTS orders(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id),product_id TEXT NOT NULL,amount INTEGER NOT NULL,phone TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'pending',payment_id TEXT UNIQUE,payment_session TEXT,details TEXT NOT NULL DEFAULT '{}',revision INTEGER NOT NULL DEFAULT 0,published TEXT,public_token TEXT UNIQUE,fulfillment TEXT NOT NULL DEFAULT 'awaiting_details',preview_url TEXT,final_url TEXT,video_path TEXT,created INTEGER NOT NULL);
-CREATE UNIQUE INDEX IF NOT EXISTS one_pending_product ON orders(user_id,product_id) WHERE status='pending';
-CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY AUTOINCREMENT,admin_id TEXT NOT NULL,order_id TEXT NOT NULL,action TEXT NOT NULL,created INTEGER NOT NULL);
-CREATE TABLE IF NOT EXISTS rsvps(id TEXT PRIMARY KEY,order_id TEXT REFERENCES orders(id),name TEXT NOT NULL,attendance TEXT NOT NULL,guests INTEGER NOT NULL,created INTEGER NOT NULL);
-`);
-    const columns = database.prepare("PRAGMA table_info(users)").all() as {
-      name: string;
-    }[];
-    if (!columns.some((c) => c.name === "role"))
-      database.exec(
-        "ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'customer'",
-      );
-  }
-  return database;
+import {AsyncLocalStorage} from 'node:async_hooks';import {DatabaseSync} from 'node:sqlite';import {mkdirSync} from 'node:fs';import path from 'node:path';import {postgresPool} from './database/postgres';import {schemaSql,SCHEMA_VERSION} from './database/schema';import {postgresSql,type SqlValue,type Row,type Connection} from './database/sql';
+export type {SqlValue,Row};
+let local:DatabaseSync;const transactionContext=new AsyncLocalStorage<Connection>();let localQueue:Promise<unknown>=Promise.resolve();
+export function usingPostgres(){return !!process.env.DATABASE_URL;}
+function sqlite(){if(!local){if(process.env.VERCEL)throw new Error('Persistent DATABASE_URL required on Vercel. SQLite fallback is disabled.');const file=process.env.DATABASE_PATH||path.join(process.cwd(),'data','wedding.sqlite');mkdirSync(path.dirname(file),{recursive:true,mode:0o700});local=new DatabaseSync(file);local.exec('PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;');local.exec(schemaSql('sqlite'));const cols=local.prepare('PRAGMA table_info(users)').all() as {name:string}[];if(!cols.some(c=>c.name==='role'))local.exec("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'customer'");local.prepare('INSERT OR IGNORE INTO schema_migrations VALUES(?,?)').run(SCHEMA_VERSION,Date.now());}return local;}
+function localQuery(sql:string,params:SqlValue[]=[]){const statement=sqlite().prepare(sql);if(/^\s*(SELECT|PRAGMA|WITH)/i.test(sql)||/\bRETURNING\b/i.test(sql)){const rows=statement.all(...params) as Row[];return {rows,rowCount:rows.length};}const r=statement.run(...params);return {rows:[],rowCount:Number(r.changes)};}
+function exclusive<T>(fn:()=>Promise<T>):Promise<T>{const next=localQueue.then(fn,fn);localQueue=next.catch(()=>{});return next;}
+async function query(sql:string,params:SqlValue[]=[]){const tx=transactionContext.getStore();if(tx)return tx.query(sql,params);if(usingPostgres())return postgresPool().query(postgresSql(sql),params);return exclusive(async()=>localQuery(sql,params));}
+export function db(){
+ return {prepare(sql:string){
+  return {
+   async get(...params:SqlValue[]){return (await query(sql,params)).rows[0];},
+   async all(...params:SqlValue[]){return (await query(sql,params)).rows;},
+   async run(...params:SqlValue[]){return {changes:(await query(sql,params)).rowCount||0};}
+  };
+ }};
 }
-export type User = { id: string; email: string; role: string };
-export type Order = {
-  id: string;
-  user_id: string;
-  product_id: string;
-  amount: number;
-  phone: string;
-  status: string;
-  payment_id: string | null;
-  payment_session: string | null;
-  details: string;
-  revision: number;
-  published: string | null;
-  public_token: string | null;
-  fulfillment: string;
-  preview_url: string | null;
-  final_url: string | null;
-  video_path: string | null;
-  created: number;
-};
-export function getOrder(id: string) {
-  return db().prepare("SELECT * FROM orders WHERE id=?").get(id) as
-    Order | undefined;
-}
-export function limit(key: string, max: number, windowMs: number) {
-  const now = Date.now();
-  db().prepare("DELETE FROM limits WHERE expires < ?").run(now);
-  const row = db()
-    .prepare(
-      "INSERT INTO limits(key,count,expires) VALUES(?,1,?) ON CONFLICT(key) DO UPDATE SET count=count+1 RETURNING count",
-    )
-    .get(key, now + windowMs) as { count: number };
-  return row.count <= max;
-}
+export async function transaction<T>(fn:()=>Promise<T>):Promise<T>{if(transactionContext.getStore())return fn();if(usingPostgres()){const c=await postgresPool().connect();try{await c.query('BEGIN');const value=await transactionContext.run({query:(sql,params)=>c.query(postgresSql(sql),params)},fn);await c.query('COMMIT');return value;}catch(e){await c.query('ROLLBACK');throw e;}finally{c.release();}}return exclusive(async()=>{sqlite().exec('BEGIN IMMEDIATE');try{const value=await transactionContext.run({query:async(sql,params)=>localQuery(sql,params)},fn);sqlite().exec('COMMIT');return value;}catch(e){sqlite().exec('ROLLBACK');throw e;}});}
+export type User={id:string;email:string;role:string};
+export type Order={id:string;user_id:string;product_id:string;amount:number;phone:string;status:string;payment_id:string|null;payment_session:string|null;details:string;revision:number;published:string|null;public_token:string|null;fulfillment:string;preview_url:string|null;final_url:string|null;video_path:string|null;created:number};
+export async function getOrder(id:string){return await db().prepare('SELECT * FROM orders WHERE id=?').get(id) as Order|undefined;}
+export async function limit(key:string,max:number,windowMs:number){const now=Date.now();await db().prepare('DELETE FROM limits WHERE expires < ?').run(now);const row=await db().prepare('INSERT INTO limits(key,count,expires) VALUES(?,1,?) ON CONFLICT(key) DO UPDATE SET count=limits.count+1 RETURNING count').get(key,now+windowMs) as {count:number};return row.count<=max;}

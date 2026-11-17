@@ -40,3 +40,15 @@
 - [x] Create read-only protected admin template registry at /admin/cards
 - [ ] Verify latest production Vercel deployment and configure durable order storage before taking real payments
 - [ ] Extend admin studio to durable secured create/publish/unpublish workflow after persistent data infrastructure is agreed
+
+## Advanced studio milestones
+- [x] 1: Latest-main audit, PostgreSQL schema/adapter, safe import/dry-run/rollback tests
+- [ ] 2: Durable storage and secure asset lifecycle
+- [ ] 3: Dynamic template database and legacy migration
+- [ ] 4: Admin visual layer editor
+- [ ] 5: Unicode smart layout and collision tests
+- [ ] 6: Paid customer editor integration
+- [ ] 7: Publishing and immutable purchased version pinning
+- [ ] 8: Reliable PNG/PDF export
+- [ ] 9: Security and browser regression
+- [ ] 10: Verified preview deployment and final documentation (provider access required)

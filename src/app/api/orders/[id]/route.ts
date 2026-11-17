@@ -12,7 +12,7 @@ export async function PATCH(
   const u = await user();
   if (!u) return Response.json({ error: "Sign in first" }, { status: 401 });
   const { id } = await params;
-  const o = getOrder(id);
+  const o = (await getOrder(id));
   if (!o || o.user_id !== u.id)
     return Response.json({ error: "Order not found" }, { status: 404 });
   if (o.status !== "paid")
@@ -20,7 +20,7 @@ export async function PATCH(
       { error: "Verified payment is required" },
       { status: 403 },
     );
-  if (!limit(`save:${u.id}`, 100, 60000))
+  if (!(await limit(`save:${u.id}`, 100, 60000)))
     return Response.json(
       { error: "Please wait before saving again" },
       { status: 429 },
@@ -28,11 +28,11 @@ export async function PATCH(
   try {
     const body = await readJson(req);
     if (body.action === "unpublish") {
-      db()
+      (await db()
         .prepare(
           "UPDATE orders SET public_token=NULL,published=NULL WHERE id=?",
         )
-        .run(id);
+        .run(id));
       return Response.json({ ok: true });
     }
     const details = detailsSchema.parse(body.details);
@@ -47,11 +47,11 @@ export async function PATCH(
         { error: "Your managed website will be published by our team." },
         { status: 400 },
       );
-    const changed = db()
+    const changed = (await db()
       .prepare(
         "UPDATE orders SET details=?,revision=revision+1,fulfillment=CASE WHEN fulfillment='awaiting_details' THEN 'details_received' ELSE fulfillment END WHERE id=? AND revision=?",
       )
-      .run(JSON.stringify(details), id, body.revision);
+      .run(JSON.stringify(details), id, body.revision));
     if (!changed.changes)
       return Response.json(
         {
@@ -63,9 +63,9 @@ export async function PATCH(
     let token = o.public_token;
     if (body.action === "publish") {
       token = token || randomBytes(24).toString("hex");
-      db()
+      (await db()
         .prepare("UPDATE orders SET published=?,public_token=? WHERE id=?")
-        .run(JSON.stringify(details), token, id);
+        .run(JSON.stringify(details), token, id));
     }
     return Response.json({ revision: body.revision + 1, token });
   } catch {

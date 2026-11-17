@@ -26,11 +26,11 @@ export async function user() {
   const token = (await cookies()).get("wedding_session")?.value;
   if (!token) return null;
   return (
-    (db()
+    ((await db()
       .prepare(
         "SELECT users.id,users.email,users.role FROM sessions JOIN users ON users.id=sessions.user_id WHERE token=? AND expires>?",
       )
-      .get(digest(token), Date.now()) as User | undefined) || null
+      .get(digest(token), Date.now())) as User | undefined) || null
   );
 }
 export function isAdmin(u: User) {
@@ -50,10 +50,10 @@ export function sameOrigin(request: Request) {
 }
 export async function startSession(id: string) {
   const token = randomBytes(32).toString("hex");
-  db().prepare("DELETE FROM sessions WHERE expires<?").run(Date.now());
-  db()
+  (await db().prepare("DELETE FROM sessions WHERE expires<?").run(Date.now()));
+  (await db()
     .prepare("INSERT INTO sessions VALUES(?,?,?)")
-    .run(digest(token), id, Date.now() + 7 * 86400000);
+    .run(digest(token), id, Date.now() + 7 * 86400000));
   (await cookies()).set("wedding_session", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -66,6 +66,6 @@ export async function endSession() {
   const jar = await cookies();
   const token = jar.get("wedding_session")?.value;
   if (token)
-    db().prepare("DELETE FROM sessions WHERE token=?").run(digest(token));
+    (await db().prepare("DELETE FROM sessions WHERE token=?").run(digest(token)));
   jar.delete("wedding_session");
 }

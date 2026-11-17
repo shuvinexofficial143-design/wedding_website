@@ -7,9 +7,9 @@ import { Logout } from "@/components/auth-form";
 export default async function Dashboard() {
   const u = await user();
   if (!u) redirect("/login?next=/dashboard");
-  const orders = db()
+  const orders = (await db()
     .prepare("SELECT * FROM orders WHERE user_id=? ORDER BY created DESC")
-    .all(u.id) as Order[];
+    .all(u.id)) as Order[];
   return (
     <section className="section">
       <div className="section-head">

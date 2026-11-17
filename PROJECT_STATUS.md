@@ -89,3 +89,12 @@
 - Published South Indian Traditional Wedding and Luxury Dark Emerald Wedding: unique original SVG artworks, responsive typography and the same authenticated paid editor/export pipeline.
 - The original three premium designs and nine original other products remain untouched.
 - Full new ten-card regression and screenshot review still required before launch claims.
+
+## Advanced Studio — 17 November 2026
+- Baseline audited: main 498e1abea9ecb1cf2713f836a4fdcbcdc7c23fe7. Existing 10 artwork + 3 premium + 9 legacy products preserved.
+- Branch: feature/advanced-card-studio. Production/main is not modified by this project.
+- Milestone 1 implemented: asynchronous bound SQL PostgreSQL adapter with SQLite development compatibility, explicit transaction isolation, persistent-only Vercel guard, schema migration, snapshot-backed SQLite importer with dry run, exact row verification and rollback.
+- Tests: lint PASS; 10 unit/integration tests PASS including PostgreSQL-engine migration validation; Next production build PASS. Hosted database not connected or migrated.
+- Latest verified predecessor: 498e1abea9ecb1cf2713f836a4fdcbcdc7c23fe7. Current checkpoint SHA is `git log -1` (self-reference is impossible).
+- Blockers: current connected Vercel account returned zero matching wedding projects. No durable PostgreSQL/S3 credentials discovered; no paid resource created.
+- Exact next step: secure S3-compatible assets and upload validation, then dynamic immutable templates and visual studio.

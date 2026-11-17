@@ -14,9 +14,9 @@ export default async function Invitation({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
-  const o = db()
+  const o = (await db()
     .prepare("SELECT * FROM orders WHERE public_token=? AND status='paid'")
-    .get(token) as Order | undefined;
+    .get(token)) as Order | undefined;
   if (!o?.published) notFound();
   const details = detailsSchema.safeParse(JSON.parse(o.published));
   if (!details.success) notFound();

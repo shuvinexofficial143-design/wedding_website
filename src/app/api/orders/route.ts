@@ -23,24 +23,24 @@ export async function POST(req: Request) {
       );
     const p = products.find((p) => p.id === parsed.data.productId);
     if (!p) return Response.json({ error: "Unknown design" }, { status: 404 });
-    if (!limit(`order:${u.id}`, 20, 3600000))
+    if (!(await limit(`order:${u.id}`, 20, 3600000)))
       return Response.json(
         { error: "Please try again later." },
         { status: 429 },
       );
-    let order = db()
+    let order = (await db()
       .prepare(
         "SELECT * FROM orders WHERE user_id=? AND product_id=? AND status='pending'",
       )
-      .get(u.id, p.id) as Order | undefined;
+      .get(u.id, p.id)) as Order | undefined;
     if (!order) {
       const id = randomUUID();
-      db()
+      (await db()
         .prepare(
           "INSERT INTO orders(id,user_id,product_id,amount,phone,created) VALUES(?,?,?,?,?,?)",
         )
-        .run(id, u.id, p.id, p.price * 100, parsed.data.phone, Date.now());
-      order = db().prepare("SELECT * FROM orders WHERE id=?").get(id) as Order;
+        .run(id, u.id, p.id, p.price * 100, parsed.data.phone, Date.now()));
+      order = (await db().prepare("SELECT * FROM orders WHERE id=?").get(id)) as Order;
     }
     return Response.json({ id: order.id });
   } catch {

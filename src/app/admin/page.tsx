@@ -10,11 +10,11 @@ export default async function Admin() {
   const u = await user();
   if (!u) redirect("/login?next=/admin");
   if (!isAdmin(u)) notFound();
-  const orders = db()
+  const orders = (await db()
     .prepare(
       "SELECT orders.*,users.email FROM orders JOIN users ON users.id=orders.user_id ORDER BY created DESC LIMIT 100",
     )
-    .all() as (Order & { email: string })[];
+    .all()) as (Order & { email: string })[];
   return (
     <section className="section">
       <span className="eyebrow">PRIVATE OPERATIONS</span>

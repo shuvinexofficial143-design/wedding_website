@@ -11,10 +11,10 @@ export async function POST(
   const u = await user();
   if (!u) return Response.json({ error: "Sign in first" }, { status: 401 });
   const { id } = await params;
-  const order = getOrder(id);
+  const order = (await getOrder(id));
   if (!order || order.user_id !== u.id)
     return Response.json({ error: "Order not found" }, { status: 404 });
-  if (!limit(`payment:${u.id}`, 30, 60000))
+  if (!(await limit(`payment:${u.id}`, 30, 60000)))
     return Response.json({ error: "Please wait and retry." }, { status: 429 });
   try {
     const body = await readJson(req, 1024);

@@ -19,7 +19,7 @@ export default async function CheckoutPage({
   if (!u) redirect(`/login?next=/checkout/${id}`);
   const { order } = await searchParams;
   if (order) {
-    const o = getOrder(order);
+    const o = (await getOrder(order));
     if (!o || o.user_id !== u.id || o.product_id !== id) notFound();
     if (o.status === "paid") redirect(`/editor/${order}`);
   }

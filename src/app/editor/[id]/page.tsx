@@ -12,7 +12,7 @@ export default async function EditorPage({
   const { id } = await params;
   const u = await user();
   if (!u) redirect(`/login?next=/editor/${id}`);
-  const o = getOrder(id);
+  const o = (await getOrder(id));
   if (!o || o.user_id !== u.id) notFound();
   if (o.status !== "paid") redirect(`/checkout/${o.product_id}?order=${id}`);
   const p = products.find((p) => p.id === o.product_id)!;

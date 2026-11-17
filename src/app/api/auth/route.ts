@@ -38,16 +38,16 @@ export async function POST(req: Request) {
       );
     const { action, email, password } = parsed.data;
     if (
-      !limit(`auth:${digest(email)}`, 10, 15 * 60000) ||
-      !limit("auth:global", 200, 15 * 60000)
+      !(await limit(`auth:${digest(email)}`, 10, 15 * 60000)) ||
+      !(await limit("auth:global", 200, 15 * 60000))
     )
       return Response.json(
         { error: "Too many attempts. Try again in 15 minutes." },
         { status: 429 },
       );
-    const existing = db()
+    const existing = (await db()
       .prepare("SELECT * FROM users WHERE email=?")
-      .get(email) as { id: string; password: string } | undefined;
+      .get(email)) as { id: string; password: string } | undefined;
     if (action === "register") {
       if (isReserved(email))
         return Response.json(
@@ -60,9 +60,9 @@ export async function POST(req: Request) {
           { status: 409 },
         );
       const id = randomUUID();
-      db()
+      (await db()
         .prepare("INSERT INTO users(id,email,password,created) VALUES(?,?,?,?)")
-        .run(id, email, await passwordHash(password), Date.now());
+        .run(id, email, await passwordHash(password), Date.now()));
       await startSession(id);
     } else {
       if (!existing || !(await checkPassword(password, existing.password)))

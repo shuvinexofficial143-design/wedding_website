@@ -69,9 +69,9 @@ export async function createPayment(order: Order) {
   });
   if (data.order_id !== order.id || typeof data.payment_session_id !== "string")
     throw new Error("Invalid provider response.");
-  db()
+  (await db()
     .prepare("UPDATE orders SET payment_session=? WHERE id=?")
-    .run(data.payment_session_id, order.id);
+    .run(data.payment_session_id, order.id));
   return data.payment_session_id as string;
 }
 export type ProviderOrder = {
@@ -119,19 +119,19 @@ export async function verifyPayment(order: Order) {
   if (!Array.isArray(payments)) throw new Error("Invalid payment response");
   const payment = matchingPayment(order, remote, payments);
   if (payment) {
-    db()
+    (await db()
       .prepare(
         "UPDATE orders SET status='paid',payment_id=? WHERE id=? AND status='pending'",
       )
-      .run(String(payment.cf_payment_id), order.id);
+      .run(String(payment.cf_payment_id), order.id));
     return { paid: true, state: "PAID" };
   }
   if (["EXPIRED", "TERMINATED"].includes(remote.order_status))
-    db()
+    (await db()
       .prepare(
         "UPDATE orders SET status='expired' WHERE id=? AND status='pending'",
       )
-      .run(order.id);
+      .run(order.id));
   return {
     paid: false,
     state:
