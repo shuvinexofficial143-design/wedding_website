@@ -59,7 +59,7 @@ export function AnimatedOrderFulfilment({initial}:{initial:Job}){
     {job.editing_copy_url&&<a className="text-link" href={job.editing_copy_url} target="_blank" rel="noopener noreferrer">Open this order&apos;s copy ↗</a>}</div>
    <p><strong>Step 3.</strong> Apply the copied wedding details to the order-specific Canva copy.</p>
    <button className="button" disabled={busy||!!job.started_at||!!job.delivered_at} onClick={()=>void change("editing")}>Mark Editing</button>
-   <p><strong>Step 4.</strong> Paste the completed invitation's HTTPS delivery link, then mark delivered.</p>
+   <p><strong>Step 4.</strong> Paste the completed invitation&apos;s HTTPS delivery link, then mark delivered.</p>
    <label>Final delivery URL<input type="url" placeholder="https://..." value={delivery} onChange={e=>setDelivery(e.target.value)}/></label>
    <button className="button" disabled={busy||!job.started_at||!!job.delivered_at} onClick={()=>void change("delivered")}>Mark Delivered</button>
    {job.delivered_at&&<p>Delivered ✓ <a href={job.delivery_url||"#"} rel="noopener noreferrer" target="_blank">Open delivered invitation</a></p>}
