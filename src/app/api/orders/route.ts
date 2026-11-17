@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         throw new Error("This design was updated. Refresh the catalog and retry.");
       let existing = (await db()
         .prepare("SELECT * FROM orders WHERE user_id=? AND product_id=? AND status='pending'")
-        .get(u.id, p.id)) as Order | undefined;
+        .get(u.id, p?.id || animated!.id)) as Order | undefined;
       if (!existing) {
         const id = randomUUID();
         await db().prepare(
