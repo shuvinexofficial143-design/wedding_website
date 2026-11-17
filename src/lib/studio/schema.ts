@@ -149,7 +149,7 @@ export function editableValues(
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(values)) {
     const layer = doc.layers.find((l) => l.id === key);
-    if (!layer?.editable || layer.kind === "shape")
+    if (!layer?.editable || layer.hidden || layer.kind === "shape")
       throw new Error("This layer cannot be edited");
     if (typeof value !== "string" || Array.from(value).length > layer.maxLength)
       throw new Error("Layer value exceeds maximum length");
