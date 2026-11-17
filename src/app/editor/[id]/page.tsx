@@ -36,6 +36,7 @@ export default async function EditorPage({
           templateVersion={pinned.version}
           initialValues={saved ? JSON.parse(saved.values_json) : {}}
           initialRevision={saved?.revision ?? 0}
+          initialToken={o.public_token}
         />
       </section>
     );

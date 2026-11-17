@@ -7,17 +7,19 @@ import { LayerCard } from "@/components/studio/layer-card";
 import { uploadAsset } from "@/lib/upload-client";
 
 export function CustomerStudioEditor({
-  orderId, document: doc, templateVersion, initialValues, initialRevision,
+  orderId, document: doc, templateVersion, initialValues, initialRevision, initialToken,
 }: {
   orderId: string;
   document: CardDocument;
   templateVersion: number;
   initialValues: Record<string, string>;
   initialRevision: number;
+  initialToken: string | null;
 }) {
   const [values, setValues] = useState(initialValues);
   const [message, setMessage] = useState("All changes saved");
   const [busy, setBusy] = useState(false);
+  const [publicToken, setPublicToken] = useState(initialToken);
   const [layoutIssues, setLayoutIssues] = useState<string[]>([]);
   const revision = useRef(initialRevision);
   const current = useRef(values);
@@ -82,6 +84,40 @@ export function CustomerStudioEditor({
     window.addEventListener("beforeunload", listener);
     return () => window.removeEventListener("beforeunload", listener);
   }, []);
+  async function share(action: "publish" | "unpublish") {
+    setBusy(true);
+    try {
+      if (action === "publish" && !(await save()))
+        throw new Error("Save your changes before publishing.");
+      const response = await fetch(`/api/orders/${orderId}/card`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, revision: revision.current }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        if (response.status === 409) conflicted.current = true;
+        throw new Error(data.error || "Unable to update invitation sharing");
+      }
+      setPublicToken(data.token);
+      setMessage(action === "publish"
+        ? "Your invitation link is active. Guests can view the shared design."
+        : "Sharing disabled. The old invitation link no longer works.");
+    } catch(error) {
+      setMessage((error as Error).message);
+    } finally { setBusy(false); }
+  }
+  async function copyLink() {
+    if (!publicToken) return;
+    try {
+      await navigator.clipboard.writeText(
+        new URL(`/i/${publicToken}`, window.location.origin).toString(),
+      );
+      setMessage("Invitation link copied");
+    } catch {
+      setMessage("Open the invitation link and copy it from your browser.");
+    }
+  }
   async function uploadPhoto(layerId: string, file: File) {
     if (!["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
       file.size > 10 * 1024 * 1024) {
@@ -181,9 +217,25 @@ export function CustomerStudioEditor({
         <p role="status" aria-live="polite">{message}</p>
         <div className="actions">
           <button className="button" disabled={busy} onClick={() => void save()}>Save details</button>
+          <button className="button" disabled={busy} onClick={() => void share("publish")}>
+            {publicToken ? "Update shared invitation" : "Publish shareable invitation"}
+          </button>
           <button className="filter" disabled={busy} onClick={() => void exportFile("png")}>HD PNG</button>
           <button className="filter" disabled={busy} onClick={() => void exportFile("pdf")}>PDF</button>
         </div>
+        {publicToken && (
+          <div className="notice">
+            <a href={`/i/${publicToken}`} target="_blank" rel="noopener noreferrer" className="text-link">
+              Open guest invitation
+            </a>
+            <div className="actions">
+              <button type="button" onClick={() => void copyLink()}>Copy invitation link</button>
+              <button type="button" disabled={busy} onClick={() => void share("unpublish")}>
+                Disable public link
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       <div className="editor-preview">
         <div className="studio-customer-preview" ref={preview}>
