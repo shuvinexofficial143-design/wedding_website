@@ -149,3 +149,15 @@
 - Regression checks added for draft exclusion, sandbox payment gate, publication revision conflicts, anonymous guest viewing, RSVP, admin unpublish preserving purchased cards, republish not rewriting existing guest snapshot, and revoked token behavior. A further end-to-end test uploads a real customer PNG via the isolated local asset adapter and verifies anonymous mobile photo visibility and revoked-media HTTP 404.
 - Verified intermediate CI [run 44036222561](https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/44036222561): **33/33 Chromium, 20 unit tests, ESLint, production build passed**, including version-locked guest publishing/revocation. Verified final feature CI [run 44037053721](https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/44037053721) on commit `3dd8350a138fb00d6a6069cb687886b9479857d0`: **33/33 Chromium Browser Tests, 22 unit/integration tests, ESLint and Next.js production build PASS**, including real purchaser PNG upload, anonymous mobile guest render and revoked guest-media access. Earlier runs are retained as regression history.
 - The connected Vercel account still does not expose the wedding project; hosted preview, network PostgreSQL, private S3/CORS and actual merchant sandbox payment remain unverified. No customer data was reset, migrated or removed.
+
+## Animated Wedding Builder — milestones 1–2 (17 November 2026)
+- Latest Studio baseline audited at c9018c45c742f751e6ca38623404eb1c9fca4310; new isolated feature/animated-wedding-builder branch created. Stale local edits were not applied over newer Studio work.
+- Implemented versioned, bounded timeline schema, numeric keyframes, nine motion presets, synchronized sequential/parallel WAAPI tracks, Play/Pause/Replay, reduced-motion fallback and unmount cleanup. Existing layered renderer and immutable template documents reused; old cards have no timeline and remain unchanged.
+- No hosted database migration, production merge, payment-mode change or resource creation performed.
+- Tests/results recorded at checkpoint below. Current commit SHA: git log -1 on feature/animated-wedding-builder (predecessor c9018c45).
+- Currently working on: six distinct original compositions and admin timeline controls.
+- Pending: website templates/editor, advanced RSVP, full browser/visual QA and verified preview deployment.
+- Known limitations: motion export/MP4 is not implemented; no MP4 claim or button added. Timeline browser verification pending.
+- Exact next step: add seeded original animated documents and browser play/pause/reduced-motion tests.
+
+- Milestone 1–2 validation: ESLint PASS, 29 unit/integration tests PASS, Next production build PASS; browser playback not yet run.

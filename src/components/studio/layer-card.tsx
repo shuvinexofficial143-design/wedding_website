@@ -3,7 +3,20 @@
 import { useState, useEffect } from "react";
 import type { CardDocument } from "@/lib/studio/schema";
 import { fitText, layerText, type TextLayout } from "@/lib/studio/layout";
-export function LayerCard({
+import { TimelinePlayer } from "../animation/timeline-player";
+export function LayerCard(props: Parameters<typeof StaticLayerCard>[0]) {
+  return props.document.animation ? (
+    <TimelinePlayer
+      timeline={props.document.animation}
+      width={props.document.width}
+    >
+      <StaticLayerCard {...props} />
+    </TimelinePlayer>
+  ) : (
+    <StaticLayerCard {...props} />
+  );
+}
+function StaticLayerCard({
   document: doc,
   values = {},
   fields,
@@ -171,9 +184,14 @@ export function LayerCard({
                 (values[l.id] || l.assetId) && (
                   <img
                     key={retry}
-                    src={values[l.id]
-                      ? values[l.id].replace(/^\/api\/assets\//, assetBasePath)
-                      : `${assetBasePath}${l.assetId}`}
+                    src={
+                      values[l.id]
+                        ? values[l.id].replace(
+                            /^\/api\/assets\//,
+                            assetBasePath,
+                          )
+                        : `${assetBasePath}${l.assetId}`
+                    }
                     alt={l.label}
                     style={{
                       width: "100%",

@@ -1183,3 +1183,5 @@ td {
 body:has(.studio-customer-preview) .support-float,
 body:has(.studio-shell) .support-float,
 body:has(.editor-preview) .support-float { display:none; }
+
+.motion-player {width:100%;min-width:0}.motion-controls{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;padding:.8rem;background:#fff9f4;color:#2b1c1f;font-size:.8rem}.motion-controls button{border:1px solid #c9a55c;padding:.5rem .8rem;border-radius:2rem;background:transparent;cursor:pointer}.motion-controls button:disabled{opacity:.5;cursor:default}@media(prefers-reduced-motion:reduce){.motion-player *{animation:none!important;transition:none!important}}
