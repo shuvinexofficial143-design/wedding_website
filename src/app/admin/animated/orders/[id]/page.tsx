@@ -12,6 +12,6 @@ export default async function AnimatedOrderPage({params}:{params:Promise<{id:str
   if(!job||job.payment_status!=="paid")notFound();
   return <section className="section"><span className="eyebrow">PRIVATE PAID ORDER</span><h1>Animated order <i>fulfilment.</i></h1>
     <p><Link href="/admin/animated/orders" className="text-link">Back to delivery queue</Link></p>
-    <AnimatedOrderFulfilment initial={job}/>
+    <AnimatedOrderFulfilment initial={{...job}}/>
   </section>;
 }
