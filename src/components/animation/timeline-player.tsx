@@ -33,6 +33,14 @@ export function TimelinePlayer({
       cancel();
       setReduced(media.matches);
       if (!Element.prototype.animate) {
+        for (const track of timeline.tracks) {
+          const layer = element.querySelector<HTMLElement>(
+            '[data-layer="' + track.layerId + '"]',
+          );
+          if (layer)
+            layer.style.opacity = String(track.frames.at(-1)?.opacity ?? 1);
+        }
+
         setState("Motion reduced");
         return;
       }
@@ -95,6 +103,16 @@ export function TimelinePlayer({
       }
     }
     setState(action === "pause" ? "Paused" : "Playing");
+    if (action !== "pause")
+      Promise.all(
+        animations.current.map((a) => a.finished.catch(() => {})),
+      ).then(() => {
+        if (
+          animations.current.length &&
+          animations.current.every((a) => a.playState === "finished")
+        )
+          setState("Finished");
+      });
   }
   return (
     <div className="motion-player" data-motion-state={state}>

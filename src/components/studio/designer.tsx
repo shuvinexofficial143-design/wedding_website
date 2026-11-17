@@ -344,11 +344,11 @@ export function Designer({
               ))}
             </fieldset>
           )}
-          <TimelineEditor
+          {!doc.website&&<TimelineEditor
             document={doc}
             selected={selected}
             onChange={update}
-          />
+          />}
           <button
             type="button"
             onClick={() => {
@@ -554,7 +554,7 @@ export function Designer({
           ))}
         </aside>
         <div className="studio-workspace">
-          <div className="studio-add">
+          <div className="studio-add" style={{display:doc.website?"none":undefined}}>
             <button onClick={() => add("text", "partnerA")}>
               + Bride name
             </button>

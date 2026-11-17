@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "The Wedding Edit | Invitations with a little forever",
+  title: "Suhani Wedding Studio | Invitations with a little forever",
   description:
     "Discover beautifully crafted digital cards, animated invitations and wedding websites.",
 };
@@ -19,7 +19,7 @@ export default function RootLayout({
         </div>
         <header>
           <Link href="/" className="brand">
-            the wedding edit<span>INVITATIONS & LITTLE FOREVERS</span>
+            Suhani Wedding Studio<span>INVITATIONS & LITTLE FOREVERS</span>
           </Link>
           <nav aria-label="Main navigation">
             <Link href="/catalog">Collections</Link>
@@ -40,7 +40,7 @@ export default function RootLayout({
         </Link>
         <footer>
           <div className="brand">
-            the wedding edit<span>MADE FOR YOUR HAPPILY EVER AFTER</span>
+            Suhani Wedding Studio<span>MADE FOR YOUR HAPPILY EVER AFTER</span>
           </div>
           <p>Thoughtful invitations. Unforgettable beginnings.</p>
           <div className="footer-links">

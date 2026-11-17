@@ -391,6 +391,8 @@ export function animatedTemplates() {
         500,
       );
     }
+    if(index===1){for(let i=0;i<7;i++){const x=i%2?825:45,y=130+i*150;shape('Garden rose outer',x,y,85,85,'#ba7180',{shape:'ellipse'},'zoom',i*100);shape('Garden rose middle',x+12,y+12,61,61,'#e4adbd',{shape:'ellipse'},'turn',i*100+150);shape('Garden rose centre',x+26,y+26,33,33,'#a8526c',{shape:'ellipse'},'zoom',i*100+300);}}
+    if(index===2)for(const l of layers)if(l.kind==='text')l.color='#2b1c1f';
     const doc: CardDocument = {
       ...newDocument(),
       name,

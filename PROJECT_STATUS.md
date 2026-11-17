@@ -177,3 +177,9 @@
 - Validation: 32 unit/integration tests, lint and build passed. Website browser suite added and pending CI.
 - Animation checkpoint 5b7a0ae verified in GitHub run 44065498717: 39/39 browser tests + 30 unit tests + lint/build PASS, including six mobile motion previews, Play/Pause/Replay and reduced motion.
 - Current next step: full combined CI, admin motion/browser checks, screenshot review, hosted preview verification. No main merge or live payments.
+
+### Visual/security hardening in progress
+- Reviewed real GitHub CI mobile screenshots for palace, envelope, rose and Nikah. Fixed envelope text contrast, retained roses in reduced-motion final state, and removed support-pill overlap on motion/website previews. Applied requested Suhani Wedding Studio branding.
+- Added failed-image feedback/retry and export-readiness blocking, animation replay completion handling, admin timeline draft/reload/duplicate regression and paid animated guest personalisation regression.
+- Connected Vercel personal scope and Avanti Verse team both return no matching wedding project. Preview deployment cannot currently be verified through this connection. No new project or paid resource created.
+- Combined website browser CI is still running; do not treat prior 39-test green run as final website acceptance.

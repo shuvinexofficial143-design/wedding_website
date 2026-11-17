@@ -266,13 +266,22 @@ export function WebsiteEditor({
                     {k}
                     {k === "dateTime" && " (India time)"}
                     <input
-                      type={k==="dateTime"?"datetime-local":"text"} value={k==="dateTime"?event[k].slice(0,16):event[k]}
+                      type={k === "dateTime" ? "datetime-local" : "text"}
+                      value={
+                        k === "dateTime" ? event[k].slice(0, 16) : event[k]
+                      }
                       onChange={(e) =>
                         setData({
                           ...data,
                           events: data.events.map((v) =>
                             v.id === event.id
-                              ? { ...v, [k]: k==="dateTime"?e.target.value+":00+05:30":e.target.value }
+                              ? {
+                                  ...v,
+                                  [k]:
+                                    k === "dateTime"
+                                      ? e.target.value + ":00+05:30"
+                                      : e.target.value,
+                                }
                               : v,
                           ),
                         })

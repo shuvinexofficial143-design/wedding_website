@@ -124,6 +124,13 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
     expect((await request.get("/api/assets/"+customerPhotoId)).status()).toBe(404);
     await expect(page.locator(".layer-card img[alt='Couple photo']")).toBeVisible();
     await expect(page.locator(".layer-card")).toHaveAttribute("data-export-ready","true");
+    await page.route('**/api/assets/'+customerPhotoId,route=>route.abort());
+    await page.reload();
+    await expect(page.getByRole('alert')).toContainText('image could not load');
+    await expect(page.locator('.layer-card')).toHaveAttribute('data-export-ready','false');
+    await page.unroute('**/api/assets/'+customerPhotoId);
+    await page.getByRole('button',{name:'Retry fonts/assets'}).click();
+    await expect(page.locator('.layer-card')).toHaveAttribute('data-export-ready','true');
     const pngEvent=page.waitForEvent("download",{timeout:60000});
     await page.getByRole("button",{name:"HD PNG"}).click();
     const png=await pngEvent;
