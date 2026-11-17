@@ -40,7 +40,7 @@ export function assertPreviewMigrationTarget(env: Record<string,string|undefined
 export const EXPECTED_TABLES = [
   "admin_audit_logs", "asset_links", "assets", "audit", "card_templates",
   "customer_card_edits", "limits", "orders", "payments", "purchased_products",
-  "rsvps", "schema_migrations", "sessions", "template_versions", "users",
+  "rsvp_details", "rsvps", "schema_migrations", "sessions", "template_versions", "users",
   "wedding_website_orders",
 ] as const;
 

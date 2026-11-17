@@ -94,3 +94,12 @@
 - [ ] Event RSVP, duplicate handling, private CSV export.
 - [ ] Full browser/security/performance checks and screenshots.
 - [ ] Verified preview deployment; no main merge.
+
+### Animated builder implemented checkpoints
+- [x] Six original animated compositions with paid personalised guest sharing.
+- [x] Admin timeline duration/delay/easing/preset controls and template duplication.
+- [x] 39-test Chromium regression at 5b7a0ae; actual six animation mobile flows passed.
+- [x] Four website layouts and structured self-service editor implementation.
+- [x] Event RSVP metadata/duplicate handling and private CSV implementation.
+- [ ] Combined final-head browser tests, website visual QA and authenticated provider tests.
+- [ ] Authorised additive v3 migration on a named preview database; never production.

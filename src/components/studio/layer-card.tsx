@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import type { CardDocument } from "@/lib/studio/schema";
 import { fitText, layerText, type TextLayout } from "@/lib/studio/layout";
+import {WebsiteView} from "../website/website-view";
 import { TimelinePlayer } from "../animation/timeline-player";
 export function LayerCard(props: Parameters<typeof StaticLayerCard>[0]) {
+  if(props.document.website)return <WebsiteView template={props.document.website}/>;
   return props.document.animation ? (
     <TimelinePlayer
       timeline={props.document.animation}

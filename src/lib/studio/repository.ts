@@ -1,3 +1,4 @@
+import {websiteTemplates} from "../website/templates";
 import { animatedTemplates } from "../animation/templates";
 import { collisionPairs } from "./layout";
 import { randomUUID } from "node:crypto";
@@ -63,7 +64,7 @@ export function seedLegacyTemplates() {
         )
         .run(p.id, JSON.stringify(doc), Date.now());
     }
-    for (const [i, t] of animatedTemplates().entries()) {
+    for (const [i, t] of [...animatedTemplates(),...websiteTemplates()].entries()) {
       documentSchema.parse(t.document);
       await db()
         .prepare(
@@ -276,7 +277,7 @@ export async function publishTemplate(
       );
       if (collisionPairs(version.content.layers).length)
         throw new Error("Resolve text layer collisions before publishing");
-      if (!version.content.layers.length)
+      if (!version.content.website && !version.content.layers.length)
         throw new Error("Add at least one layer before publishing");
     }
     const result = await db()

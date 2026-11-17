@@ -1,3 +1,6 @@
+import {websitePublicationSchema} from "@/lib/website/schema";
+import {WebsiteView} from "@/components/website/website-view";
+import {GuestRsvp} from "@/components/website/guest-rsvp";
 import { notFound } from "next/navigation";
 import { db, type Order } from "@/lib/db";
 import { products } from "@/lib/catalog";
@@ -9,7 +12,7 @@ import { StudioGuestInvitation } from "@/components/studio/guest-invitation";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "You are invited | The Wedding Edit",
+  title: "You are invited | Suhani Wedding Studio",
   robots: { index: false, follow: false },
 };
 export default async function Invitation({
@@ -26,6 +29,8 @@ export default async function Invitation({
   let payload: unknown;
   try { payload = JSON.parse(order.published); } catch { notFound(); }
 
+  const site=websitePublicationSchema.safeParse(payload);
+  if(site.success){const pinned=await purchasedVersion(order.id);if(!pinned?.content.website||pinned.version!==site.data.version)notFound();return <><WebsiteView template={pinned.content.website} data={site.data.data} token={token}/><GuestRsvp token={token} events={site.data.data.events}/></>;}
   const shared = studioPublicationSchema.safeParse(payload);
   if (shared.success) {
     const snapshot = await purchasedVersion(order.id);

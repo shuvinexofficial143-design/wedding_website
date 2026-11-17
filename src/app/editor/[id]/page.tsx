@@ -1,5 +1,7 @@
+import {WebsiteEditor} from "@/components/website/website-editor";
+import {websiteOrder} from "@/lib/website/repository";
 import { notFound, redirect } from "next/navigation";
-import { user } from "@/lib/auth";
+import { user,isAdmin } from "@/lib/auth";
 import { getOrder } from "@/lib/db";
 import { products } from "@/lib/catalog";
 import { defaultDetails } from "@/lib/validation";
@@ -17,9 +19,11 @@ export default async function EditorPage({
   const u = await user();
   if (!u) redirect(`/login?next=/editor/${id}`);
   const o = (await getOrder(id));
-  if (!o || o.user_id !== u.id) notFound();
+  if (!o || (o.user_id !== u.id && !isAdmin(u))) notFound();
   if (o.status !== "paid") redirect(`/checkout/${o.product_id}?order=${id}`);
   const pinned = await purchasedVersion(id);
+  if(pinned?.content.website){const w=await websiteOrder(u,id);return <WebsiteEditor orderId={id} template={pinned.content.website} initial={w.data} initialRevision={o.revision} initialToken={o.public_token}/>;}
+  if(o.user_id!==u.id)notFound();
   if (pinned?.content.renderer === "layers") {
     const saved = await db().prepare(
       "SELECT values_json,revision FROM customer_card_edits WHERE order_id=?",

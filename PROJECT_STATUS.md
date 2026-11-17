@@ -168,3 +168,12 @@
 - Local validation: lint PASS, 30 unit/integration tests PASS, production build PASS.
 - Local Playwright attempted: all six launches blocked before page execution by Chromium socket permission error. These are NOT passed browser tests. GitHub CI will run actual flows and screenshots.
 - Latest verified predecessor a43c6e090d180ac729dd1a1cd46df0c8ed8c2197. Next: CI/browser fixes, structured wedding website model and four layouts. No hosted migrations.
+
+### Wedding website and event RSVP implementation checkpoint
+- Added four original website layouts (heritage, garden, editorial, celebration), structured events/story/gallery/contact/gift data, countdown and Google Maps links.
+- Separate self-service product eligibility is pinned inside the purchased template. Existing manually fulfilled products remain unchanged. Customer and authorised admin website saves use the existing database/storage with ownership checks, optimistic revisions and immutable guest publications.
+- Added photo ownership validation, guest asset allowlists, publish/revoke, autosave and responsive editor. Added event-specific RSVP metadata, duplicate update handling, notes, private owner/admin CSV export and formula-injection escaping.
+- Additive schema version 3 introduces only rsvp_details. Migration file prepared; NOT executed against hosted Neon. Previously approved exact-branch schema v2 instructions are not permission to run this new migration.
+- Validation: 32 unit/integration tests, lint and build passed. Website browser suite added and pending CI.
+- Animation checkpoint 5b7a0ae verified in GitHub run 44065498717: 39/39 browser tests + 30 unit tests + lint/build PASS, including six mobile motion previews, Play/Pause/Replay and reduced motion.
+- Current next step: full combined CI, admin motion/browser checks, screenshot review, hosted preview verification. No main merge or live payments.

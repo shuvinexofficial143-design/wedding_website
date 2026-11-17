@@ -30,7 +30,7 @@ export default async function Product({
           </Link>
         </div>
         <div className="notice">
-          {p.category === "cards"
+          {p.document.website ? "Self-service website: personalise your story, events and photos, then publish a guest link. This package is separate from our managed delivery service." : p.category === "cards"
             ? "Personalise names, photo, date, time and venue after verified payment. Export a high-resolution PNG or PDF."
             : p.category === "animated"
               ? "Animated web invitation with a shareable link. MP4 export is not offered for this service."

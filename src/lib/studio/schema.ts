@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { websiteTemplateSchema } from "../website/schema";
 import { timelineSchema } from "../animation/timeline";
 export const fontFamilies = [
   "Georgia",
@@ -67,11 +68,18 @@ export const documentSchema = z
     thumbnailAssetId: z.string().uuid().nullable().default(null),
     layers: z.array(layerSchema).max(80),
     animation: timelineSchema.optional(),
+    website: websiteTemplateSchema.optional(),
   })
   .strict()
   .superRefine((d, ctx) => {
     if (d.safeInset * 2 >= Math.min(d.width, d.height))
       ctx.addIssue({ code: "custom", message: "Safe area is too large" });
+    if (d.website && (d.category !== "websites" || d.animation))
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "Website configuration requires a website product without animation",
+      });
     if (d.animation) {
       if (d.category !== "animated")
         ctx.addIssue({

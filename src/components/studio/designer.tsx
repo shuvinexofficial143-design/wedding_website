@@ -279,6 +279,71 @@ export function Designer({
       <div className="studio-body">
         <aside className="studio-panel">
           <h2>Design</h2>
+          {doc.website && (
+            <fieldset>
+              <legend>Website template settings</legend>
+              <label>
+                Layout
+                <select
+                  value={doc.website.layout}
+                  onChange={(e) =>
+                    update({
+                      ...doc,
+                      website: {
+                        ...doc.website!,
+                        layout: e.target.value as NonNullable<
+                          CardDocument["website"]
+                        >["layout"],
+                      },
+                    })
+                  }
+                >
+                  {["heritage", "garden", "editorial", "celebration"].map(
+                    (v) => (
+                      <option key={v}>{v}</option>
+                    ),
+                  )}
+                </select>
+              </label>
+              {(["background", "ink", "accent"] as const).map((k) => (
+                <label key={k}>
+                  {k}
+                  <input
+                    type="color"
+                    value={doc.website![k]}
+                    onChange={(e) =>
+                      update({
+                        ...doc,
+                        website: { ...doc.website!, [k]: e.target.value },
+                      })
+                    }
+                  />
+                </label>
+              ))}
+              {(
+                ["story", "gallery", "events", "contact", "gifts"] as const
+              ).map((k) => (
+                <label key={k}>
+                  <input
+                    type="checkbox"
+                    checked={doc.website!.sections.includes(k)}
+                    onChange={(e) =>
+                      update({
+                        ...doc,
+                        website: {
+                          ...doc.website!,
+                          sections: e.target.checked
+                            ? [...doc.website!.sections, k]
+                            : doc.website!.sections.filter((s) => s !== k),
+                        },
+                      })
+                    }
+                  />
+                  {k}
+                </label>
+              ))}
+            </fieldset>
+          )}
           <TimelineEditor
             document={doc}
             selected={selected}

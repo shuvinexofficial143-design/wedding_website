@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION=2;
+export const SCHEMA_VERSION=3;
 export function schemaSql(dialect:'postgres'|'sqlite') {const serial=dialect==='postgres'?'BIGSERIAL PRIMARY KEY':'INTEGER PRIMARY KEY AUTOINCREMENT';return `
 CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY,applied_at BIGINT NOT NULL);
 CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY,email TEXT UNIQUE NOT NULL,password TEXT NOT NULL,created BIGINT NOT NULL,role TEXT NOT NULL DEFAULT 'customer');
@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS assets(id TEXT PRIMARY KEY,owner_id TEXT NOT NULL REF
 CREATE TABLE IF NOT EXISTS asset_links(asset_id TEXT NOT NULL REFERENCES assets(id),scope TEXT NOT NULL,scope_id TEXT NOT NULL,PRIMARY KEY(asset_id,scope,scope_id));
 CREATE TABLE IF NOT EXISTS admin_audit_logs(id TEXT PRIMARY KEY,admin_id TEXT NOT NULL REFERENCES users(id),entity_type TEXT NOT NULL,entity_id TEXT NOT NULL,action TEXT NOT NULL,metadata TEXT NOT NULL DEFAULT '{}',created BIGINT NOT NULL);
 CREATE TABLE IF NOT EXISTS wedding_website_orders(order_id TEXT PRIMARY KEY REFERENCES orders(id),requirements TEXT NOT NULL DEFAULT '{}',delivery_status TEXT NOT NULL DEFAULT 'awaiting_details',preview_url TEXT,final_url TEXT,updated BIGINT NOT NULL);
+CREATE TABLE IF NOT EXISTS rsvp_details(rsvp_id TEXT PRIMARY KEY REFERENCES rsvps(id),order_id TEXT NOT NULL REFERENCES orders(id),event_id TEXT NOT NULL DEFAULT '',notes TEXT NOT NULL DEFAULT '',request_key TEXT NOT NULL,updated BIGINT NOT NULL,UNIQUE(order_id,event_id,request_key));
 CREATE INDEX IF NOT EXISTS orders_user_created ON orders(user_id,created);
 CREATE INDEX IF NOT EXISTS rsvps_order ON rsvps(order_id);
 CREATE INDEX IF NOT EXISTS assets_owner ON assets(owner_id,status);
