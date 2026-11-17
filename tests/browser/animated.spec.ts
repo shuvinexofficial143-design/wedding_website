@@ -113,9 +113,14 @@ test("animated admin-only Canva registry, verified order queue, independent copy
     await mobile.goto(origin+"/login?next=/admin/animated/orders/"+orderId);
     await mobile.getByLabel("Email",{exact:true}).fill("admin@example.test");
     await mobile.getByLabel(/Password/).fill("Test-admin-only-password-2026!");
+    const authResponse=mobile.waitForResponse(response=>
+      response.url().endsWith("/api/auth") && response.request().method()==="POST");
     await mobile.locator("form").getByRole("button",{name:"Sign in"}).click();
-    await expect(mobile).toHaveURL(new RegExp("/admin/animated/orders/"+orderId));
-    await mobile.waitForLoadState("domcontentloaded");
+    expect((await authResponse).status()).toBe(200);
+    // An unanchored path regex also matches ?next=... on the login page;
+    // require actual navigation away from /login before inspecting admin UI.
+    await expect(mobile).toHaveURL(origin+"/admin/animated/orders/"+orderId,{timeout:20000});
+    await expect(mobile.getByRole("heading",{name:/Animated order fulfilment/})).toBeVisible({timeout:20000});
     await expect(mobile.getByRole("link",{name:/Open Canva Template/})).toBeVisible();
     await expect(mobile.getByRole("button",{name:"Copy Customer Details"})).toBeVisible();
     await expect(mobile.getByRole("link",{name:"WhatsApp Customer"})).toBeVisible();
