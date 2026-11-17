@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { db, transaction, type User } from "../db";
+import { db, transaction, usingPostgres, type User } from "../db";
 
 const httpsUrl = z.string().trim().max(1200).url().refine(value => {
   try { const url = new URL(value); return url.protocol === "https:" && !url.username && !url.password; }
@@ -142,6 +142,16 @@ export async function changeAnimatedJob(actor:User,orderId:string,revision:numbe
     const designId=(url:string)=>new URL(url).pathname.split("/")[2];
     if(copy && designId(copy)===designId(job.original_canva_url))
       throw new Error("Create an independent Canva copy for this order; do not edit the original");
+    if (copy) {
+      // Serialise the per-order-copy check across independent PostgreSQL
+      // transactions. SQLite uses BEGIN IMMEDIATE in our shared DB adapter.
+      if (usingPostgres()) await db().prepare("SELECT pg_advisory_xact_lock(1743112703)").get();
+      const others=await db().prepare(
+        "SELECT order_id,editing_copy_url FROM animated_order_jobs WHERE editing_copy_url IS NOT NULL AND order_id<>?"
+      ).all(orderId) as {order_id:string;editing_copy_url:string}[];
+      if(others.some(row=>designId(row.editing_copy_url)===designId(copy)))
+        throw new Error("That Canva editing copy is already assigned to another order; create a new copy");
+    }
     const now=Date.now();
     if(action==="copy" && !copy)throw new Error("Paste this order's independent Canva editing copy URL");
     if(action==="editing" && !copy)throw new Error("Create and save a separate Canva editing copy first");
