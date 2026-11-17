@@ -118,11 +118,32 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
     const pdf=await pdfEvent;
     expect((await readFile(await pdf.path())).subarray(0,4).toString("hex")).toBe("25504446");
     await page.locator(".layer-card").screenshot({path:"test-results/studio-customer-edited.png"});
+    const staleShare = await page.request.patch("/api/orders/"+orderId+"/card",{
+      headers:{origin},data:{action:"publish",revision:0},
+    });
+    expect(staleShare.status()).toBe(409);
+    await page.getByRole("button",{name:"Publish shareable invitation"}).click();
+    const guestLink=page.getByRole("link",{name:"Open guest invitation"});
+    await expect(guestLink).toBeVisible();
+    const invitationPath=await guestLink.getAttribute("href");
+    expect(invitationPath).toMatch(new RegExp("^/i/[a-f0-9]{48}$"));
+    const shareText=await (await request.get(invitationPath!)).text();
+    expect(shareText).toContain("माधवी");
+    expect(shareText).toContain("With our blessings");
+    const guestToken=invitationPath!.split("/").pop()!;
+    expect((await request.get("/api/invites/"+guestToken+"/assets/"+randomUUID())).status()).toBe(404);
+    const rsvp=await request.post("/api/invites/"+guestToken+"/rsvp",{
+      headers:{origin},
+      data:{name:"Studio guest",attendance:"yes",guests:2,website:""},
+    });
+    expect(rsvp.status()).toBe(200);
     const unpublish=await admin.patch("/api/admin/cards/"+id,{
       data:{action:"unpublished",revision:2,sortOrder:0,featured:false},
     });
     expect(unpublish.status()).toBe(200);
     expect((await request.get("/preview/"+id)).status()).toBe(404);
+    // Admin unpublish must never revoke already purchased invitations.
+    expect((await request.get(invitationPath!)).status()).toBe(200);
     await page.goto("/editor/"+orderId);
     await expect(page.getByRole("textbox",{name:"Bride Name"})).toHaveValue("माधवी & Rahul");
     const second=await admin.patch("/api/admin/cards/"+id,{
@@ -137,6 +158,12 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
     expect(republish.status()).toBe(200);
     const pinnedAfter=await page.request.get("/api/orders/"+orderId+"/card");
     expect((await pinnedAfter.json()).document.name).toBe(name);
+    const guestAfterAdminChange=await (await request.get(invitationPath!)).text();
+    expect(guestAfterAdminChange).toContain("With our blessings");
+    expect(guestAfterAdminChange).not.toContain("Updated fixed line");
+    await page.getByRole("button",{name:"Disable public link"}).click();
+    await expect(page.getByRole("status")).toContainText("Sharing disabled");
+    expect((await request.get(invitationPath!)).status()).toBe(404);
     const nextOrder=await page.request.post("/api/orders",{
       headers:{origin},data:{productId:id,phone:"9876543210"},
     });
