@@ -15,6 +15,8 @@ async function admin(page: Page) {
   // Isolated Playwright SQLite fixture only; never accessible from application routes.
   const database = new DatabaseSync(process.env.DATABASE_PATH || path.join(process.cwd(), "data", "e2e.sqlite"));
   try {
+    // Other isolated e2e specs may have provisioned the reserved address earlier.
+    database.prepare("UPDATE users SET email='retired-'||id||'@example.test',role='customer' WHERE email='admin@example.test'").run();
     database.prepare("UPDATE users SET role='admin',email='admin@example.test' WHERE email=?").run(email);
   } finally { database.close(); }
 }
