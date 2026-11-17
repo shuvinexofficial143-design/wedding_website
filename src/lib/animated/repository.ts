@@ -36,10 +36,7 @@ export function parseYouTubeId(value: string) {
   if (!/^[a-zA-Z0-9_-]{11}$/.test(id)) throw new Error("Invalid YouTube video ID");
   return id;
 }
-export function youtubeEmbed(id: string) {
-  if (!/^[a-zA-Z0-9_-]{11}$/.test(id)) throw new Error("Invalid video ID");
-  return `https://www.youtube-nocookie.com/embed/${id}`;
-}
+export { youtubeEmbed } from "./youtube";
 export type PublicAnimated = {
   id: string; style_number: string; name: string; category: string;
   price_paise: number; thumbnail_url: string; youtube_video_id: string;
