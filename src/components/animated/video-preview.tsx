@@ -1,4 +1,4 @@
-import { youtubeEmbed } from "@/lib/animated/repository";
+import { youtubeEmbed } from "@/lib/animated/youtube";
 export function AnimatedVideoPreview({videoId,title}:{videoId:string;title:string}){
   return <div className="animated-video"><iframe title={title+" sample YouTube invitation"} src={youtubeEmbed(videoId)}
     loading="lazy" referrerPolicy="strict-origin-when-cross-origin"
