@@ -225,6 +225,11 @@ export function CustomerStudioEditor({
         </div>
         {publicToken && (
           <div className="notice">
+            <p>
+              Anyone who has this invitation link can view the published card,
+              including its photos. Later editor changes are private until you
+              select Update shared invitation. Disable the link to revoke access.
+            </p>
             <a href={`/i/${publicToken}`} target="_blank" rel="noopener noreferrer" className="text-link">
               Open guest invitation
             </a>
