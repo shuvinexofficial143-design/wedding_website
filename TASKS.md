@@ -81,5 +81,5 @@
 - [x] Token-scoped image access with a strict visible-asset allowlist and immediate revocation
 - [x] Customer consent message for publicly shared photos and copy-link UI
 - [x] Verified shared-guest baseline in 33/33 Chromium CI run 44036222561
-- [ ] Confirm latest real customer PNG upload, anonymous mobile guest preview, revoked asset route and screenshot CI at head
+- [x] Real customer PNG upload, anonymous 390px mobile guest screenshot, revoked image URL test: 33/33 Browser and 22 unit tests passed in run 44037053721
 - [ ] Verify hosted PostgreSQL + S3 upload and preview only after legitimate provider credentials/project access
