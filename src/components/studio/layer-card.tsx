@@ -3,7 +3,23 @@
 import { useState, useEffect } from "react";
 import type { CardDocument } from "@/lib/studio/schema";
 import { fitText, layerText, type TextLayout } from "@/lib/studio/layout";
-export function LayerCard({
+import { WebsiteView } from "../website/website-view";
+import { TimelinePlayer } from "../animation/timeline-player";
+export function LayerCard(props: Parameters<typeof StaticLayerCard>[0]) {
+  if (props.document.website)
+    return <WebsiteView template={props.document.website} />;
+  return props.document.animation ? (
+    <TimelinePlayer
+      timeline={props.document.animation}
+      width={props.document.width}
+    >
+      <StaticLayerCard {...props} />
+    </TimelinePlayer>
+  ) : (
+    <StaticLayerCard {...props} />
+  );
+}
+function StaticLayerCard({
   document: doc,
   values = {},
   fields,
@@ -20,6 +36,11 @@ export function LayerCard({
 }) {
   const [layouts, setLayouts] = useState<Record<string, TextLayout>>({});
   const [fontError, setFontError] = useState("");
+  const [assetError, setAssetError] = useState("");
+  const failedAsset = () => {
+    setAssetError("An invitation image could not load. Please retry.");
+    onIssues?.(["An invitation image could not load. Please retry."]);
+  };
   const [retry, setRetry] = useState(0);
   const signature = JSON.stringify({ doc, values, fields });
   useEffect(() => {
@@ -93,7 +114,9 @@ export function LayerCard({
   return (
     <div
       className="layer-card"
-      data-export-ready={textReady && !fontError ? "true" : "false"}
+      data-export-ready={
+        textReady && !fontError && !assetError ? "true" : "false"
+      }
       data-overflow={
         Object.values(layouts).some((l) => l.overflow) ? "true" : "false"
       }
@@ -108,6 +131,7 @@ export function LayerCard({
     >
       {doc.backgroundAssetId && (
         <img
+          onError={failedAsset}
           key={`${doc.backgroundAssetId}-${retry}`}
           src={`${assetBasePath}${doc.backgroundAssetId}`}
           alt="Invitation background"
@@ -170,10 +194,16 @@ export function LayerCard({
               ) : (
                 (values[l.id] || l.assetId) && (
                   <img
+                    onError={failedAsset}
                     key={retry}
-                    src={values[l.id]
-                      ? values[l.id].replace(/^\/api\/assets\//, assetBasePath)
-                      : `${assetBasePath}${l.assetId}`}
+                    src={
+                      values[l.id]
+                        ? values[l.id].replace(
+                            /^\/api\/assets\//,
+                            assetBasePath,
+                          )
+                        : `${assetBasePath}${l.assetId}`
+                    }
                     alt={l.label}
                     style={{
                       width: "100%",
@@ -186,10 +216,15 @@ export function LayerCard({
             </div>
           );
         })}
-      {fontError && (
+      {(fontError || assetError) && (
         <div className="layer-error" data-export-ignore="true" role="alert">
-          {fontError}
-          <button onClick={() => setRetry((n) => n + 1)}>
+          {fontError || assetError}
+          <button
+            onClick={() => {
+              setAssetError("");
+              setRetry((n) => n + 1);
+            }}
+          >
             Retry fonts/assets
           </button>
         </div>

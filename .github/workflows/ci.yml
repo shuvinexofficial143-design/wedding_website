@@ -34,5 +34,7 @@ jobs:
             test-results/premium-*.png
             test-results/art-*.png
             test-results/studio-*.png
+            test-results/motion-*.png
+            test-results/website-*.png
           if-no-files-found: ignore
           retention-days: 7

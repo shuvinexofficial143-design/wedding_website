@@ -12,6 +12,7 @@ import {
 import { clampLayer, collisionPairs } from "@/lib/studio/layout";
 import { uploadAsset } from "@/lib/upload-client";
 import { LayerCard } from "./layer-card";
+import { TimelineEditor } from "../animation/timeline-editor";
 export function Designer({
   initial,
   id: initialId,
@@ -278,6 +279,92 @@ export function Designer({
       <div className="studio-body">
         <aside className="studio-panel">
           <h2>Design</h2>
+          {doc.website && (
+            <fieldset>
+              <legend>Website template settings</legend>
+              <label>
+                Layout
+                <select
+                  value={doc.website.layout}
+                  onChange={(e) =>
+                    update({
+                      ...doc,
+                      website: {
+                        ...doc.website!,
+                        layout: e.target.value as NonNullable<
+                          CardDocument["website"]
+                        >["layout"],
+                      },
+                    })
+                  }
+                >
+                  {["heritage", "garden", "editorial", "celebration"].map(
+                    (v) => (
+                      <option key={v}>{v}</option>
+                    ),
+                  )}
+                </select>
+              </label>
+              {(["background", "ink", "accent"] as const).map((k) => (
+                <label key={k}>
+                  {k}
+                  <input
+                    type="color"
+                    value={doc.website![k]}
+                    onChange={(e) =>
+                      update({
+                        ...doc,
+                        website: { ...doc.website!, [k]: e.target.value },
+                      })
+                    }
+                  />
+                </label>
+              ))}
+              {(
+                ["story", "gallery", "events", "contact", "gifts"] as const
+              ).map((k) => (
+                <label key={k}>
+                  <input
+                    type="checkbox"
+                    checked={doc.website!.sections.includes(k)}
+                    onChange={(e) =>
+                      update({
+                        ...doc,
+                        website: {
+                          ...doc.website!,
+                          sections: e.target.checked
+                            ? [...doc.website!.sections, k]
+                            : doc.website!.sections.filter((s) => s !== k),
+                        },
+                      })
+                    }
+                  />
+                  {k}
+                </label>
+              ))}
+            </fieldset>
+          )}
+          {!doc.website&&<TimelineEditor
+            document={doc}
+            selected={selected}
+            onChange={update}
+          />}
+          <button
+            type="button"
+            onClick={() => {
+              setId(undefined);
+              setStyle("");
+              setRevision(1);
+              setHistory([]);
+              update({ ...doc, name: `${doc.name} copy` });
+              window.history.replaceState(null, "", "/admin/cards/new");
+              setMessage(
+                "Duplicate ready. Enter a unique style number and save.",
+              );
+            }}
+          >
+            Duplicate as new template
+          </button>
           {initial?.renderer === "legacy" && (
             <p className="notice">
               This existing card remains unchanged for customers. Saving here
@@ -467,7 +554,7 @@ export function Designer({
           ))}
         </aside>
         <div className="studio-workspace">
-          <div className="studio-add">
+          <div className="studio-add" style={{display:doc.website?"none":undefined}}>
             <button onClick={() => add("text", "partnerA")}>
               + Bride name
             </button>
@@ -919,6 +1006,14 @@ export function Designer({
                     update({
                       ...doc,
                       layers: doc.layers.filter((l) => l.id !== layer.id),
+                      animation: doc.animation
+                        ? {
+                            ...doc.animation,
+                            tracks: doc.animation.tracks.filter(
+                              (t) => t.layerId !== layer.id,
+                            ),
+                          }
+                        : undefined,
                     });
                     setSelected(null);
                   }}

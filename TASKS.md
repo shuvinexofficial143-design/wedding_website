@@ -83,3 +83,23 @@
 - [x] Verified shared-guest baseline in 33/33 Chromium CI run 44036222561
 - [x] Real customer PNG upload, anonymous 390px mobile guest screenshot, revoked image URL test: 33/33 Browser and 22 unit tests passed in run 44037053721
 - [ ] Verify hosted PostgreSQL + S3 upload and preview only after legitimate provider credentials/project access
+
+## Animated Wedding Builder (separate branch)
+- [x] Audit latest Studio baseline and isolate new feature branch.
+- [x] Versioned timeline validation and shared browser playback implementation.
+- [ ] Six original animated invitation compositions.
+- [ ] Admin timeline editing, duplication and version workflow.
+- [ ] Paid animated customer/guest integration regression.
+- [ ] Four wedding website layouts and structured editor with explicit eligibility.
+- [ ] Event RSVP, duplicate handling, private CSV export.
+- [ ] Full browser/security/performance checks and screenshots.
+- [ ] Verified preview deployment; no main merge.
+
+### Animated builder implemented checkpoints
+- [x] Six original animated compositions with paid personalised guest sharing.
+- [x] Admin timeline duration/delay/easing/preset controls and template duplication.
+- [x] 39-test Chromium regression at 5b7a0ae; actual six animation mobile flows passed.
+- [x] Four website layouts and structured self-service editor implementation.
+- [x] Event RSVP metadata/duplicate handling and private CSV implementation.
+- [ ] Combined final-head browser tests, website visual QA and authenticated provider tests.
+- [ ] Authorised additive v3 migration on a named preview database; never production.

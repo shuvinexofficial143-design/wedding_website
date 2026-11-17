@@ -20,7 +20,7 @@ test("Preview migration target refuses production, other branches, mismatched da
     {DATABASE_URL_UNPOOLED:"postgresql://reader:test@"+endpoint+"/production"},
   ]) assert.throws(()=>assertPreviewMigrationTarget({...previewEnv,...bad}));
 });
-test("the exact production migration schema creates 16 Preview tables, is idempotent and preserves records",async()=>{
+test("the exact production migration schema creates 17 Preview tables, is idempotent and preserves records",async()=>{
   const pg=new PGlite();
   const client={query:async(sql:string,params?:unknown[])=>{
     const r=await pg.query<Record<string,unknown>>(sql,params);
@@ -29,7 +29,7 @@ test("the exact production migration schema creates 16 Preview tables, is idempo
   try {
     const one=await migrateFreshPreviewSchema(client,{skipLockForTest:true});
     assert.equal(one.created,true);
-    assert.equal(one.tableCount,16);
+    assert.equal(one.tableCount,17);
     assert.deepEqual(Object.keys(one.counts).sort(),[...EXPECTED_TABLES].sort());
     assert.equal(one.counts.schema_migrations,1);
     assert.equal(one.counts.users,0);

@@ -69,7 +69,7 @@ export async function PATCH(request: Request, { params }: Context) {
         if (input.revision === undefined) throw new Error("Missing edit revision");
         const snapshot = await purchasedVersion(id);
         if (!snapshot || snapshot.content.renderer !== "layers" ||
-          snapshot.content.category !== "cards")
+          !["cards","animated"].includes(snapshot.content.category))
           throw new Error("This purchased card cannot be shared");
         const row = await db().prepare(
           "SELECT values_json,revision FROM customer_card_edits WHERE order_id=?",

@@ -149,3 +149,37 @@
 - Regression checks added for draft exclusion, sandbox payment gate, publication revision conflicts, anonymous guest viewing, RSVP, admin unpublish preserving purchased cards, republish not rewriting existing guest snapshot, and revoked token behavior. A further end-to-end test uploads a real customer PNG via the isolated local asset adapter and verifies anonymous mobile photo visibility and revoked-media HTTP 404.
 - Verified intermediate CI [run 44036222561](https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/44036222561): **33/33 Chromium, 20 unit tests, ESLint, production build passed**, including version-locked guest publishing/revocation. Verified final feature CI [run 44037053721](https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/44037053721) on commit `3dd8350a138fb00d6a6069cb687886b9479857d0`: **33/33 Chromium Browser Tests, 22 unit/integration tests, ESLint and Next.js production build PASS**, including real purchaser PNG upload, anonymous mobile guest render and revoked guest-media access. Earlier runs are retained as regression history.
 - The connected Vercel account still does not expose the wedding project; hosted preview, network PostgreSQL, private S3/CORS and actual merchant sandbox payment remain unverified. No customer data was reset, migrated or removed.
+
+## Animated Wedding Builder — milestones 1–2 (17 November 2026)
+- Latest Studio baseline audited at c9018c45c742f751e6ca38623404eb1c9fca4310; new isolated feature/animated-wedding-builder branch created. Stale local edits were not applied over newer Studio work.
+- Implemented versioned, bounded timeline schema, numeric keyframes, nine motion presets, synchronized sequential/parallel WAAPI tracks, Play/Pause/Replay, reduced-motion fallback and unmount cleanup. Existing layered renderer and immutable template documents reused; old cards have no timeline and remain unchanged.
+- No hosted database migration, production merge, payment-mode change or resource creation performed.
+- Tests/results recorded at checkpoint below. Current commit SHA: git log -1 on feature/animated-wedding-builder (predecessor c9018c45).
+- Currently working on: six distinct original compositions and admin timeline controls.
+- Pending: website templates/editor, advanced RSVP, full browser/visual QA and verified preview deployment.
+- Known limitations: motion export/MP4 is not implemented; no MP4 claim or button added. Timeline browser verification pending.
+- Exact next step: add seeded original animated documents and browser play/pause/reduced-motion tests.
+
+- Milestone 1–2 validation: ESLint PASS, 29 unit/integration tests PASS, Next production build PASS; browser playback not yet run.
+
+### Animated compositions / admin controls checkpoint
+- Added six original geometric compositions with distinct palace-door, petal, envelope, mandap/diya, editorial and Nikah motion sequences. Seeded as additive immutable products motion-1 through motion-6; old 22 products remain intact.
+- Admin can configure layer presets, delay, duration, easing, duplicate templates, save versions and publish through existing protected APIs. Purchased animated invitations reuse the paid editor and token-scoped guest sharing. No MP4 export offered.
+- Local validation: lint PASS, 30 unit/integration tests PASS, production build PASS.
+- Local Playwright attempted: all six launches blocked before page execution by Chromium socket permission error. These are NOT passed browser tests. GitHub CI will run actual flows and screenshots.
+- Latest verified predecessor a43c6e090d180ac729dd1a1cd46df0c8ed8c2197. Next: CI/browser fixes, structured wedding website model and four layouts. No hosted migrations.
+
+### Wedding website and event RSVP implementation checkpoint
+- Added four original website layouts (heritage, garden, editorial, celebration), structured events/story/gallery/contact/gift data, countdown and Google Maps links.
+- Separate self-service product eligibility is pinned inside the purchased template. Existing manually fulfilled products remain unchanged. Customer and authorised admin website saves use the existing database/storage with ownership checks, optimistic revisions and immutable guest publications.
+- Added photo ownership validation, guest asset allowlists, publish/revoke, autosave and responsive editor. Added event-specific RSVP metadata, duplicate update handling, notes, private owner/admin CSV export and formula-injection escaping.
+- Additive schema version 3 introduces only rsvp_details. Migration file prepared; NOT executed against hosted Neon. Previously approved exact-branch schema v2 instructions are not permission to run this new migration.
+- Validation: 32 unit/integration tests, lint and build passed. Website browser suite added and pending CI.
+- Animation checkpoint 5b7a0ae verified in GitHub run 44065498717: 39/39 browser tests + 30 unit tests + lint/build PASS, including six mobile motion previews, Play/Pause/Replay and reduced motion.
+- Current next step: full combined CI, admin motion/browser checks, screenshot review, hosted preview verification. No main merge or live payments.
+
+### Visual/security hardening in progress
+- Reviewed real GitHub CI mobile screenshots for palace, envelope, rose and Nikah. Fixed envelope text contrast, retained roses in reduced-motion final state, and removed support-pill overlap on motion/website previews. Applied requested Suhani Wedding Studio branding.
+- Added failed-image feedback/retry and export-readiness blocking, animation replay completion handling, admin timeline draft/reload/duplicate regression and paid animated guest personalisation regression.
+- Connected Vercel personal scope and Avanti Verse team both return no matching wedding project. Preview deployment cannot currently be verified through this connection. No new project or paid resource created.
+- Combined website browser CI is still running; do not treat prior 39-test green run as final website acceptance.

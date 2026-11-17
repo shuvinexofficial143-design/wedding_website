@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { websiteTemplateSchema } from "../website/schema";
+import { timelineSchema } from "../animation/timeline";
 export const fontFamilies = [
   "Georgia",
   "Noto Sans Variable",
@@ -65,11 +67,32 @@ export const documentSchema = z
     backgroundAssetId: z.string().uuid().nullable().default(null),
     thumbnailAssetId: z.string().uuid().nullable().default(null),
     layers: z.array(layerSchema).max(80),
+    animation: timelineSchema.optional(),
+    website: websiteTemplateSchema.optional(),
   })
   .strict()
   .superRefine((d, ctx) => {
     if (d.safeInset * 2 >= Math.min(d.width, d.height))
       ctx.addIssue({ code: "custom", message: "Safe area is too large" });
+    if (d.website && (d.category !== "websites" || d.animation))
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "Website configuration requires a website product without animation",
+      });
+    if (d.animation) {
+      if (d.category !== "animated")
+        ctx.addIssue({
+          code: "custom",
+          message: "Timeline requires animated category",
+        });
+      for (const track of d.animation.tracks)
+        if (!d.layers.some((l) => l.id === track.layerId))
+          ctx.addIssue({
+            code: "custom",
+            message: "Timeline targets a missing layer",
+          });
+    }
     const ids = new Set<string>();
     for (const l of d.layers) {
       if (ids.has(l.id))

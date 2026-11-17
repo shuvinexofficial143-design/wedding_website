@@ -1,3 +1,4 @@
+import {websitePublicationSchema,websiteAssets} from "@/lib/website/schema";
 import { db, type Order } from "@/lib/db";
 import { purchasedVersion } from "@/lib/studio/repository";
 import { studioPublicationSchema, isPublishedStudioAsset } from "@/lib/studio/publication";
@@ -23,12 +24,10 @@ export async function GET(_request: Request, {
   try { raw = JSON.parse(order.published); }
   catch { return new Response("Not found", { status: 404 }); }
   const parsed = studioPublicationSchema.safeParse(raw);
-  if (!parsed.success) return new Response("Not found", { status: 404 });
-  const pinned = await purchasedVersion(order.id);
-  if (!pinned || pinned.content.renderer !== "layers" ||
-      pinned.version !== parsed.data.version ||
-      !isPublishedStudioAsset(pinned.content, parsed.data.values, id))
-    return new Response("Not found", { status: 404 });
+  const site=websitePublicationSchema.safeParse(raw);
+  const pinned=await purchasedVersion(order.id);
+  const allowed=pinned && ((parsed.success && pinned.content.renderer==='layers' && pinned.version===parsed.data.version && isPublishedStudioAsset(pinned.content,parsed.data.values,id)) || (site.success && pinned.content.website && pinned.version===site.data.version && websiteAssets({...site.data.data,sections:site.data.data.sections.filter(s=>pinned.content.website!.sections.includes(s))}).includes(id)));
+  if(!allowed)return new Response('Not found',{status:404});
   const asset = await assetById(id);
   if (!asset || asset.status !== "ready" ||
       !["image/png","image/jpeg","image/webp"].includes(asset.mime))
