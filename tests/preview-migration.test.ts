@@ -55,6 +55,25 @@ test("partial or unknown public schema aborts with zero DDL and preserves existi
     assert.equal(r.rows.length,1);
   } finally {await pg.close();}
 });
+test("a mid-migration DDL error rolls back every table created earlier in the transaction",async()=>{
+  const pg=new PGlite();
+  const connection={query:async(sql:string,params?:unknown[])=>{
+    if (/^CREATE TABLE IF NOT EXISTS assets\\b/i.test(sql))
+      throw new Error("simulated migration failure");
+    const r=await pg.query<Record<string,unknown>>(sql,params);
+    return {rows:r.rows};
+  }};
+  try {
+    await assert.rejects(
+      migrateFreshPreviewSchema(connection,{skipLockForTest:true}),
+      /simulated migration failure/,
+    );
+    const result=await pg.query<{n:number}>(
+      "SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'",
+    );
+    assert.equal(result.rows[0].n,0);
+  } finally {await pg.close();}
+});
 test("approved migration has no destructive schema statements",()=>{
   assert.doesNotMatch(schemaSql("postgres"),/\b(DROP|TRUNCATE|DELETE|UPDATE)\b/i);
 });
