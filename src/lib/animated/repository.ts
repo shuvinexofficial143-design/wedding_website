@@ -9,7 +9,7 @@ const httpsUrl = z.string().trim().max(1200).url().refine(value => {
 export const canvaEditUrl = httpsUrl.refine(value => {
   const url = new URL(value);
   return ["canva.com","www.canva.com"].includes(url.hostname.toLowerCase()) &&
-    /^\/design\/[a-zA-Z0-9_-]+\//.test(url.pathname);
+    /^\/design\/[a-zA-Z0-9_-]+\/(?:[a-zA-Z0-9_-]+\/)?edit\/?$/.test(url.pathname);
 }, "Use a private Canva design link");
 export const animatedInput = z.object({
   styleNumber: z.string().trim().regex(/^[A-Z0-9][A-Z0-9-]{2,39}$/),
@@ -130,8 +130,13 @@ export async function changeAnimatedJob(actor:User,orderId:string,revision:numbe
     const job=await privateAnimatedJob(orderId);
     if(!job || job.payment_status!=="paid")throw new Error("Verified paid animated order not found");
     if(job.revision!==revision)throw new AnimatedConflict("Order updated elsewhere. Reload.");
+    if(job.delivered_at)throw new Error("This order was already delivered and is locked");
+    if(action==="editing" && job.started_at)throw new Error("Editing already started");
     const copy=rawCopy===undefined?job.editing_copy_url:canvaEditUrl.parse(rawCopy);
-    if(copy && copy===job.original_canva_url)
+    // Canva URLs can differ only by tracking query even when they refer to
+    // the same design: compare canonical design IDs, not URL strings.
+    const designId=(url:string)=>new URL(url).pathname.split("/")[2];
+    if(copy && designId(copy)===designId(job.original_canva_url))
       throw new Error("Create an independent Canva copy for this order; do not edit the original");
     const now=Date.now();
     if(action==="copy" && !copy)throw new Error("Paste this order's independent Canva editing copy URL");
