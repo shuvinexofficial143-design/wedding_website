@@ -93,6 +93,17 @@ test("admin designer: touch drag and mobile controls", async ({page}) => {
   await cdp.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[{x:x+24,y:y+15}]});
   await cdp.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
   await expect.poll(() => readLayerNumber(page,"x")).toBeGreaterThan(start);
+  const oldWidth = await readLayerNumber(page,"width");
+  const grip = page.locator(".studio-resize");
+  await grip.scrollIntoViewIfNeeded();
+  const handleBox = await grip.boundingBox();
+  expect(handleBox).toBeTruthy();
+  const gx = handleBox!.x + handleBox!.width / 2;
+  const gy = handleBox!.y + handleBox!.height / 2;
+  await cdp.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[{x:gx,y:gy}]});
+  await cdp.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[{x:gx+24,y:gy+22}]});
+  await cdp.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
+  await expect.poll(() => readLayerNumber(page,"width")).toBeGreaterThan(oldWidth);
   await expect(page.getByRole("button",{name:"Save design"})).toBeVisible();
   await page.screenshot({path:"test-results/studio-designer-mobile.png",fullPage:true});
 });
