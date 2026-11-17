@@ -104,3 +104,10 @@
 - Added immutable object keys, owner-scoped duplicate detection, guarded asset links, tombstone-first cleanup and quarantine lifecycle guidance. Local adapter is test-only and blocked on Vercel/production.
 - Validation: lint PASS, 12 tests PASS (including malicious SVG/disguised image rejection), production build PASS. Real S3 provider/CORS not tested without credentials.
 - Verified predecessor: 48ead2d8fc3298e27302536afeefb07a70158757. Next: dynamic template version repository, seed all legacy cards, version-pinned purchases.
+
+### Advanced studio milestone 3
+- Dynamic template repository, create/save/publish/unpublish/archive APIs, immutable template-version history and explicit revision conflicts implemented.
+- Legacy seed copies ALL existing products into preserved renderer snapshots and backfills purchased version references without rewriting source card artwork or customer order details.
+- Tests: 14 unit/integration tests PASS, lint/build PASS. Includes all-product preservation, concurrent save conflict, old-version retention after unpublish and noneditable-layer rejection.
+- Initial async-database checkpoint passed existing full GitHub browser regression run 44018931927 (29 tests).
+- Latest verified predecessor: be3e1aa190ffeaa1fe3ac9602737d2b4674763c4. Next: visual drag/resize studio and shared Unicode rendering engine; public catalog/customer wiring follows.

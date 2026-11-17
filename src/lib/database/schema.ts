@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION=1;
+export const SCHEMA_VERSION=2;
 export function schemaSql(dialect:'postgres'|'sqlite') {const serial=dialect==='postgres'?'BIGSERIAL PRIMARY KEY':'INTEGER PRIMARY KEY AUTOINCREMENT';return `
 CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY,applied_at BIGINT NOT NULL);
 CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY,email TEXT UNIQUE NOT NULL,password TEXT NOT NULL,created BIGINT NOT NULL,role TEXT NOT NULL DEFAULT 'customer');
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS orders(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFE
 CREATE UNIQUE INDEX IF NOT EXISTS one_pending_product ON orders(user_id,product_id) WHERE status='pending';
 CREATE TABLE IF NOT EXISTS audit(id ${serial},admin_id TEXT NOT NULL,order_id TEXT NOT NULL,action TEXT NOT NULL,created BIGINT NOT NULL);
 CREATE TABLE IF NOT EXISTS rsvps(id TEXT PRIMARY KEY,order_id TEXT REFERENCES orders(id),name TEXT NOT NULL,attendance TEXT NOT NULL,guests INTEGER NOT NULL,created BIGINT NOT NULL);
-CREATE TABLE IF NOT EXISTS card_templates(id TEXT PRIMARY KEY,style_number TEXT UNIQUE NOT NULL,status TEXT NOT NULL CHECK(status IN('draft','published','unpublished','archived')),head_version INTEGER NOT NULL DEFAULT 1,published_version INTEGER,sort_order INTEGER NOT NULL DEFAULT 0,featured INTEGER NOT NULL DEFAULT 0,created_by TEXT REFERENCES users(id),created BIGINT NOT NULL,updated BIGINT NOT NULL);
+CREATE TABLE IF NOT EXISTS card_templates(id TEXT PRIMARY KEY,style_number TEXT UNIQUE NOT NULL,status TEXT NOT NULL CHECK(status IN('draft','published','unpublished','archived')),head_version INTEGER NOT NULL DEFAULT 1,revision INTEGER NOT NULL DEFAULT 1,published_version INTEGER,sort_order INTEGER NOT NULL DEFAULT 0,featured INTEGER NOT NULL DEFAULT 0,created_by TEXT REFERENCES users(id),created BIGINT NOT NULL,updated BIGINT NOT NULL);
 CREATE TABLE IF NOT EXISTS template_versions(template_id TEXT NOT NULL REFERENCES card_templates(id),version INTEGER NOT NULL,document TEXT NOT NULL,created_by TEXT REFERENCES users(id),created BIGINT NOT NULL,PRIMARY KEY(template_id,version));
 CREATE TABLE IF NOT EXISTS purchased_products(order_id TEXT PRIMARY KEY REFERENCES orders(id),template_id TEXT NOT NULL,template_version INTEGER NOT NULL,created BIGINT NOT NULL,FOREIGN KEY(template_id,template_version) REFERENCES template_versions(template_id,version));
 CREATE TABLE IF NOT EXISTS customer_card_edits(order_id TEXT PRIMARY KEY REFERENCES orders(id),values_json TEXT NOT NULL DEFAULT '{}',revision INTEGER NOT NULL DEFAULT 0,updated BIGINT NOT NULL);

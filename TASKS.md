@@ -44,7 +44,7 @@
 ## Advanced studio milestones
 - [x] 1: Latest-main audit, PostgreSQL schema/adapter, safe import/dry-run/rollback tests
 - [x] 2: Durable storage and secure asset lifecycle (provider-neutral implementation; hosted acceptance pending)
-- [ ] 3: Dynamic template database and legacy migration
+- [x] 3: Dynamic template database and legacy migration
 - [ ] 4: Admin visual layer editor
 - [ ] 5: Unicode smart layout and collision tests
 - [ ] 6: Paid customer editor integration
