@@ -11,7 +11,9 @@
     "test:e2e": "playwright test",
     "db:migrate": "node --import tsx scripts/db-migrate.ts",
     "db:import": "node --import tsx scripts/import-sqlite.ts",
-    "deploy:check": "node --import tsx scripts/check-deployment.ts"
+    "deploy:check": "node --import tsx scripts/check-deployment.ts",
+    "db:migrate:preview": "node --import tsx scripts/migrate-preview.ts",
+    "db:verify:preview": "node --import tsx scripts/verify-preview-db.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1170.0",
