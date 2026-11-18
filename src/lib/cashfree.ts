@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { db, type Order } from "./db";
+import { db, transaction, type Order } from "./db";
+import { markAnimatedPaid } from "./animated/repository";
 // Production endpoint deliberately unavailable until explicit owner approval and launch review.
 export function paymentReady() {
   return (
@@ -69,9 +70,9 @@ export async function createPayment(order: Order) {
   });
   if (data.order_id !== order.id || typeof data.payment_session_id !== "string")
     throw new Error("Invalid provider response.");
-  db()
+  (await db()
     .prepare("UPDATE orders SET payment_session=? WHERE id=?")
-    .run(data.payment_session_id, order.id);
+    .run(data.payment_session_id, order.id));
   return data.payment_session_id as string;
 }
 export type ProviderOrder = {
@@ -109,7 +110,10 @@ export function matchingPayment(
   );
 }
 export async function verifyPayment(order: Order) {
-  if (order.status === "paid") return { paid: true, state: "PAID" };
+  if (order.status === "paid") {
+    await markAnimatedPaid(order.id);
+    return { paid: true, state: "PAID" };
+  }
   const remote = (await cashfree(
     `/orders/${encodeURIComponent(order.id)}`,
   )) as ProviderOrder;
@@ -119,19 +123,20 @@ export async function verifyPayment(order: Order) {
   if (!Array.isArray(payments)) throw new Error("Invalid payment response");
   const payment = matchingPayment(order, remote, payments);
   if (payment) {
-    db()
-      .prepare(
-        "UPDATE orders SET status='paid',payment_id=? WHERE id=? AND status='pending'",
-      )
-      .run(String(payment.cf_payment_id), order.id);
+    await transaction(async () => {
+      await db()
+        .prepare("UPDATE orders SET status='paid',payment_id=? WHERE id=? AND status='pending'")
+        .run(String(payment.cf_payment_id), order.id);
+      await markAnimatedPaid(order.id);
+    });
     return { paid: true, state: "PAID" };
   }
   if (["EXPIRED", "TERMINATED"].includes(remote.order_status))
-    db()
+    (await db()
       .prepare(
         "UPDATE orders SET status='expired' WHERE id=? AND status='pending'",
       )
-      .run(order.id);
+      .run(order.id));
   return {
     paid: false,
     state:

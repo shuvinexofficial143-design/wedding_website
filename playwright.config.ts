@@ -3,6 +3,7 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests/browser",
   workers: 1,
+  reporter: "list",
   use: {
     baseURL: "http://localhost:3000",
     headless: true,
@@ -23,6 +24,8 @@ export default defineConfig({
         process.env.DATABASE_PATH || `${process.cwd()}/data/e2e.sqlite`,
       NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
       ADMIN_EMAILS: "admin@example.test",
+      ASSET_STORAGE: "local",
+      ASSET_LOCAL_DIR: `${process.cwd()}/data/e2e-assets`,
     },
   },
   timeout: 60000,

@@ -1,3 +1,32 @@
+# Premium redesign — 18 November 2026
+- [x] Inspect supplied visual reference and latest integration code.
+- [x] Original hero asset, brand mark, complete homepage and real product showcases.
+- [x] Shared catalog/product cards, responsive navigation and customer/admin surface polish.
+- [x] Loading/fallback player states and mobile/reduced-motion styles.
+- [x] Photographic login/register, customer order summary and grouped admin management shortcuts.
+- [x] Diagnose six selector failures from run 44301009659; preserve all assertions and rerun.
+- [x] Inspect real desktop/login screenshots; isolate artwork typography and improve banner contrast.
+- [x] Pass 42 unit + 55 browser tests on 6ef20ed; inspect full desktop/mobile screenshots.
+- [x] Review 360px catalog and correct legacy thumbnail name scaling.
+- [x] Guard website editor inputs until client readiness after an autosave race surfaced in CI.
+- [x] Verify final CTA contrast and regenerated viewport screenshots on ff6a3ec.
+- [x] Full regression: ff6a3ec, 42 unit + 55 browser/API tests; lint, TypeScript/build pass; visual screenshot review.
+- [ ] Hosted preview verification (external project/configuration access required).
+
+# Final integration — 18 November 2026
+
+- [x] Audit both feature branch heads and resolve merge conflicts preserving functionality.
+- [x] Merge PostgreSQL schema inventories into v4 and pass 37 local tests, lint and build.
+- [x] Thumbnail computer upload and inline video preview implemented; browser acceptance pending.
+- [x] Private durable final MP4 upload, progress and owned download implemented; hosted S3 acceptance pending.
+- [x] Expanded API, storage and both-v3 migration regression tests; fixes for browser accessibility and image retry.
+- [x] Confirm application commit 17fa33a: 42/42 unit and 49/49 browser/API tests; lint/build passed (run 44286140320).
+- [ ] Safe preview database backup, migration and verification (never production main).
+- [ ] Verified Vercel preview and real Cashfree sandbox test.
+- [ ] Production merge requires explicit owner approval.
+
+Historical checklist follows:
+
 # Implementation checklist
 
 - [x] Verify existing repository and branches
@@ -40,3 +69,66 @@
 - [x] Create read-only protected admin template registry at /admin/cards
 - [ ] Verify latest production Vercel deployment and configure durable order storage before taking real payments
 - [ ] Extend admin studio to durable secured create/publish/unpublish workflow after persistent data infrastructure is agreed
+
+## Advanced studio milestones
+- [x] 1: Latest-main audit, PostgreSQL schema/adapter, safe import/dry-run/rollback tests
+- [x] 2: Durable storage and secure asset lifecycle (provider-neutral implementation; hosted acceptance pending)
+- [x] 3: Dynamic template database and legacy migration
+- [x] 4: Admin visual layer editor (browser mouse/touch, undo/redo, save/reload)
+- [x] 5: Unicode smart layout and collision tests (Hindi/English preview verified)
+- [x] 6: Paid customer editor integration (pinned snapshot, server layer allowlist and private photo ownership)
+- [x] 7: Publishing and immutable purchased version pinning (atomic purchase snapshot, unpublish-safe)
+- [x] 8: PNG/PDF export implementation and local browser magic-byte tests (hosted visual acceptance pending)
+- [x] 9: Local browser security and regression 33/33, run 44032663514 (final-head checks ongoing)
+- [ ] 10: Verified preview deployment and final documentation (provider access required)
+
+## Advanced studio continuation
+- [x] PostgreSQL adapter/schema and tested dry-run SQLite importer.
+- [x] Private durable storage adapter and validated upload pipeline.
+- [x] Immutable database templates and legacy registry preservation.
+- [x] Admin visual editor and Unicode layout engine implementation.
+- [x] Browser verification of new designer and touch controls (32/32 Chromium run 44031865089).
+- [x] Dynamic public catalog, order-time version pinning, customer layer editing (33/33 Chromium run 44032663514).
+- [x] Local PNG/PDF export, role/ownership and cross-version regression; hosted S3/PG acceptance still pending.
+- [ ] Hosted provider integration and verified preview deployment (credentials/project access required).
+
+### Pending hosted acceptance (not simulated)
+- [ ] Link the **correct** wedding Vercel project; verify a non-production feature-branch preview URL and deployment commit.
+- [ ] Provision and verify network PostgreSQL and private S3 credentials, bucket CORS, object lifecycle and backups without disclosing secrets.
+- [ ] Run full migration dry run against actual owned source backup, then user-approved cutover with rollback documentation.
+- [ ] Perform actual sandbox merchant checkout and private image upload from a hosted preview; no live Cashfree.
+- [ ] Repeat mobile desktop screenshot comparison, Hindi font and PNG/PDF visual inspection on the hosted preview.
+
+- [x] Additional mobile touch **resize**, not only drag — tested in passing Chromium run 44033583175
+- [x] Downloaded and inspected actual Studio desktop/mobile/customer screenshots from CI artifact 14306531197
+- [x] Scoped support floating pill off the Studio/Editor pages; regression assertion added
+- [ ] Verify final screenshot/UI hardening commit on CI and compare browser preview to PNG/PDF on an accessible Vercel preview
+
+### Dynamic public invitation share flow
+- [x] Publish/Unpublish actions for paid dynamic cards, with immutable purchased version and optimistic revision guard
+- [x] Public guest invitation route for newly designed cards, with RSVP and no requirement to log in
+- [x] Token-scoped image access with a strict visible-asset allowlist and immediate revocation
+- [x] Customer consent message for publicly shared photos and copy-link UI
+- [x] Verified shared-guest baseline in 33/33 Chromium CI run 44036222561
+- [x] Real customer PNG upload, anonymous 390px mobile guest screenshot, revoked image URL test: 33/33 Browser and 22 unit tests passed in run 44037053721
+- [ ] Verify hosted PostgreSQL + S3 upload and preview only after legitimate provider credentials/project access
+
+## Animated Wedding Builder (separate branch)
+- [x] Audit latest Studio baseline and isolate new feature branch.
+- [x] Versioned timeline validation and shared browser playback implementation.
+- [ ] Six original animated invitation compositions.
+- [ ] Admin timeline editing, duplication and version workflow.
+- [ ] Paid animated customer/guest integration regression.
+- [ ] Four wedding website layouts and structured editor with explicit eligibility.
+- [ ] Event RSVP, duplicate handling, private CSV export.
+- [ ] Full browser/security/performance checks and screenshots.
+- [ ] Verified preview deployment; no main merge.
+
+### Animated builder implemented checkpoints
+- [x] Six original animated compositions with paid personalised guest sharing.
+- [x] Admin timeline duration/delay/easing/preset controls and template duplication.
+- [x] 39-test Chromium regression at 5b7a0ae; actual six animation mobile flows passed.
+- [x] Four website layouts and structured self-service editor implementation.
+- [x] Event RSVP metadata/duplicate handling and private CSV implementation.
+- [ ] Combined final-head browser tests, website visual QA and authenticated provider tests.
+- [ ] Authorised additive v3 migration on a named preview database; never production.

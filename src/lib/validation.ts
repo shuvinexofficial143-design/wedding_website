@@ -51,8 +51,5 @@ export const defaultDetails: Details = {
   maps: "",
   gallery: [],
 };
-export async function readJson(request: Request, max = 8_000_000) {
-  const body = await request.text();
-  if (Buffer.byteLength(body) > max) throw new Error("Request is too large");
-  return JSON.parse(body);
-}
+export async function readBody(req:Request,max:number){if(Number(req.headers.get('content-length')||0)>max)throw new Error('Request too large');const reader=req.body?.getReader();if(!reader)return Buffer.alloc(0);const chunks:Uint8Array[]=[];let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>max){await reader.cancel();throw new Error('Request too large');}chunks.push(value);}}finally{reader.releaseLock();}return Buffer.concat(chunks);}
+export async function readJson(request:Request,max=8_000_000){return JSON.parse((await readBody(request,max)).toString('utf8'));}

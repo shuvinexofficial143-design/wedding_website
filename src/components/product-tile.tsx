@@ -1,0 +1,100 @@
+import Link from "next/link";
+import { Invite } from "./invite";
+import { LayerCard } from "./studio/layer-card";
+import type { catalogProducts } from "@/lib/studio/repository";
+import type { PublicAnimated } from "@/lib/animated/repository";
+import { SafeThumbnail } from "./safe-thumbnail";
+type Product = Awaited<ReturnType<typeof catalogProducts>>[number];
+export function ProductTile({ product: p }: { product: Product }) {
+  return (
+    <article className="product luxury-product">
+      <div className="product-art">
+        <span className="design-badge">
+          {p.category === "animated"
+            ? "◉ Animated"
+            : p.category === "websites"
+              ? "↗ Website"
+              : p.category === "videos"
+                ? "▶ Studio video"
+                : "✧ Digital card"}
+        </span>
+        <div className="tile-artwork">
+          {p.document.website ? (
+            <div
+              className={
+                "catalog-site-cover device-" + p.document.website.layout
+              }
+              style={{
+                background: p.document.website.background,
+                color: p.document.website.ink,
+              }}
+            >
+              <small>OUR STORY · EVENTS · RSVP</small>
+              <span>❦</span>
+              <h4>
+                Ananya <i>&</i> Aarav
+              </h4>
+              <p>A celebration of our forever</p>
+              <small>ILLUSTRATIVE WEBSITE COVER</small>
+            </div>
+          ) : p.document.renderer === "layers" ? (
+            <LayerCard document={p.document} />
+          ) : (
+            <Invite theme={p.theme} />
+          )}
+        </div>
+        <Link
+          className="preview-chip"
+          href={"/preview/" + p.id}
+          aria-label={"Preview " + p.name}
+        >
+          View Preview ↗
+        </Link>
+      </div>
+      <div className="product-meta">
+        <div>
+          <small>{p.tag}</small>
+          <h3>
+            <Link href={"/products/" + p.id}>{p.name}</Link>
+          </h3>
+        </div>
+        <strong>₹{p.price.toLocaleString("en-IN")}</strong>
+      </div>
+      <div className="tile-actions">
+        <Link href={"/products/" + p.id}>Design details</Link>
+        <Link className="button" href={"/checkout/" + p.id}>
+          Order Now ↗
+        </Link>
+      </div>
+    </article>
+  );
+}
+export function VideoTile({ product: p }: { product: PublicAnimated }) {
+  return (
+    <article className="product luxury-product">
+      <Link href={"/products/" + p.id} className="video-cover">
+        <SafeThumbnail
+          src={p.thumbnail_url}
+          alt={p.name + " invitation preview"}
+        />
+        <span className="play-disc" aria-hidden="true">
+          ▶
+        </span>
+        <span className="video-caption">WATCH SAMPLE · YOUTUBE</span>
+      </Link>
+      <div className="product-meta">
+        <div>
+          <small>{p.category} · Animated video</small>
+          <h3>{p.name}</h3>
+        </div>
+        <strong>₹{p.price_paise / 100}</strong>
+      </div>
+      <div className="tile-actions">
+        <Link href={"/preview/" + p.id}>View Preview</Link>
+        <Link className="button" href={"/checkout/" + p.id}>
+          Order Now ↗
+        </Link>
+      </div>
+    </article>
+  );
+}

@@ -7,7 +7,7 @@ test("desktop and mobile catalog, navigation and layout", async ({ page }) => {
     await page.setViewportSize({ width, height: 950 });
     await page.goto("/");
     await expect(
-      page.getByRole("heading", { name: /Your love story/ }),
+      page.getByRole("heading", { name: /For your forever/ }),
     ).toBeVisible();
     expect(
       await page.evaluate(
@@ -17,13 +17,14 @@ test("desktop and mobile catalog, navigation and layout", async ({ page }) => {
     await page.screenshot({
       path: `test-results/home-${width}.png`,
       fullPage: true,
+      animations: "disabled",
     });
-    await page.getByRole("link", { name: /Find your invitation/ }).click();
+    await page.getByRole("link", { name: /Browse Designs/ }).click();
     await expect(
       page.getByRole("heading", { name: /A design for/ }),
     ).toBeVisible();
     await page
-      .getByRole("link", { name: "Animated invitations", exact: true })
+      .locator(".filters").getByRole("link", { name: "Animated invitations", exact: true })
       .click();
     await expect(
       page.getByRole("heading", { name: "Moonlit Romance" }),
@@ -31,7 +32,7 @@ test("desktop and mobile catalog, navigation and layout", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Gulmohar" })).toHaveCount(
       0,
     );
-    await page.getByRole("link", { name: /Moonlit Romance/ }).click();
+    await page.getByRole("link", { name: "Moonlit Romance", exact: true }).click();
     await page
       .getByRole("link", { name: "Preview design", exact: true })
       .click();
@@ -54,6 +55,8 @@ test("account, server access controls, persisted editor, exports and publishing"
     .getByRole("button", { name: "Create account" })
     .click();
   await expect(page).toHaveURL(/dashboard/);
+  await expect(page.getByLabel('Your order summary')).toBeVisible();
+  await page.screenshot({path:'test-results/luxury-dashboard.png',fullPage:true});
   const r = await page.request.post("/api/orders", {
     headers: { origin },
     data: { productId: "gulmohar", phone: "9876543210", amount: 1 },

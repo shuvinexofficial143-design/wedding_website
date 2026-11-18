@@ -1,0 +1,245 @@
+"use client";
+/* eslint-disable @next/next/no-img-element */
+import { useState, useEffect, useRef } from "react";
+import type { CardDocument } from "@/lib/studio/schema";
+import { fitText, layerText, type TextLayout } from "@/lib/studio/layout";
+import { WebsiteView } from "../website/website-view";
+import { TimelinePlayer } from "../animation/timeline-player";
+export function LayerCard(props: Parameters<typeof StaticLayerCard>[0]) {
+  if (props.document.website)
+    return <WebsiteView template={props.document.website} />;
+  return props.document.animation ? (
+    <TimelinePlayer
+      timeline={props.document.animation}
+      width={props.document.width}
+    >
+      <StaticLayerCard {...props} />
+    </TimelinePlayer>
+  ) : (
+    <StaticLayerCard {...props} />
+  );
+}
+function StaticLayerCard({
+  document: doc,
+  values = {},
+  fields,
+  width,
+  onIssues,
+  assetBasePath = "/api/assets/",
+}: {
+  document: CardDocument;
+  values?: Record<string, string>;
+  fields?: Record<string, string>;
+  width?: number;
+  onIssues?: (issues: string[]) => void;
+  assetBasePath?: string;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [layouts, setLayouts] = useState<Record<string, TextLayout>>({});
+  const [fontError, setFontError] = useState("");
+  const [assetError, setAssetError] = useState("");
+  const failedAsset = () => {
+    setAssetError("An invitation image could not load. Please retry.");
+    onIssues?.(["An invitation image could not load. Please retry."]);
+  };
+  const [retry, setRetry] = useState(0);
+  const signature = JSON.stringify({ doc, values, fields });
+  useEffect(() => {
+    let active = true;
+    async function layout() {
+      try {
+        const canvas = window.document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("Canvas is unavailable");
+        const next: Record<string, TextLayout> = {};
+        for (const l of doc.layers.filter(
+          (l) => l.kind === "text" && !l.hidden,
+        )) {
+          const text = layerText(l, values, fields);
+          const family = /[\u0900-\u097f]/.test(text)
+            ? "Noto Serif Devanagari Variable"
+            : l.fontFamily;
+          await Promise.race([
+            window.document.fonts.load(
+              `${l.fontWeight} 16px "${family}"`,
+              text || "Wedding",
+            ),
+            new Promise((_, reject) =>
+              setTimeout(
+                () => reject(new Error("Font loading timed out")),
+                12000,
+              ),
+            ),
+          ]);
+          if (
+            !window.document.fonts.check(
+              `${l.fontWeight} 16px "${family}"`,
+              text || "Wedding",
+            )
+          )
+            throw new Error("Required font has not loaded");
+          next[l.id] = fitText(l, text, (s, size, font) => {
+            ctx.font = `${l.fontWeight} ${size}px "${font}"`;
+            return ctx.measureText(s).width;
+          });
+        }
+        if (active) {
+          setLayouts(next);
+          setFontError("");
+          onIssues?.(
+            doc.layers
+              .filter((l) => next[l.id]?.overflow)
+              .map(
+                (l) =>
+                  `${l.label}: text does not fit; shorten it or resize its layer.`,
+              ),
+          );
+        }
+      } catch (e) {
+        if (active) {
+          setFontError((e as Error).message);
+          onIssues?.([(e as Error).message]);
+        }
+      }
+    }
+    void layout();
+    return () => {
+      active = false;
+    };
+    // The stable serialized document covers every typography and input change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signature, retry]);
+  useEffect(() => {
+    // An SSR image may fail before hydration attaches its error listener.
+    const images = cardRef.current?.querySelectorAll("img");
+    if (images && Array.from(images).some(img => img.complete && img.naturalWidth === 0)) {
+      const timer = setTimeout(() => failedAsset(), 0);
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signature, retry]);
+  const textReady = doc.layers
+    .filter((l) => l.kind === "text" && !l.hidden)
+    .every((l) => layouts[l.id]);
+  return (
+    <div
+      ref={cardRef}
+      className="layer-card"
+      data-export-ready={
+        textReady && !fontError && !assetError ? "true" : "false"
+      }
+      data-overflow={
+        Object.values(layouts).some((l) => l.overflow) ? "true" : "false"
+      }
+      style={{
+        position: "relative",
+        width: width || "100%",
+        aspectRatio: `${doc.width}/${doc.height}`,
+        background: doc.backgroundColor,
+        overflow: "hidden",
+        containerType: "inline-size",
+      }}
+    >
+      {doc.backgroundAssetId && (
+        <img
+          onError={failedAsset}
+          key={`${doc.backgroundAssetId}-${retry}`}
+          src={`${assetBasePath}${doc.backgroundAssetId}`}
+          alt="Invitation background"
+          crossOrigin="anonymous"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "fill",
+          }}
+        />
+      )}
+      {[...doc.layers]
+        .sort((a, b) => a.zIndex - b.zIndex)
+        .filter((l) => !l.hidden)
+        .map((l) => {
+          const layout = layouts[l.id];
+          const text = layerText(l, values, fields);
+          const style = {
+            position: "absolute" as const,
+            left: `${(l.x / doc.width) * 100}%`,
+            top: `${(l.y / doc.height) * 100}%`,
+            width: `${(l.width / doc.width) * 100}%`,
+            height: `${(l.height / doc.height) * 100}%`,
+            transform: `rotate(${l.rotation}deg)`,
+            opacity: l.opacity,
+            zIndex: l.zIndex,
+            overflow: "hidden",
+          };
+          return (
+            <div key={l.id} data-layer={l.id} style={style}>
+              {l.kind === "text" ? (
+                <div
+                  style={{
+                    fontFamily: layout?.fontFamily || l.fontFamily,
+                    fontSize: `${((layout?.fontSize || l.fontSize) / doc.width) * 100}cqw`,
+                    fontWeight: l.fontWeight,
+                    lineHeight: l.lineHeight,
+                    color: l.color,
+                    textAlign: l.align,
+                    letterSpacing: `${(l.letterSpacing / doc.width) * 100}cqw`,
+                    whiteSpace: "pre",
+                  }}
+                >
+                  {(layout?.lines || [text]).map((line, i) => (
+                    <div key={i}>{line || "\u00a0"}</div>
+                  ))}
+                </div>
+              ) : l.kind === "shape" ? (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    background: l.fill,
+                    border: `${(l.borderWidth / doc.width) * 100}cqw solid ${l.borderColor}`,
+                    borderRadius: l.shape === "ellipse" ? "50%" : 0,
+                  }}
+                />
+              ) : (
+                (values[l.id] || l.assetId) && (
+                  <img
+                    onError={failedAsset}
+                    key={retry}
+                    src={
+                      values[l.id]
+                        ? values[l.id].replace(
+                            /^\/api\/assets\//,
+                            assetBasePath,
+                          )
+                        : `${assetBasePath}${l.assetId}`
+                    }
+                    alt={l.label}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                )
+              )}
+            </div>
+          );
+        })}
+      {(fontError || assetError) && (
+        <div className="layer-error" data-export-ignore="true" role="alert">
+          {fontError || assetError}
+          <button
+            onClick={() => {
+              setAssetError("");
+              setRetry((n) => n + 1);
+            }}
+          >
+            Retry fonts/assets
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

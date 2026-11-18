@@ -1,15 +1,20 @@
 import Link from "next/link";
-import { products, categories } from "@/lib/catalog";
-import { Invite } from "@/components/invite";
+import { categories } from "@/lib/catalog";
+import {listAnimatedPublic} from "@/lib/animated/repository";
+import { catalogProducts } from "@/lib/studio/repository";
+import {ProductTile,VideoTile} from "@/components/product-tile";
+
+export const dynamic = "force-dynamic";
 export default async function Catalog({
   searchParams,
 }: {
   searchParams: Promise<{ category?: string }>;
 }) {
   const { category } = await searchParams;
-  const list = products.filter((p) => !category || p.category === category);
+  const list = (await catalogProducts()).filter((p) => !category || p.category === category);
+  const videos=(!category||category==="animated")?await listAnimatedPublic():[];
   return (
-    <section className="section">
+    <section className="section catalog-section">
       <span className="eyebrow">THE INVITATION COLLECTION</span>
       <h1>
         A design for <i>your story.</i>
@@ -30,23 +35,10 @@ export default async function Catalog({
         ))}
       </div>
       <div className="product-grid">
-        {list.map((p) => (
-          <Link key={p.id} className="product" href={`/products/${p.id}`}>
-            <div className="product-art">
-              <Invite theme={p.theme} animated={p.category === "animated"} />
-              <span className="preview-chip">View design ↗</span>
-            </div>
-            <div className="product-meta">
-              <div>
-                <small>{p.tag}</small>
-                <h3>{p.name}</h3>
-              </div>
-              <span>₹{p.price}</span>
-            </div>
-          </Link>
-        ))}
+        {list.map(p=><ProductTile key={p.id} product={p}/>)}
+        {videos.map(p=><VideoTile key={p.id} product={p}/>)}
       </div>
-      {!list.length && (
+      {!list.length && !videos.length && (
         <p>
           No designs in this category.{" "}
           <Link href="/catalog">View all designs</Link>
