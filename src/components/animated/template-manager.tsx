@@ -1,4 +1,8 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
+import {uploadAsset} from "@/lib/upload-client";
+import {parseYouTubeId} from "@/lib/animated/youtube";
+import {AnimatedVideoPreview} from "./video-preview";
 import {useEffect,useState} from "react";
 type Template={id:string;style_number:string;name:string;category:string;price_paise:number;thumbnail_url:string;youtube_video_id:string;canva_url:string;status:string;revision:number};
 type Input={styleNumber:string;name:string;category:string;pricePaise:number;thumbnailUrl:string;youtubeUrl:string;canvaUrl:string};
@@ -6,6 +10,8 @@ const empty:Input={styleNumber:"",name:"",category:"wedding",pricePaise:59900,th
 export function AnimatedTemplateManager(){
  const [items,setItems]=useState<Template[]>([]),[selected,setSelected]=useState<Template|null>(null);
  const [form,setForm]=useState<Input>(empty),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
+ const [uploadProgress,setUploadProgress]=useState<number|null>(null);
+ let videoId="";try{videoId=parseYouTubeId(form.youtubeUrl);}catch{}
  const load=async()=>{
   const r=await fetch("/api/admin/animated",{cache:"no-store"}),data=await r.json();
   if(!r.ok)throw new Error(data.error||"Unable to read templates");
@@ -44,8 +50,16 @@ export function AnimatedTemplateManager(){
      {["wedding","engagement","anniversary","birthday","other"].map(x=><option key={x} value={x}>{x}</option>)}
     </select></label>
     <label>Price (₹)<input type="number" required min="1" step="1" value={form.pricePaise/100} onChange={e=>setForm({...form,pricePaise:Math.round(Number(e.target.value)*100)})}/></label>
-    <label>Public thumbnail HTTPS URL<input type="url" required placeholder="https://…" value={form.thumbnailUrl} onChange={e=>setForm({...form,thumbnailUrl:e.target.value})}/></label>
+    <label>Upload thumbnail from computer<input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy} onChange={async e=>{
+      const file=e.target.files?.[0];if(!file)return;setBusy(true);setMessage('Uploading thumbnail…');
+      try{const asset=await uploadAsset(file,'thumbnail',setUploadProgress);setForm(f=>({...f,thumbnailUrl:asset.url}));setMessage('Thumbnail uploaded. Save the template to attach it.');}
+      catch(error){setMessage((error as Error).message)}finally{setBusy(false);setUploadProgress(null);e.target.value='';}
+    }}/></label>
+    {uploadProgress!==null&&<progress aria-label="Thumbnail upload progress" max={100} value={uploadProgress}/>}
+    {form.thumbnailUrl&&<img src={form.thumbnailUrl} alt="Template thumbnail preview" style={{maxWidth:'100%',maxHeight:240,objectFit:'contain'}}/>}
+    <label>Public thumbnail HTTPS URL<input type="text" required placeholder="https://…" value={form.thumbnailUrl} onChange={e=>setForm({...form,thumbnailUrl:e.target.value})}/></label>
     <label>YouTube Unlisted Video URL<input type="url" required placeholder="https://youtu.be/…" value={form.youtubeUrl} onChange={e=>setForm({...form,youtubeUrl:e.target.value})}/></label>
+    {videoId&&<AnimatedVideoPreview videoId={videoId} title={form.name||"Template"}/>}
     <label>PRIVATE Canva editable original URL<input type="url" required placeholder="https://www.canva.com/design/…/edit" value={form.canvaUrl} onChange={e=>setForm({...form,canvaUrl:e.target.value})}/></label>
     <p><small>The Canva URL remains inside admin-only database reads. Never use a public Canva share-link here.</small></p>
     <div className="actions"><button className="button" disabled={busy}>{busy?"Saving…":selected?"Save template changes":"Add draft template"}</button>

@@ -13,6 +13,7 @@ const previewEnv={
 };
 test("Preview migration target refuses production, other branches, mismatched databases and missing unpooled",()=>{
   assert.equal(assertPreviewMigrationTarget(previewEnv),previewEnv.DATABASE_URL_UNPOOLED);
+  assert.equal(assertPreviewMigrationTarget({...previewEnv,VERCEL_GIT_COMMIT_REF:"feature/suhani-final-integration"}),previewEnv.DATABASE_URL_UNPOOLED);
   for (const bad of [
     {VERCEL_ENV:"production"},{VERCEL:"0"},{VERCEL_GIT_COMMIT_REF:"main"},
     {DATABASE_URL_UNPOOLED:""},{CASHFREE_ENV:"production"},

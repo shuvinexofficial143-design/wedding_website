@@ -8,7 +8,7 @@ import { SCHEMA_VERSION, schemaSql } from "./schema";
 export function assertPreviewMigrationTarget(env: Record<string,string|undefined>) {
   if (env.VERCEL !== "1" || env.VERCEL_ENV !== "preview")
     throw new Error("Refusing database migration outside Vercel Preview");
-  if (env.VERCEL_GIT_COMMIT_REF !== "feature/advanced-card-studio")
+  if (!["feature/advanced-card-studio","feature/suhani-final-integration"].includes(env.VERCEL_GIT_COMMIT_REF || ""))
     throw new Error("Refusing migration outside the reviewed feature branch");
   if (env.CASHFREE_ENV && env.CASHFREE_ENV !== "sandbox")
     throw new Error("Refusing Preview migration with non-sandbox Cashfree configuration");

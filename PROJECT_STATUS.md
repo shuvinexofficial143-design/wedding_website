@@ -1,3 +1,14 @@
+# Upload and fulfilment checkpoint — 18 November 2026
+
+- Branch: feature/suhani-final-integration; last verified remote predecessor 254bdc823f1a4d9a4252f46a1764e22405b7fc2e. Draft PR #4. Main unchanged.
+- Completed implementation: computer thumbnail upload with progress and admin YouTube preview; owner-validated asset attachment and published-only public thumbnail access; private MP4 upload with progress/50 MB limit, structural MP4 validation, owned download and delivery only after successful storage validation; Canva delivery-link leak blocked; legacy video uploads now use durable assets while existing local deliveries remain readable.
+- Order creation serializes PostgreSQL per-customer requests and locks template while snapshotting current price. Queue includes wedding details/payment status. Website editor explicit accessible labels and pre-hydration image failure detection added.
+- Tests run: 39/39 unit/integration tests passed, lint and build passed before final small legacy-upload/migration-allowlist changes. GitHub full browser suite pending new checkpoint. Local browser execution blocked by Chromium socket permission (1 launch failure, not an application pass).
+- Added browser coverage: thumbnail upload/publish/unpublish and private MP4 delivery/download with real generated MP4 fixture.
+- Infrastructure: Neon br-curly-bar-ao23mgo4 read-only inventory confirms no user tables. Snapshot tool unavailable; hosted migration held pending safe backup. Vercel personal account and Avanti Verse team return no wedding project. No production changes.
+- Next: validate final changes and push; resolve GitHub browser failures; verify preview when infrastructure access is available. Real Cashfree transaction and configured S3 remain unverified.
+
+---
 # Current integration checkpoint — 18 November 2026
 
 - Branch: `feature/suhani-final-integration`. Production main is unchanged.

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import {useEffect,useState} from "react";
-type Job={order_id:string;template_name:string;template_style:string;paid_at:number|null;started_at:number|null;delivered_at:number|null;phone:string;email:string;state:string;deadlineAt:number|null};
+type Job={details:string;payment_status:string;order_id:string;template_name:string;template_style:string;paid_at:number|null;started_at:number|null;delivered_at:number|null;phone:string;email:string;state:string;deadlineAt:number|null};
 export function AnimatedOrderQueue(){
  const [jobs,setJobs]=useState<Job[]>([]),[status,setStatus]=useState("pending"),[search,setSearch]=useState("");
  const [now,setNow]=useState(0),[message,setMessage]=useState("");
@@ -12,11 +12,11 @@ export function AnimatedOrderQueue(){
   }catch(e){if(active)setMessage((e as Error).message)}
  };void load();const refresh=setInterval(load,30000),tick=setInterval(()=>setNow(Date.now()),1000);
  return ()=>{active=false;clearInterval(refresh);clearInterval(tick)};},[]);
- const state=(job:Job)=>job.delivered_at?"delivered":job.deadlineAt&&now>job.deadlineAt?"overdue":job.started_at?"editing":"pending";
+ const state=(job:Job)=>job.delivered_at?"delivered":job.deadlineAt&&now>=job.deadlineAt?"overdue":job.started_at?"editing":"pending";
  const time=(deadline:number|null,delivered:boolean)=>delivered?"Delivered":deadline===null?"Timer pending":now===0?"Calculating…":(deadline<now?"Overdue by ":"Remaining ")+
    Math.floor(Math.abs(deadline-now)/60000)+":"+String(Math.floor(Math.abs(deadline-now)%60000/1000)).padStart(2,"0");
  const visible=jobs.filter(j=>(status==="all"||state(j)===status||status==="queue"&&state(j)!=="delivered")&&
-  (!search||[j.order_id,j.email,j.phone,j.template_name,j.template_style].some(t=>t.toLowerCase().includes(search.toLowerCase()))));
+  (!search||[j.order_id,j.email,j.phone,j.template_name,j.template_style,j.details].some(t=>t.toLowerCase().includes(search.toLowerCase()))));
  return <div className="animated-panel">
   <div className="animated-order-line"><h2>Paid orders ({jobs.length})</h2><p>Pending {jobs.filter(j=>state(j)!=="delivered").length} · Overdue {jobs.filter(j=>state(j)==="overdue").length}</p></div>
   <div className="animated-admin-grid">
@@ -27,7 +27,7 @@ export function AnimatedOrderQueue(){
   </div>
   <p role="status">{message}</p>
   <div className="animated-list">{visible.map(j=><article className="animated-item" key={j.order_id}>
-   <div className="animated-order-line"><div><h3>{j.template_name}</h3><p>{j.template_style} · {j.email} · {j.phone}</p><small>Order: {j.order_id}</small></div>
+   <div className="animated-order-line"><div><h3>{j.template_name}</h3><p>{j.template_style} · {j.email} · {j.phone}</p><small>Order: {j.order_id} · Payment: {j.payment_status}</small><p>{(()=>{try{const d=JSON.parse(j.details||'{}');return [d.partnerA,d.partnerB,d.date,d.venue].filter(Boolean).join(' · ')}catch{return 'Customer details pending'}})()}</p></div>
     <div><p className="animated-status">{state(j).toUpperCase()}</p><p className={"animated-timer "+(state(j)==="overdue"?"overdue":"")}>{time(j.deadlineAt,!!j.delivered_at)}</p></div></div>
    <Link className="button" href={"/admin/animated/orders/"+j.order_id}>Manage order ↗</Link>
   </article>)}</div>

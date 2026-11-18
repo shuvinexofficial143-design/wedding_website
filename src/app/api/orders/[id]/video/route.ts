@@ -1,8 +1,10 @@
-import { mkdir, writeFile, readFile } from "node:fs/promises";
+import {assetById,beginAsset,completeAsset,linkAsset} from "@/lib/storage/assets";
+import {getObject,putObject,downloadUrl,localStorage} from "@/lib/storage/objects";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { randomUUID } from "node:crypto";
+import {hashBytes,validateAsset} from "@/lib/storage/validate";
 import { user, isAdmin, sameOrigin } from "@/lib/auth";
-import { db, getOrder } from "@/lib/db";
+import { db, getOrder, transaction } from "@/lib/db";
 import { products } from "@/lib/catalog";
 const directory = () =>
   process.env.UPLOAD_DIR || path.join(process.cwd(), "uploads");
@@ -43,22 +45,15 @@ export async function POST(
     const buffer = Buffer.from(await file.arrayBuffer());
     if (buffer.toString("ascii", 4, 8) !== "ftyp" || file.type !== "video/mp4")
       return Response.json({ error: "Invalid MP4 file." }, { status: 400 });
-    await mkdir(directory(), { recursive: true, mode: 0o700 });
-    const filename = `${randomUUID()}.mp4`;
-    await writeFile(path.join(directory(), filename), buffer, {
-      mode: 0o600,
-      flag: "wx",
+    await validateAsset(buffer,file.type,'video');
+    const pending=await beginAsset(u,{purpose:'video',mime:file.type,size:buffer.length,sha256:hashBytes(buffer)});
+    let asset=(await assetById(pending.id))!;
+    if(!pending.ready){await putObject(asset.object_key,buffer,file.type);asset=await completeAsset(asset);}
+    await transaction(async()=>{
+      await linkAsset(asset.id,u.id,'order_delivery',id);
+      await db().prepare("UPDATE orders SET video_path=?,fulfillment='delivered' WHERE id=? AND status='paid'").run('asset:'+asset.id,id);
+      await db().prepare('INSERT INTO audit(admin_id,order_id,action,created) VALUES(?,?,?,?)').run(u.id,id,'video_uploaded',Date.now());
     });
-    (await db()
-      .prepare(
-        "UPDATE orders SET video_path=?,fulfillment='delivered' WHERE id=?",
-      )
-      .run(filename, id));
-    (await db()
-      .prepare(
-        "INSERT INTO audit(admin_id,order_id,action,created) VALUES(?,?,?,?)",
-      )
-      .run(u.id, id, "video_uploaded", Date.now()));
     return Response.json({ ok: true });
   } catch {
     return Response.json(
@@ -83,6 +78,14 @@ export async function GET(
   )
     return new Response("Not found", { status: 404 });
   try {
+    if(o.video_path.startsWith('asset:')) {
+      const asset=await assetById(o.video_path.slice(6));
+      const link=asset&&await db().prepare("SELECT asset_id FROM asset_links WHERE asset_id=? AND scope='order_delivery' AND scope_id=?").get(asset.id,id);
+      if(!asset||!link||asset.status!=='ready'||asset.purpose!=='video'||asset.mime!=='video/mp4')return new Response('Not found',{status:404});
+      if(!localStorage())return new Response(null,{status:302,headers:{Location:await downloadUrl(asset.object_key),'Cache-Control':'private, no-store'}});
+      const bytes=await getObject(asset.object_key,asset.size_bytes);
+      return new Response(new Uint8Array(bytes),{headers:{'Content-Type':'video/mp4','Content-Disposition':'attachment; filename="wedding-invitation.mp4"','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});
+    }
     const bytes = await readFile(
       /* turbopackIgnore: true */ path.join(
         /* turbopackIgnore: true */ directory(),

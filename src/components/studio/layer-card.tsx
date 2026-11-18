@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { CardDocument } from "@/lib/studio/schema";
 import { fitText, layerText, type TextLayout } from "@/lib/studio/layout";
 import { WebsiteView } from "../website/website-view";
@@ -34,6 +34,7 @@ function StaticLayerCard({
   onIssues?: (issues: string[]) => void;
   assetBasePath?: string;
 }) {
+  const cardRef = useRef<HTMLDivElement>(null);
   const [layouts, setLayouts] = useState<Record<string, TextLayout>>({});
   const [fontError, setFontError] = useState("");
   const [assetError, setAssetError] = useState("");
@@ -108,11 +109,21 @@ function StaticLayerCard({
     // The stable serialized document covers every typography and input change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signature, retry]);
+  useEffect(() => {
+    // An SSR image may fail before hydration attaches its error listener.
+    const images = cardRef.current?.querySelectorAll("img");
+    if (images && Array.from(images).some(img => img.complete && img.naturalWidth === 0)) {
+      const timer = setTimeout(() => failedAsset(), 0);
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signature, retry]);
   const textReady = doc.layers
     .filter((l) => l.kind === "text" && !l.hidden)
     .every((l) => layouts[l.id]);
   return (
     <div
+      ref={cardRef}
       className="layer-card"
       data-export-ready={
         textReady && !fontError && !assetError ? "true" : "false"

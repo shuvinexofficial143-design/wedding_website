@@ -1,3 +1,6 @@
+import {mp4Fixture} from "../mp4-fixture";
+import {createHash} from "node:crypto";
+import sharp from "sharp";
 import { test,expect,request as requests } from "@playwright/test";
 import { DatabaseSync } from "node:sqlite";
 import { randomUUID } from "node:crypto";
@@ -99,11 +102,19 @@ test("animated admin-only Canva registry, verified order queue, independent copy
   expect(copy.status()).toBe(200);
   const start=await admin.patch("/api/admin/animated/orders/"+orderId,{data:{action:"editing",revision:1}});
   expect(start.status()).toBe(200);
-  const finished=await admin.patch("/api/admin/animated/orders/"+orderId,{data:{action:"delivered",revision:2,deliveryUrl:"https://delivery.example.test/our-invitation"}});
+  const upload=await admin.post('/api/assets',{data:{purpose:'video',mime:'video/mp4',size:mp4Fixture.length,sha256:createHash('sha256').update(mp4Fixture).digest('hex')}});
+  expect(upload.status()).toBe(200);const asset=await upload.json();
+  expect((await admin.put('/api/assets/'+asset.id+'/upload',{headers:{'Content-Type':'video/mp4'},data:mp4Fixture})).status()).toBe(200);
+  expect((await admin.post('/api/assets/'+asset.id+'/complete')).status()).toBe(200);
+  expect((await request.get('/api/assets/'+asset.id)).status()).toBe(404);
+  expect((await page.request.get('/api/assets/'+asset.id)).status()).toBe(404);
+  const finished=await admin.patch("/api/admin/animated/orders/"+orderId,{data:{action:"delivered",revision:2,deliveryAssetId:asset.id}});
   expect(finished.status()).toBe(200);
   expect((await db.prepare("SELECT fulfillment FROM orders WHERE id=?").get(orderId) as {fulfillment:string}).fulfillment).toBe("delivered");
   const customer=await (await page.request.get("/api/orders/"+orderId+"/animated")).json();
-  expect(customer.deliveryUrl).toBe("https://delivery.example.test/our-invitation");
+  expect(customer.deliveryUrl).toBe('/api/orders/'+orderId+'/video');
+  expect((await request.get(customer.deliveryUrl)).status()).toBe(401);
+  const download=await page.request.get(customer.deliveryUrl);expect(download.status()).toBe(200);expect(Buffer.from(await download.body()).equals(mp4Fixture)).toBe(true);
   expect(JSON.stringify(customer)).not.toContain("canva.com");
   // Per-order Canva copies must not be silently reused, even when the link's
   // tracking query differs. Payment is an isolated CI database fixture only.
@@ -146,4 +157,31 @@ test("animated admin-only Canva registry, verified order queue, independent copy
     await mobile.screenshot({path:"test-results/animated-admin-mobile.png",fullPage:true});
   }finally{await adminMobile.close();}
  }finally{db.close();await admin.dispose();}
+});
+
+test('admin thumbnail file upload, inline YouTube preview and published asset access',async({browser,request})=>{
+ const admin=await adminRequest();
+ const context=await browser.newContext({storageState:await admin.storageState(),viewport:{width:390,height:844}});
+ try{
+  const page=await context.newPage();await page.goto('/admin/animated');
+  const png=await sharp({create:{width:90,height:120,channels:3,background:'#bd9061'}}).png().toBuffer();
+  await page.getByLabel('Upload thumbnail from computer').setInputFiles({name:'thumbnail.png',mimeType:'image/png',buffer:png});
+  await expect(page.getByRole('status')).toContainText('Thumbnail uploaded');
+  await expect(page.getByAltText('Template thumbnail preview')).toBeVisible();
+  const thumbnail=await page.getByLabel('Public thumbnail HTTPS URL').inputValue();
+  expect((await request.get(thumbnail)).status()).toBe(404);
+  await page.getByLabel('Unique template ID / style number').fill('UP-'+randomUUID().slice(0,8).toUpperCase());
+  await page.getByLabel('Name',{exact:true}).fill('Uploaded thumbnail template');
+  await page.getByLabel('YouTube Unlisted Video URL').fill('https://youtu.be/dQw4w9WgXcQ');
+  await expect(page.locator('iframe')).toHaveAttribute('src','https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+  await page.getByLabel('PRIVATE Canva editable original URL').fill('https://www.canva.com/design/UPLOADMASTER/edit');
+  await page.getByRole('button',{name:'Add draft template'}).click();await expect(page.getByRole('status')).toContainText('Saved successfully');
+  const item=page.locator('article').filter({has:page.getByRole('heading',{name:'Uploaded thumbnail template'})});await item.getByRole('button',{name:'Edit template'}).click();
+  await page.getByRole('button',{name:'Publish',exact:true}).click();await expect(page.getByRole('button',{name:'Unpublish',exact:true})).toBeVisible();
+  expect((await request.get(thumbnail)).status()).toBe(200);
+  await page.getByRole('button',{name:'Unpublish',exact:true}).click();await expect(page.getByRole('button',{name:'Publish',exact:true})).toBeVisible();
+  expect((await request.get(thumbnail)).status()).toBe(404);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:'test-results/animated-upload-mobile.png',fullPage:true});
+ }finally{await context.close();await admin.dispose();}
 });

@@ -18,7 +18,7 @@ export async function PATCH(req:Request,{params}:Context){
   if(!actor||!isAdmin(actor))return Response.json({error:"Admin only"},{status:403});
   try{
     const raw=await readJson(req,4000);
-    const body=z.object({revision:z.number().int().nonnegative(),action:z.enum(["copy","editing","delivered"]),editingCopyUrl:z.string().max(1200).optional(),deliveryUrl:z.string().max(1200).optional()}).strict().parse(raw);
-    return Response.json(await changeAnimatedJob(actor,(await params).id,body.revision,body.action,body.editingCopyUrl,body.deliveryUrl),{headers});
+    const body=z.object({revision:z.number().int().nonnegative(),action:z.enum(["copy","editing","delivered"]),editingCopyUrl:z.string().max(1200).optional(),deliveryAssetId:z.string().uuid().optional(),deliveryUrl:z.string().max(1200).optional()}).strict().parse(raw);
+    return Response.json(await changeAnimatedJob(actor,(await params).id,body.revision,body.action,body.editingCopyUrl,body.deliveryUrl,body.deliveryAssetId),{headers});
   }catch(e){return Response.json({error:(e as Error).message},{status:e instanceof AnimatedConflict?409:400,headers});}
 }

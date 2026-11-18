@@ -1,3 +1,6 @@
+import {parseYouTubeId} from "./youtube";
+import {assetById,linkAsset} from "../storage/assets";
+import {getObject} from "../storage/objects";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { db, transaction, usingPostgres, type User } from "../db";
@@ -16,30 +19,16 @@ export const animatedInput = z.object({
   name: z.string().trim().min(2).max(120),
   category: z.enum(["wedding","engagement","anniversary","birthday","other"]),
   pricePaise: z.number().int().min(100).max(10_000_000),
-  thumbnailUrl: httpsUrl,
+  thumbnailUrl: z.union([httpsUrl,z.string().regex(/^\/api\/assets\/[0-9a-f-]{36}$/)]),
   youtubeUrl: z.string().trim().max(500),
   canvaUrl: canvaEditUrl,
 }).strict().superRefine((data,ctx)=>{
-  const host=new URL(data.thumbnailUrl).hostname.toLowerCase();
+  const host=new URL(data.thumbnailUrl,"https://local.invalid").hostname.toLowerCase();
   if(host==="canva.com" || host==="www.canva.com" || data.thumbnailUrl===data.canvaUrl)
     ctx.addIssue({code:"custom",path:["thumbnailUrl"],message:"Use a public image URL, never the private Canva design URL"});
 });
 export type AnimatedInput = z.infer<typeof animatedInput>;
-export function parseYouTubeId(value: string) {
-  let url: URL;
-  try { url = new URL(value); } catch { throw new Error("Use a YouTube video URL"); }
-  if (url.protocol !== "https:" || url.username || url.password)
-    throw new Error("YouTube must use HTTPS");
-  const host = url.hostname.toLowerCase();
-  let id = "";
-  if (host === "youtu.be") id = url.pathname.split("/")[1] || "";
-  else if (["youtube.com","www.youtube.com","m.youtube.com","youtube-nocookie.com","www.youtube-nocookie.com"].includes(host)) {
-    if (url.pathname === "/watch") id = url.searchParams.get("v") || "";
-    else if (/^\/(embed|shorts|live)\//.test(url.pathname)) id = url.pathname.split("/")[2] || "";
-  }
-  if (!/^[a-zA-Z0-9_-]{11}$/.test(id)) throw new Error("Invalid YouTube video ID");
-  return id;
-}
+export {parseYouTubeId} from "./youtube";
 export { youtubeEmbed } from "./youtube";
 export type PublicAnimated = {
   id: string; style_number: string; name: string; category: string;
@@ -71,6 +60,12 @@ async function logAction(actor:User,kind:string,id:string,action:string) {
   await db().prepare("INSERT INTO admin_audit_logs(id,admin_id,entity_type,entity_id,action,metadata,created) VALUES(?,?,?,?,?,'{}',?)")
     .run(randomUUID(),actor.id,kind,id,action,Date.now());
 }
+async function linkThumbnail(actor:User,id:string,url:string) {
+  if(!url.startsWith('/api/assets/'))return;
+  const asset=await assetById(url.slice('/api/assets/'.length));
+  if(!asset||asset.purpose!=='thumbnail'||asset.mime!=='image/png')throw new Error('Use a validated thumbnail upload');
+  await linkAsset(asset.id,actor.id,'animated_template',id);
+}
 export async function createAnimated(actor:User,raw:unknown) {
   const body=animatedInput.parse(raw);
   const youtubeId=parseYouTubeId(body.youtubeUrl);
@@ -78,6 +73,7 @@ export async function createAnimated(actor:User,raw:unknown) {
     const id=randomUUID(),now=Date.now();
     await db().prepare("INSERT INTO animated_templates(id,style_number,name,category,price_paise,thumbnail_url,youtube_video_id,canva_url,status,created_by,created,updated) VALUES(?,?,?,?,?,?,?,?,'draft',?,?,?)")
       .run(id,body.styleNumber,body.name,body.category,body.pricePaise,body.thumbnailUrl,youtubeId,body.canvaUrl,actor.id,now,now);
+    await linkThumbnail(actor,id,body.thumbnailUrl);
     await logAction(actor,"animated_template",id,"created");
     return {id,revision:1,status:"draft"};
   });
@@ -88,6 +84,7 @@ export async function updateAnimated(actor:User,id:string,revision:number,raw:un
     const changed=await db().prepare("UPDATE animated_templates SET style_number=?,name=?,category=?,price_paise=?,thumbnail_url=?,youtube_video_id=?,canva_url=?,revision=revision+1,updated=? WHERE id=? AND revision=?")
       .run(body.styleNumber,body.name,body.category,body.pricePaise,body.thumbnailUrl,youtubeId,body.canvaUrl,Date.now(),id,revision);
     if(!changed.changes)throw new AnimatedConflict("Template updated elsewhere. Reload.");
+    await linkThumbnail(actor,id,body.thumbnailUrl);
     await logAction(actor,"animated_template",id,"updated");
     return {id,revision:revision+1};
   });
@@ -126,10 +123,10 @@ export function fulfilmentState(job:Pick<AnimatedJob,"delivered_at"|"started_at"
   return "pending";
 }
 export async function listAnimatedJobs() {
-  return await db().prepare("SELECT j.order_id,j.template_name,j.template_style,j.paid_at,j.started_at,j.delivered_at,j.revision,o.phone,o.status AS payment_status,o.fulfillment,o.created,u.email FROM animated_order_jobs j JOIN orders o ON o.id=j.order_id JOIN users u ON u.id=o.user_id WHERE o.status='paid' ORDER BY COALESCE(j.paid_at,o.created) DESC LIMIT 300")
-    .all() as (Pick<AnimatedJob,"order_id"|"template_name"|"template_style"|"paid_at"|"started_at"|"delivered_at"|"revision"|"phone"|"fulfillment"|"email"> & {created:number;payment_status:string})[];
+  return await db().prepare("SELECT j.order_id,j.template_name,j.template_style,j.paid_at,j.started_at,j.delivered_at,j.revision,o.phone,o.details,o.status AS payment_status,o.fulfillment,o.created,u.email FROM animated_order_jobs j JOIN orders o ON o.id=j.order_id JOIN users u ON u.id=o.user_id WHERE o.status='paid' ORDER BY COALESCE(j.paid_at,o.created) DESC LIMIT 300")
+    .all() as (Pick<AnimatedJob,"order_id"|"template_name"|"template_style"|"paid_at"|"started_at"|"delivered_at"|"revision"|"phone"|"fulfillment"|"email"|"details"> & {created:number;payment_status:string})[];
 }
-export async function changeAnimatedJob(actor:User,orderId:string,revision:number,action:"copy"|"editing"|"delivered",rawCopy?:string,rawDelivery?:string) {
+export async function changeAnimatedJob(actor:User,orderId:string,revision:number,action:"copy"|"editing"|"delivered",rawCopy?:string,rawDelivery?:string,deliveryAssetId?:string) {
   return transaction(async()=>{
     const job=await privateAnimatedJob(orderId);
     if(!job || job.payment_status!=="paid")throw new Error("Verified paid animated order not found");
@@ -159,7 +156,22 @@ export async function changeAnimatedJob(actor:User,orderId:string,revision:numbe
       throw new Error("Customer details are required before editing");
     if(action==="delivered" && !job.started_at)
       throw new Error("Mark Editing before delivery");
-    const delivery=action==="delivered" ? httpsUrl.parse(rawDelivery) : job.delivery_url;
+    let delivery=job.delivery_url;
+    if(action==='delivered') {
+      if(deliveryAssetId) {
+        const asset=await assetById(deliveryAssetId);
+        if(!asset||asset.owner_id!==actor.id||asset.purpose!=='video'||asset.mime!=='video/mp4'||asset.status!=='ready')throw new Error('Completed private MP4 upload required');
+        const bytes=await getObject(asset.object_key,asset.size_bytes);
+        if(bytes.length!==asset.size_bytes)throw new Error('Delivery file unavailable; retry upload');
+        await linkAsset(asset.id,actor.id,'order_delivery',orderId);
+        delivery='/api/orders/'+orderId+'/video';
+        await db().prepare('UPDATE orders SET video_path=? WHERE id=?').run('asset:'+asset.id,orderId);
+      } else {
+        delivery=httpsUrl.parse(rawDelivery);
+        const host=new URL(delivery).hostname.toLowerCase();
+        if(host==='canva.com'||host.endsWith('.canva.com'))throw new Error('Private Canva links cannot be customer deliveries');
+      }
+    }
     const changed=await db().prepare("UPDATE animated_order_jobs SET editing_copy_url=?,delivery_url=?,started_at=?,delivered_at=?,revision=revision+1 WHERE order_id=? AND revision=?")
       .run(copy||null,delivery||null,action==="editing"?(job.started_at||now):job.started_at,action==="delivered"?now:job.delivered_at,orderId,revision);
     if(!changed.changes)throw new AnimatedConflict("Concurrent fulfilment update");

@@ -1,4 +1,5 @@
 "use client";
+import {uploadAsset} from "@/lib/upload-client";
 import {useEffect,useState} from "react";
 type Job={
  order_id:string;template_name:string;template_style:string;email:string;phone:string;
@@ -8,9 +9,11 @@ type Job={
 };
 export function AnimatedOrderFulfilment({initial}:{initial:Job}){
  const [job,setJob]=useState(initial),[copy,setCopy]=useState(initial.editing_copy_url||"");
+ const [deliveryAssetId,setDeliveryAssetId]=useState<string|undefined>(),[uploadProgress,setUploadProgress]=useState<number|null>(null);
  const [delivery,setDelivery]=useState(initial.delivery_url||"");
+ const [siteOrigin,setSiteOrigin]=useState("");
  const [now,setNow]=useState(0),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
- useEffect(()=>{const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer)},[]);
+ useEffect(()=>{const timer=setInterval(()=>{setNow(Date.now());setSiteOrigin(window.location.origin);},1000);return()=>clearInterval(timer)},[]);
  const details=JSON.parse(job.details||"{}") as Record<string,unknown>;
  const detailLines=[
   "Order: "+job.order_id,"Design: "+job.template_name+" ("+job.template_style+")",
@@ -33,14 +36,15 @@ export function AnimatedOrderFulfilment({initial}:{initial:Job}){
   setBusy(true);setMessage("");
   try{
    const r=await fetch("/api/admin/animated/orders/"+job.order_id,{method:"PATCH",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({action,revision:job.revision,editingCopyUrl:copy||undefined,deliveryUrl:delivery||undefined})});
+    body:JSON.stringify({action,revision:job.revision,editingCopyUrl:copy||undefined,deliveryUrl:deliveryAssetId?undefined:delivery||undefined,deliveryAssetId})});
    const result=await r.json();if(!r.ok)throw new Error(result.error||"Unable to update");
    const fresh=await fetch("/api/admin/animated/orders/"+job.order_id,{cache:"no-store"});
    if(!fresh.ok)throw new Error("Updated; reload order to read latest details");
    const data=await fresh.json();setJob(data.job);setMessage("Order "+action+" saved.");
   }catch(e){setMessage((e as Error).message)}finally{setBusy(false)}
  }
- const whatsapp="https://wa.me/91"+job.phone+"?text="+encodeURIComponent("Hello! Suhani Wedding Studio here regarding your "+job.template_name+" order "+job.order_id+".");
+ const readyMessage=siteOrigin&&job.delivered_at&&job.delivery_url?' Your invitation is ready: '+(job.delivery_url.startsWith('/')?siteOrigin+job.delivery_url:job.delivery_url)+' . Sign in with your customer account to download.':'';
+ const whatsapp="https://wa.me/91"+job.phone+"?text="+encodeURIComponent("Hello! Suhani Wedding Studio here regarding your "+job.template_name+" order "+job.order_id+"."+readyMessage);
  return <div className="animated-admin-grid">
   <section className="animated-panel">
    <h2>{job.template_name}</h2><p>{job.template_style} · ₹{job.amount/100} · {job.fulfillment.replaceAll("_"," ")}</p>
@@ -62,7 +66,15 @@ export function AnimatedOrderFulfilment({initial}:{initial:Job}){
     {job.editing_copy_url&&<a className="text-link" href={job.editing_copy_url} target="_blank" rel="noopener noreferrer">Open this order&apos;s copy ↗</a>}</div>
    <p><strong>Step 3.</strong> Apply the copied wedding details to the order-specific Canva copy.</p>
    <button className="button" disabled={busy||!!job.started_at||!!job.delivered_at} onClick={()=>void change("editing")}>Mark Editing</button>
-   <p><strong>Step 4.</strong> Paste the completed invitation&apos;s HTTPS delivery link, then mark delivered.</p>
+   <p><strong>Step 4.</strong> Upload the finished MP4 privately, or provide an existing final HTTPS delivery link. Then mark delivered.</p>
+   <label>Upload final MP4 (maximum 50 MB)<input type="file" accept="video/mp4" disabled={busy||!!job.delivered_at||!job.started_at} onChange={async e=>{
+    const file=e.target.files?.[0];if(!file)return;setBusy(true);setDeliveryAssetId(undefined);setMessage('Uploading private MP4…');
+    try{const asset=await uploadAsset(file,'video',setUploadProgress);setDeliveryAssetId(asset.id);setMessage('Upload verified. Click Mark Delivered to release the file to this customer.');}
+    catch(error){setMessage((error as Error).message)}finally{setBusy(false);setUploadProgress(null);e.target.value='';}
+   }}/></label>
+   {uploadProgress!==null&&<div><progress aria-label="MP4 upload progress" value={uploadProgress} max={100}/><span>{uploadProgress}% · validating before delivery</span></div>}
+   {deliveryAssetId&&<p>Private MP4 is ready for delivery.</p>}
+   <p>WhatsApp opens a prepared message for you to send manually. Opening it does not mark delivery.</p>
    <label>Final delivery URL<input type="url" placeholder="https://..." value={delivery} onChange={e=>setDelivery(e.target.value)}/></label>
    <button className="button" disabled={busy||!job.started_at||!!job.delivered_at} onClick={()=>void change("delivered")}>Mark Delivered</button>
    {job.delivered_at&&<p>Delivered ✓ <a href={job.delivery_url||"#"} rel="noopener noreferrer" target="_blank">Open delivered invitation</a></p>}

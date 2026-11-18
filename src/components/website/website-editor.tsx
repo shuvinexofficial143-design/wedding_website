@@ -183,6 +183,7 @@ export function WebsiteEditor({
             <label key={k}>
               {k}
               <textarea
+                aria-label={k}
                 value={data[k]}
                 maxLength={
                   k === "story"
