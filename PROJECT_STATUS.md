@@ -1,3 +1,10 @@
+# Final contrast follow-up — 18 November 2026
+
+- Verified code 6ef20edf5dc8eee543fce592c04abecb9e3177c7: CI run 44303101876 passed 42/42 unit/integration and 55/55 browser/API tests, lint, TypeScript and production build; zero failures/skipped tests.
+- Reviewed actual 390px and 1440px full-page screenshots. Found final CTA heading contrast regression caused by increased heading-selector specificity. Added explicit ivory heading color and computed-color assertion at all five viewport widths.
+- Exact next step: verify this small follow-up's full CI, inspect regenerated screenshots, save deliverable screenshots, update final documentation. Hosted preview/configuration blockers and production safeguards unchanged.
+
+---
 # Screenshot review fixes — 18 November 2026
 
 - Reviewed actual Chromium screenshots from run 44301009659. Fixed homepage heading selector leaking into original artwork name typography, and low contrast italic login banner text. Removed floating support obstruction from login forms; support remains in navigation/footer.

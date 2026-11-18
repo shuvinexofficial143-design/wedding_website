@@ -25,6 +25,7 @@ for (const width of [360, 390, 430, 768, 1440])
       .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
     expect(nameSize).toBeLessThan(25);
     await expect(page.locator(".website-device")).toHaveCount(4);
+    await expect(page.locator(".luxury-cta h2")).toHaveCSS("color", "rgb(255, 246, 231)");
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

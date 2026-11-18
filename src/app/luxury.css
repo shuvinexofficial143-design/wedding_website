@@ -1430,3 +1430,5 @@ select:focus {
 body:has(.auth-layout) .support-float {
   display: none;
 }
+
+.luxury-home .luxury-cta h2 { color: #fff6e7; }
