@@ -1,3 +1,19 @@
+# Current integration checkpoint — 18 November 2026
+
+- Branch: `feature/suhani-final-integration`. Production main is unchanged.
+- Integrated advanced studio `6659b92344f0baa0f7f5fd43021b61a11fbde2dd` with animation/website builder `7bf813a6dd31b9a4b9f92b7fde81484590eb3d91`, preserving both ancestries.
+- Completed: CSS and CI conflicts resolved; combined 19-table schema v4; known v2/v3 additive migration paths; SQLite import includes both feature sets; reduced-motion completion race and isolated admin test fixture fixed.
+- Tests actually run: 37/37 unit/integration tests PASS; ESLint PASS; production build and TypeScript PASS.
+- Currently working: thumbnail file upload, private final MP4 delivery, browser regression failures.
+- Known bugs: prior source branch browser run had 37 passes / 9 failures; integration browser suite not yet run. Do not treat source branch results as acceptance of integration.
+- Infrastructure: Neon preview inspected, public schema empty. Snapshot tool returned unavailable. No hosted migrations or production data changes performed.
+- Blockers: durable object storage configuration, actual Cashfree sandbox merchant transaction, verified Vercel preview access. No live payments enabled.
+- Latest commit SHA: use branch head; this checkpoint records its two verified parents above (a commit cannot contain its own hash).
+- Exact next step: finish upload/delivery implementation, run browser regression suite, inspect preview infrastructure and verify remote SHA after each checkpoint.
+
+---
+Historical status below (not current acceptance):
+
 # Project status
 
 ## Latest verified milestone — 16 November 2026 (10 original artwork cards)

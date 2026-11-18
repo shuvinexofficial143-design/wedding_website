@@ -4,6 +4,7 @@ import { user, isAdmin } from "@/lib/auth";
 import { db, type Order } from "@/lib/db";
 import { products } from "@/lib/catalog";
 import { purchasedVersion } from "@/lib/studio/repository";
+import {ownedAnimatedJob} from "@/lib/animated/repository";
 import { Logout } from "@/components/auth-form";
 export default async function Dashboard() {
   const u = await user();
@@ -12,6 +13,7 @@ export default async function Dashboard() {
     .prepare("SELECT * FROM orders WHERE user_id=? ORDER BY created DESC")
     .all(u.id)) as Order[];
   const snapshots = await Promise.all(orders.map(o => purchasedVersion(o.id)));
+  const animatedOrders = await Promise.all(orders.map(o => ownedAnimatedJob(o.id,u.id)));
   return (
     <section className="section">
       <div className="section-head">
@@ -47,7 +49,7 @@ export default async function Dashboard() {
                   ? "SANDBOX PAYMENT VERIFIED"
                   : "AWAITING PAYMENT"}
               </span>
-              <h2>{snapshots[index]?.content.name || products.find((p) => p.id === o.product_id)?.name || "Saved invitation"}</h2>
+              <h2>{snapshots[index]?.content.name || animatedOrders[index]?.template_name || products.find((p) => p.id === o.product_id)?.name || "Saved invitation"}</h2>
               <p>
                 ₹{o.amount / 100} ·{" "}
                 {new Date(o.created).toLocaleDateString("en-IN")}
@@ -63,7 +65,7 @@ export default async function Dashboard() {
                   }
                 >
                   {o.status === "paid"
-                    ? "Open invitation"
+                    ? (animatedOrders[index] ? "Provide wedding details" : "Open invitation")
                     : "Continue checkout"}
                 </Link>
                 {o.public_token && (

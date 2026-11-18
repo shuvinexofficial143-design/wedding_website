@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION=3;
+export const SCHEMA_VERSION=4;
 export function schemaSql(dialect:'postgres'|'sqlite') {const serial=dialect==='postgres'?'BIGSERIAL PRIMARY KEY':'INTEGER PRIMARY KEY AUTOINCREMENT';return `
 CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY,applied_at BIGINT NOT NULL);
 CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY,email TEXT UNIQUE NOT NULL,password TEXT NOT NULL,created BIGINT NOT NULL,role TEXT NOT NULL DEFAULT 'customer');
@@ -22,4 +22,8 @@ CREATE INDEX IF NOT EXISTS orders_user_created ON orders(user_id,created);
 CREATE INDEX IF NOT EXISTS rsvps_order ON rsvps(order_id);
 CREATE INDEX IF NOT EXISTS assets_owner ON assets(owner_id,status);
 CREATE INDEX IF NOT EXISTS sessions_expiry ON sessions(expires);
+CREATE TABLE IF NOT EXISTS animated_templates(id TEXT PRIMARY KEY,style_number TEXT UNIQUE NOT NULL,name TEXT NOT NULL,category TEXT NOT NULL,price_paise INTEGER NOT NULL CHECK(price_paise>=0),thumbnail_url TEXT NOT NULL,youtube_video_id TEXT NOT NULL,canva_url TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN('draft','published','unpublished')),revision INTEGER NOT NULL DEFAULT 1,created_by TEXT REFERENCES users(id),created BIGINT NOT NULL,updated BIGINT NOT NULL);
+CREATE TABLE IF NOT EXISTS animated_order_jobs(order_id TEXT PRIMARY KEY REFERENCES orders(id),template_id TEXT NOT NULL REFERENCES animated_templates(id),template_name TEXT NOT NULL,template_style TEXT NOT NULL,original_canva_url TEXT NOT NULL,youtube_video_id TEXT NOT NULL,editing_copy_url TEXT,delivery_url TEXT,paid_at BIGINT,started_at BIGINT,delivered_at BIGINT,revision INTEGER NOT NULL DEFAULT 0,created BIGINT NOT NULL);
+CREATE INDEX IF NOT EXISTS animated_orders_paid_time ON animated_order_jobs(paid_at);
+CREATE INDEX IF NOT EXISTS animated_templates_state ON animated_templates(status,created);
 `;}

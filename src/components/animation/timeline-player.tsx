@@ -108,7 +108,7 @@ export function TimelinePlayer({
         animations.current.map((a) => a.finished.catch(() => {})),
       ).then(() => {
         if (
-          animations.current.length &&
+          !matchMedia("(prefers-reduced-motion: reduce)").matches && animations.current.length &&
           animations.current.every((a) => a.playState === "finished")
         )
           setState("Finished");

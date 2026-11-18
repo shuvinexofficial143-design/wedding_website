@@ -165,6 +165,7 @@ test("API: ownership, paid gates, save conflicts, public RSVP, admin role and ma
       })
     ).status(),
   ).toBe(400);
+  db.prepare("UPDATE users SET email='retired-'||id||'@example.test',role='customer' WHERE email='admin@example.test'").run();
   db.prepare("UPDATE users SET email='admin@example.test' WHERE email=?").run(
     email,
   );

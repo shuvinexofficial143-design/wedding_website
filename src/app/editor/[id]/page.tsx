@@ -9,6 +9,8 @@ import { db } from "@/lib/db";
 import { purchasedVersion } from "@/lib/studio/repository";
 import { type CardDocument } from "@/lib/studio/schema";
 import { CustomerStudioEditor } from "@/components/studio/customer-editor";
+import {ownedAnimatedJob} from "@/lib/animated/repository";
+import {AnimatedCustomerDetails} from "@/components/animated/customer-details";
 import { Editor } from "@/components/editor";
 export default async function EditorPage({
   params,
@@ -21,6 +23,14 @@ export default async function EditorPage({
   const o = (await getOrder(id));
   if (!o || (o.user_id !== u.id && !isAdmin(u))) notFound();
   if (o.status !== "paid") redirect(`/checkout/${o.product_id}?order=${id}`);
+  const animated=await ownedAnimatedJob(id,u.id);
+  if(animated)return <section className="section">
+    <span className="eyebrow">YOUR ANIMATED INVITATION</span>
+    <h1>Wedding <i>details.</i></h1>
+    <AnimatedCustomerDetails orderId={id} name={animated.template_name} videoId={animated.youtube_video_id}
+      initial={{...defaultDetails,...JSON.parse(o.details)}} initialRevision={o.revision}
+      fulfillment={o.fulfillment} deliveryUrl={animated.delivered_at?animated.delivery_url:null}/>
+  </section>;
   const pinned = await purchasedVersion(id);
   if(pinned?.content.website){const w=await websiteOrder(u,id);return <WebsiteEditor orderId={id} template={pinned.content.website} initial={w.data} initialRevision={o.revision} initialToken={o.public_token}/>;}
   if(o.user_id!==u.id)notFound();

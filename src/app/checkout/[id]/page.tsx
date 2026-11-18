@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { user } from "@/lib/auth";
 import { studioProduct, purchasedVersion } from "@/lib/studio/repository";
+import {publicAnimatedById,ownedAnimatedJob} from "@/lib/animated/repository";
 import { paymentReady } from "@/lib/cashfree";
 import { getOrder } from "@/lib/db";
 import { Checkout } from "@/components/checkout";
@@ -22,12 +23,15 @@ export default async function CheckoutPage({
     if (!o || o.user_id !== u.id || o.product_id !== id) notFound();
     if (o.status === "paid") redirect(`/editor/${order}`);
   }
+  const animated=await publicAnimatedById(id);
+  const pendingAnimated=order?await ownedAnimatedJob(order,u.id):undefined;
+  const existing=order?await getOrder(order):undefined;
   const p = await studioProduct(id);
   // A pinned pending order retains its quoted price until the payment attempt finishes.
   const pinned = order ? await purchasedVersion(order) : undefined;
-  if (!p && !pinned) notFound();
-  const display = pinned?.content || p?.document;
-  const shownPrice = pinned ? pinned.content.pricePaise / 100 : p!.price;
+  if (!p && !pinned && !animated && !pendingAnimated) notFound();
+  const display = pinned?.content || p?.document || {name:pendingAnimated?.template_name||animated?.name,description:"Our studio personalises your video after verified payment."};
+  const shownPrice = existing ? existing.amount/100 : pinned ? pinned.content.pricePaise/100 : p?.price ?? animated!.price_paise/100;
   return (
     <section className="section narrow">
       <span className="eyebrow">SECURE CHECKOUT · CASHFREE SANDBOX</span>

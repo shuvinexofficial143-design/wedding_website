@@ -1,3 +1,16 @@
+# Final integration — 18 November 2026
+
+- [x] Audit both feature branch heads and resolve merge conflicts preserving functionality.
+- [x] Merge PostgreSQL schema inventories into v4 and pass 37 local tests, lint and build.
+- [ ] Thumbnail computer upload and inline video preview.
+- [ ] Private durable final MP4 upload, progress and owned download.
+- [ ] Expanded fulfilment regression tests and browser failure fixes.
+- [ ] Safe preview database backup, migration and verification (never production main).
+- [ ] Verified Vercel preview and real Cashfree sandbox test.
+- [ ] Production merge requires explicit owner approval.
+
+Historical checklist follows:
+
 # Implementation checklist
 
 - [x] Verify existing repository and branches
