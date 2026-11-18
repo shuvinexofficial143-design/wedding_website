@@ -54,6 +54,8 @@ test("account, server access controls, persisted editor, exports and publishing"
     .getByRole("button", { name: "Create account" })
     .click();
   await expect(page).toHaveURL(/dashboard/);
+  await expect(page.getByLabel('Your order summary')).toBeVisible();
+  await page.screenshot({path:'test-results/luxury-dashboard.png',fullPage:true});
   const r = await page.request.post("/api/orders", {
     headers: { origin },
     data: { productId: "gulmohar", phone: "9876543210", amount: 1 },

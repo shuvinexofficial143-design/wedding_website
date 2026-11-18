@@ -4,7 +4,7 @@ import { user, isAdmin } from "@/lib/auth";
 import { db, type Order } from "@/lib/db";
 import { products } from "@/lib/catalog";
 import { purchasedVersion } from "@/lib/studio/repository";
-import {ownedAnimatedJob} from "@/lib/animated/repository";
+import { ownedAnimatedJob } from "@/lib/animated/repository";
 import { Logout } from "@/components/auth-form";
 export default async function Dashboard() {
   const u = await user();
@@ -12,8 +12,12 @@ export default async function Dashboard() {
   const orders = (await db()
     .prepare("SELECT * FROM orders WHERE user_id=? ORDER BY created DESC")
     .all(u.id)) as Order[];
-  const snapshots = await Promise.all(orders.map(o => purchasedVersion(o.id)));
-  const animatedOrders = await Promise.all(orders.map(o => ownedAnimatedJob(o.id,u.id)));
+  const snapshots = await Promise.all(
+    orders.map((o) => purchasedVersion(o.id)),
+  );
+  const animatedOrders = await Promise.all(
+    orders.map((o) => ownedAnimatedJob(o.id, u.id)),
+  );
   return (
     <section className="section">
       <div className="section-head">
@@ -33,6 +37,22 @@ export default async function Dashboard() {
           )}
         </div>
       </div>
+      <div className="studio-summary" aria-label="Your order summary">
+        <div>
+          <span>My orders</span>
+          <strong>{orders.length}</strong>
+        </div>
+        <div>
+          <span>Payment verified</span>
+          <strong>{orders.filter((o) => o.status === "paid").length}</strong>
+        </div>
+        <div>
+          <span>Delivered</span>
+          <strong>
+            {orders.filter((o) => o.fulfillment === "delivered").length}
+          </strong>
+        </div>
+      </div>
       {!orders.length ? (
         <div className="notice">
           Your love story starts with a design.{" "}
@@ -49,7 +69,12 @@ export default async function Dashboard() {
                   ? "SANDBOX PAYMENT VERIFIED"
                   : "AWAITING PAYMENT"}
               </span>
-              <h2>{snapshots[index]?.content.name || animatedOrders[index]?.template_name || products.find((p) => p.id === o.product_id)?.name || "Saved invitation"}</h2>
+              <h2>
+                {snapshots[index]?.content.name ||
+                  animatedOrders[index]?.template_name ||
+                  products.find((p) => p.id === o.product_id)?.name ||
+                  "Saved invitation"}
+              </h2>
               <p>
                 ₹{o.amount / 100} ·{" "}
                 {new Date(o.created).toLocaleDateString("en-IN")}
@@ -65,7 +90,9 @@ export default async function Dashboard() {
                   }
                 >
                   {o.status === "paid"
-                    ? (animatedOrders[index] ? "Provide wedding details" : "Open invitation")
+                    ? animatedOrders[index]
+                      ? "Provide wedding details"
+                      : "Open invitation"
                     : "Continue checkout"}
                 </Link>
                 {o.public_token && (

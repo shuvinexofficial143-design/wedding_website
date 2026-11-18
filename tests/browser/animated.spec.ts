@@ -155,6 +155,13 @@ test("animated admin-only Canva registry, verified order queue, independent copy
     await expect(mobile.locator(".support-float")).toBeHidden();
     expect(await mobile.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
     await mobile.screenshot({path:"test-results/animated-admin-mobile.png",fullPage:true});
+    await mobile.goto('/admin');
+    await expect(mobile.getByRole('navigation',{name:'Studio management'})).toBeVisible();
+    await expect(mobile.locator('.studio-summary strong')).toHaveCount(3);
+    expect(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    await mobile.screenshot({path:'test-results/luxury-admin-mobile.png',fullPage:true});
+    await mobile.setViewportSize({width:1440,height:900});
+    await mobile.screenshot({path:'test-results/luxury-admin-desktop.png',fullPage:true});
   }finally{await adminMobile.close();}
  }finally{db.close();await admin.dispose();}
 });

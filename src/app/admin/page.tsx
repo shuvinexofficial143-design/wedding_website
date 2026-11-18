@@ -14,7 +14,11 @@ export default async function Admin() {
     .prepare(
       "SELECT orders.*,users.email,j.template_name AS animated_name,j.order_id AS animated_order_id FROM orders JOIN users ON users.id=orders.user_id LEFT JOIN animated_order_jobs j ON j.order_id=orders.id ORDER BY orders.created DESC LIMIT 100",
     )
-    .all()) as (Order & { email: string; animated_name: string|null; animated_order_id: string|null })[];
+    .all()) as (Order & {
+    email: string;
+    animated_name: string | null;
+    animated_order_id: string | null;
+  })[];
   return (
     <section className="section">
       <span className="eyebrow">PRIVATE OPERATIONS</span>
@@ -24,7 +28,43 @@ export default async function Admin() {
       <p>
         Latest 100 orders. Payment status cannot be manually overridden here.
       </p>
-      <p className="actions"><Link className="button" href="/admin/cards">Manage card template registry ↗</Link><Link className="button" href="/admin/animated">Animated templates ↗</Link><Link className="button" href="/admin/animated/orders">Animated fulfilment queue ↗</Link></p>
+      <nav className="studio-shortcuts" aria-label="Studio management">
+        <Link href="/admin/cards">
+          <span>01 / DESIGN</span>
+          <strong>Manage card template registry ↗</strong>
+          <small>Artwork, layers and published designs</small>
+        </Link>
+        <Link href="/admin/animated">
+          <span>02 / COLLECTION</span>
+          <strong>Animated templates ↗</strong>
+          <small>Video previews and private master templates</small>
+        </Link>
+        <Link href="/admin/animated/orders">
+          <span>03 / DELIVERY</span>
+          <strong>Animated fulfilment queue ↗</strong>
+          <small>Customer details, editing copies and final delivery</small>
+        </Link>
+      </nav>
+      <div className="studio-summary" aria-label="Latest 100 orders summary">
+        <div>
+          <span>Orders in this view</span>
+          <strong>{orders.length}</strong>
+        </div>
+        <div>
+          <span>Verified payments</span>
+          <strong>{orders.filter((o) => o.status === "paid").length}</strong>
+        </div>
+        <div>
+          <span>Awaiting delivery</span>
+          <strong>
+            {
+              orders.filter(
+                (o) => o.status === "paid" && o.fulfillment !== "delivered",
+              ).length
+            }
+          </strong>
+        </div>
+      </div>
       {!orders.length && <p>No orders yet.</p>}
       {orders.map((o) => {
         const p = products.find((p) => p.id === o.product_id);
@@ -33,7 +73,9 @@ export default async function Admin() {
           <article className="order-card" key={o.id}>
             <div className="section-head">
               <div>
-                <h2>{o.animated_name || p?.name || "Advanced Card Studio design"}</h2>
+                <h2>
+                  {o.animated_name || p?.name || "Advanced Card Studio design"}
+                </h2>
                 <p>
                   {o.email} · {o.phone}
                 </p>
@@ -108,7 +150,14 @@ export default async function Admin() {
               ["websites", "videos"].includes(p?.category || "") ? (
                 <AdminOrder id={o.id} category={p!.category} />
               ) : o.animated_order_id && o.status === "paid" ? (
-                <p><Link className="button" href={`/admin/animated/orders/${o.id}`}>Manage animated delivery ↗</Link></p>
+                <p>
+                  <Link
+                    className="button"
+                    href={`/admin/animated/orders/${o.id}`}
+                  >
+                    Manage animated delivery ↗
+                  </Link>
+                </p>
               ) : (
                 <p>
                   {o.status === "paid"

@@ -1,3 +1,13 @@
+# Account and admin polish checkpoint — 18 November 2026
+
+- Completed: split photographic login/register layout, real customer order counts, real latest-100 admin summary, grouped design/collection/delivery shortcuts, responsive controls. Existing auth forms, queries and payment/storage routes preserved.
+- Latest remote checkpoint before this commit: 0676fc7adf6d18c293d1fe05bd711fd47ba88e1e. This commit continues feature/suhani-final-integration; use git log -1 for current SHA.
+- Testing: 42/42 local unit/integration tests, ESLint and production build passed. Added mobile login overflow and authenticated admin/dashboard screenshots to existing browser tests. CI browser results still pending, not declared passed.
+- Currently working on: review CI run 44299110757 and then the new head's regression suite/screenshots.
+- Exact next step: fetch workflow jobs/artifacts, inspect luxury-home/catalog/login/admin screenshots, correct any failures, push and update this status.
+- Known limitations/blockers: no verified hosted Vercel preview; hosted database backup/migration, S3 and real Cashfree sandbox acceptance remain outstanding. No production/main or database changes.
+
+---
 # Premium redesign checkpoint — 18 November 2026
 
 - Branch: feature/suhani-final-integration. Base: 9fad2e5c2416be3afac0db63d176ade9d878983a. Main unchanged.
