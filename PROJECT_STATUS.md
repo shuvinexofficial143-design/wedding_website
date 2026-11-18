@@ -1,3 +1,11 @@
+# Editor readiness regression follow-up — 18 November 2026
+
+- Run 44310376587 on f294dbc: 42 unit tests, lint/build pass; 54/55 browser tests pass. All five new storefront viewport/contrast/thumbnail checks passed.
+- Website autosave regression observed a first edit saved as Hindi name + default Ananya. Controlled fields were interactable before client hydration completed. Website controls now remain disabled until client readiness; exact DOM value, persisted API value and reload assertions are retained.
+- Collection description CSS narrowed to its label region so it cannot change original artwork paragraphs.
+- Next: full regression rerun and regenerated screenshots, then final status/report. No database/payment/auth API mutations or production changes.
+
+---
 # Mobile catalog typography follow-up — 18 November 2026
 
 - Reviewed full 360px catalog screenshot: legacy section heading styles were enlarging two artwork styles and old invite names inside narrow tiles. Scoped thumbnail-only font sizes/padding now preserve responsive name scaling; paid editors/export components unchanged.

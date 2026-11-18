@@ -50,8 +50,16 @@ test("website paid edit autosave, event RSVP duplicate update, private CSV and r
     process.env.DATABASE_PATH || path.join(process.cwd(), "data", "e2e.sqlite"),
   );
   db.prepare("UPDATE orders SET status='paid' WHERE id=?").run(id);
+  const beforeHydration = await browser.newContext({ storageState: await page.context().storageState(), javaScriptEnabled: false });
+  try {
+    const staticPage = await beforeHydration.newPage();
+    await staticPage.goto("/editor/" + id);
+    await expect(staticPage.getByLabel("partnerA", { exact: true })).toBeDisabled();
+    await expect(staticPage.getByRole("button", { name: "Save website", exact: true })).toBeDisabled();
+  } finally { await beforeHydration.close(); }
   await page.goto("/editor/" + id);
   await page.getByLabel("partnerA", { exact: true }).fill("अनन्या त्रिवेदी");
+  await expect(page.getByLabel("partnerA", { exact: true })).toHaveValue("अनन्या त्रिवेदी");
   await expect(page.getByRole("status")).toHaveText("Saved");
   await expect
     .poll(
