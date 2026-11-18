@@ -208,7 +208,7 @@ body {
   margin-bottom: 34px;
 }
 .lux-heading h2,
-.luxury-home h2 {
+.luxury-home :is(.reviews-note, .faq-section, .luxury-cta) h2 {
   font-family: Georgia, serif;
   font-weight: 400;
   font-size: 40px;
@@ -218,7 +218,7 @@ body {
   color: #560d24;
 }
 .lux-heading h2 em,
-.luxury-home h2 em {
+.luxury-home :is(.reviews-note, .faq-section, .luxury-cta) h2 em {
   font-weight: 400;
 }
 .lux-heading > p,
@@ -942,7 +942,7 @@ select:focus {
     padding: 44px 20px;
   }
   .lux-heading h2,
-  .luxury-home h2 {
+  .luxury-home :is(.reviews-note, .faq-section, .luxury-cta) h2 {
     font-size: 32px;
   }
   .lux-heading {
@@ -1422,4 +1422,11 @@ select:focus {
   .studio-shortcuts > a:hover {
     transform: none;
   }
+}
+
+.auth-editorial h2 i {
+  color: #f5dca9;
+}
+body:has(.auth-layout) .support-float {
+  display: none;
 }

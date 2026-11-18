@@ -1,3 +1,10 @@
+# Screenshot review fixes — 18 November 2026
+
+- Reviewed actual Chromium screenshots from run 44301009659. Fixed homepage heading selector leaking into original artwork name typography, and low contrast italic login banner text. Removed floating support obstruction from login forms; support remains in navigation/footer.
+- Added thumbnail typography regression assertion. Screenshots finish finite CSS animations before capture; reduced-motion behavior remains tested separately.
+- Latest preceding remote SHA: 9aa23cf250d1e42ba6950756c3325fabf1a0de9c. Full latest-head browser/visual verification remains next; do not treat the preceding failed/cancelled runs as passing.
+
+---
 # Browser regression follow-up — 18 November 2026
 
 - Latest completed run: 44301009659 on 311c6c9c9a3187434f326a317a9146edfe055acf: 42/42 unit tests, lint/build pass; 49 browser tests pass, 6 fail.

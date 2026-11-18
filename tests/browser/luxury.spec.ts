@@ -2,6 +2,9 @@ import { test, expect } from "@playwright/test";
 for (const width of [360, 390, 430, 768, 1440])
   test(`luxury homepage and catalog at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
+    await page.route("https://images.example.test/**", (route) =>
+      route.abort(),
+    );
     await page.goto("/");
     await expect(
       page.getByRole("heading", { name: /For your forever/ }),
@@ -16,6 +19,11 @@ for (const width of [360, 390, 430, 768, 1440])
       )
       .toBe(true);
     await expect(page.locator(".collection-tile")).toHaveCount(5);
+    // Storefront headings must not override the responsive artwork typography.
+    const nameSize = await page
+      .locator(".collection-art .art-rose .artwork-names")
+      .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    expect(nameSize).toBeLessThan(25);
     await expect(page.locator(".website-device")).toHaveCount(4);
     expect(
       await page.evaluate(
@@ -29,8 +37,19 @@ for (const width of [360, 390, 430, 768, 1440])
       ).toBeVisible();
       await page.getByRole("button", { name: "Toggle navigation" }).click();
     }
+    for (const thumbnail of await page.locator(".video-cover img").all()) {
+      await thumbnail.scrollIntoViewIfNeeded();
+      await expect
+        .poll(() =>
+          thumbnail.evaluate(
+            (img: HTMLImageElement) => img.complete && img.naturalWidth > 0,
+          ),
+        )
+        .toBe(true);
+    }
     await page
-      .locator("summary").filter({ hasText: "Will I receive an MP4 video?" })
+      .locator("summary")
+      .filter({ hasText: "Will I receive an MP4 video?" })
       .click();
     await expect(page.locator("details[open]")).toContainText(
       "do not include MP4 export",
@@ -38,6 +57,7 @@ for (const width of [360, 390, 430, 768, 1440])
     await page.screenshot({
       path: `test-results/luxury-home-${width}.png`,
       fullPage: true,
+      animations: "disabled",
     });
     await page.getByRole("link", { name: /Browse Designs/ }).click();
     await expect(page).toHaveURL(/catalog/);
@@ -50,6 +70,7 @@ for (const width of [360, 390, 430, 768, 1440])
     await page.screenshot({
       path: `test-results/luxury-catalog-${width}.png`,
       fullPage: true,
+      animations: "disabled",
     });
   });
 test("luxury reduced motion, contact and authentication surfaces", async ({
@@ -67,12 +88,14 @@ test("luxury reduced motion, contact and authentication surfaces", async ({
   await page.screenshot({
     path: "test-results/luxury-contact.png",
     fullPage: true,
+    animations: "disabled",
   });
   await page.goto("/login");
   await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
   await page.screenshot({
     path: "test-results/luxury-login.png",
     fullPage: true,
+    animations: "disabled",
   });
   for (const width of [360, 430]) {
     await page.setViewportSize({ width, height: 900 });
@@ -85,6 +108,7 @@ test("luxury reduced motion, contact and authentication surfaces", async ({
     await page.screenshot({
       path: `test-results/luxury-login-${width}.png`,
       fullPage: true,
+      animations: "disabled",
     });
   }
 });

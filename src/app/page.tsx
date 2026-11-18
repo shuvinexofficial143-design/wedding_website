@@ -160,11 +160,12 @@ export default async function Home() {
             </div>
           </div>
           <div className="product-grid">
-            {videos.length
-              ? videos
-                  .slice(0, 3)
-                  .map((p) => <VideoTile key={p.id} product={p} />)
-              : motion.map((p) => <ProductTile key={p.id} product={p} />)}
+            {videos.slice(0, 3).map((p) => (
+              <VideoTile key={p.id} product={p} />
+            ))}
+            {motion.slice(0, Math.max(0, 3 - videos.length)).map((p) => (
+              <ProductTile key={p.id} product={p} />
+            ))}
           </div>
           <p className="quiet-note">
             Animated web invitations share as a link. Studio video packages are

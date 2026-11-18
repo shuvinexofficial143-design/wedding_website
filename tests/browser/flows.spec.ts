@@ -17,6 +17,7 @@ test("desktop and mobile catalog, navigation and layout", async ({ page }) => {
     await page.screenshot({
       path: `test-results/home-${width}.png`,
       fullPage: true,
+      animations: "disabled",
     });
     await page.getByRole("link", { name: /Browse Designs/ }).click();
     await expect(
