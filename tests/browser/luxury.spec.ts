@@ -30,7 +30,7 @@ for (const width of [360, 390, 430, 768, 1440])
       await page.getByRole("button", { name: "Toggle navigation" }).click();
     }
     await page
-      .getByText("Will I receive an MP4 video?", { exact: true })
+      .locator("summary").filter({ hasText: "Will I receive an MP4 video?" })
       .click();
     await expect(page.locator("details[open]")).toContainText(
       "do not include MP4 export",

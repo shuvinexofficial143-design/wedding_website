@@ -8,6 +8,7 @@ export default function Login() {
           src="/brand/wedding-editorial-small.webp"
           alt="Illustrative Indian wedding couple and royal invitation stationery"
           fill
+          preload
           sizes="(max-width: 760px) 100vw, 45vw"
         />
         <div>

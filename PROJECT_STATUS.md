@@ -1,3 +1,12 @@
+# Browser regression follow-up — 18 November 2026
+
+- Latest completed run: 44301009659 on 311c6c9c9a3187434f326a317a9146edfe055acf: 42/42 unit tests, lint/build pass; 49 browser tests pass, 6 fail.
+- Root causes: ambiguous product/preview link selector (one test) and exact FAQ text selector including decorative plus (five viewport tests). Corrected selectors target the same intended controls; no assertions skipped or removed. Login hero now preloads after observed LCP warning.
+- Browser list reporter added for clearer individual test diagnostics. Full rerun and visual review pending this push.
+- Earlier run 44299110757 was cancelled by the next checkpoint push; it is not a passing run.
+- Next: verify new head CI, download screenshots, inspect desktop/mobile storefront, update final results. Production and external blockers unchanged.
+
+---
 # Account and admin polish checkpoint — 18 November 2026
 
 - Completed: split photographic login/register layout, real customer order counts, real latest-100 admin summary, grouped design/collection/delivery shortcuts, responsive controls. Existing auth forms, queries and payment/storage routes preserved.

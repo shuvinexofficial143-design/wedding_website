@@ -4,6 +4,7 @@
 - [x] Shared catalog/product cards, responsive navigation and customer/admin surface polish.
 - [x] Loading/fallback player states and mobile/reduced-motion styles.
 - [x] Photographic login/register, customer order summary and grouped admin management shortcuts.
+- [x] Diagnose six selector failures from run 44301009659; preserve all assertions and rerun.
 - [ ] Full regression suite and visual screenshot review on latest redesign.
 - [ ] Hosted preview verification (external project/configuration access required).
 

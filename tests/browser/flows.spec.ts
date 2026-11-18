@@ -31,7 +31,7 @@ test("desktop and mobile catalog, navigation and layout", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Gulmohar" })).toHaveCount(
       0,
     );
-    await page.getByRole("link", { name: /Moonlit Romance/ }).click();
+    await page.getByRole("link", { name: "Moonlit Romance", exact: true }).click();
     await page
       .getByRole("link", { name: "Preview design", exact: true })
       .click();
