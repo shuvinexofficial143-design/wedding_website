@@ -126,7 +126,7 @@ test("dynamic catalog, paid gates, version pinning and layer authorization", asy
     await expect(page.locator(".layer-card")).toHaveAttribute("data-export-ready","true");
     await page.route('**/api/assets/'+customerPhotoId,route=>route.abort());
     await page.reload();
-    await expect(page.getByRole('alert')).toContainText('image could not load');
+    await expect(page.locator('.layer-card').getByRole('alert')).toContainText('image could not load');
     await expect(page.locator('.layer-card')).toHaveAttribute('data-export-ready','false');
     await page.unroute('**/api/assets/'+customerPhotoId);
     await page.getByRole('button',{name:'Retry fonts/assets'}).click();

@@ -70,7 +70,7 @@ export function GuestRsvp({
         )}
         <label>
           Attendance
-          <select name="attendance">
+          <select name="attendance" aria-label="Attendance">
             <option value="yes">Joyfully accepts</option>
             <option value="no">Regretfully declines</option>
           </select>

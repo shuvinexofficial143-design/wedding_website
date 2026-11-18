@@ -9,7 +9,7 @@ async function main() {
     try {
       const result=await migrateFreshPreviewSchema(client);
       console.log(JSON.stringify({
-        environment:"preview",branch:"feature/advanced-card-studio",
+        environment:"preview",branch:process.env.VERCEL_GIT_COMMIT_REF,
         created:result.created,connected:result.connected,
         publicTables:result.tableCount,migrationVersion:result.version,
         // Counts only, no connection details, hostnames, credentials or row data.

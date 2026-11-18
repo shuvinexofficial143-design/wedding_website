@@ -94,3 +94,18 @@ test("old Preview v2 schemas upgrade additively without changing customer rows",
 test("approved migration has no destructive schema statements",()=>{
   assert.doesNotMatch(schemaSql("postgres"),/\b(DROP|TRUNCATE|DELETE|UPDATE)\b/i);
 });
+for(const source of ['animated','website'] as const)test(`v3 ${source} branch upgrades to combined v4 without altering existing records`,async()=>{
+ const pg=new PGlite();const query=async(sql:string,params?:unknown[])=>({rows:(await pg.query<Record<string,unknown>>(sql,params)).rows});
+ try{
+  for(const sql of schemaSql('postgres').split(';').map(s=>s.trim()).filter(Boolean).filter(s=>source==='animated'?!s.includes('rsvp_details'):!s.includes('animated_')))await query(sql);
+  await query('INSERT INTO schema_migrations(version,applied_at) VALUES(3,100)');
+  await query("INSERT INTO users(id,email,password,created) VALUES('old-customer','old@example.test','hashed',100)");
+  await query("INSERT INTO orders(id,user_id,product_id,amount,phone,status,payment_id,created) VALUES('paid-old','old-customer','legacy',59900,'9876543210','paid','payment-old',100)");
+  const before=await query('SELECT * FROM orders');
+  const result=await migrateFreshPreviewSchema({query},{skipLockForTest:true});
+  assert.equal(result.version,4);assert.equal(result.tableCount,19);
+  assert.deepEqual((await query('SELECT * FROM orders')).rows,before.rows);
+  await migrateFreshPreviewSchema({query},{skipLockForTest:true});
+  assert.equal((await query('SELECT count(*)::int AS n FROM schema_migrations')).rows[0].n,2);
+ }finally{await pg.close();}
+});

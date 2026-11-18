@@ -36,8 +36,8 @@ export function AnimatedTemplateManager(){
    const r=await fetch(url,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
    const data=await r.json();if(!r.ok)throw new Error(data.error||"Save failed");
    await load();setMessage("Saved successfully. Published designs become visible in the shared catalog.");
-   if(selected){setSelected(prev=>prev?{...prev,...data}:null);}
-   else {setForm(empty);}
+   setSelected(prev=>prev?.id===data.id?{...prev,...data}:prev);
+   if(method==="POST")setForm(empty);
   }catch(e){setMessage((e as Error).message)}finally{setBusy(false)}
  }
  return <div className="animated-admin-grid">
@@ -74,6 +74,7 @@ export function AnimatedTemplateManager(){
      <p>{item.style_number} · {item.category} · ₹{item.price_paise/100}</p>
      <p><small>Internal ID: {item.id}</small></p>
      <div className="actions"><button type="button" className="button" onClick={()=>edit(item)}>Edit template</button>
+      <button type="button" className="button" disabled={busy} onClick={()=>void request('/api/admin/animated/'+item.id,'PATCH',{action:item.status==='published'?'unpublished':'published',revision:item.revision})}>{item.status==='published'?'Unpublish design':'Publish design'}</button>
       {item.status==="published"&&<a href={"/products/"+item.id} target="_blank" rel="noopener noreferrer" className="text-link">Public preview ↗</a>}</div>
    </article>)}</div>
   </div>

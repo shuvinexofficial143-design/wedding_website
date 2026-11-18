@@ -4,7 +4,8 @@
 - [x] Merge PostgreSQL schema inventories into v4 and pass 37 local tests, lint and build.
 - [x] Thumbnail computer upload and inline video preview implemented; browser acceptance pending.
 - [x] Private durable final MP4 upload, progress and owned download implemented; hosted S3 acceptance pending.
-- [ ] Expanded fulfilment regression tests and browser failure fixes.
+- [x] Expanded API, storage and both-v3 migration regression tests; fixes for browser accessibility and image retry.
+- [ ] Confirm all browser tests pass on latest integration commit.
 - [ ] Safe preview database backup, migration and verification (never production main).
 - [ ] Verified Vercel preview and real Cashfree sandbox test.
 - [ ] Production merge requires explicit owner approval.

@@ -1,3 +1,14 @@
+# Regression checkpoint — 18 November 2026
+
+- Latest verified remote predecessor: 5badd77ebf487bab8095b610fbeb3eadc23f4af7, feature/suhani-final-integration, PR #4.
+- Local tests: 42/42 unit/integration passed; 2/2 real HTTP Playwright API tests passed. Lint and production build passed.
+- GitHub Actions run 44284130552: 39/39 unit tests, lint/build passed; browser 46 passed, 2 failed. Upload UI/private delivery and all six motion previews passed. Remaining failures were ambiguous image alert locator (Next also provides route alert) and missing explicit Attendance select label. Both corrected without removing assertions; new full run required.
+- Additional fixes: multi-row animated/RSVP SQLite migration validation uses correct primary keys and handles node-postgres BIGINT strings. Both divergent v3 schemas now have paid-record preservation tests. One-click publish/unpublish buttons added to template list.
+- Current work: final browser verification and preview configuration review.
+- Blockers: verified Neon backup prerequisite (snapshot API unavailable), hosted migration not performed; wedding Vercel project not accessible in connected account/team; S3 credentials and real Cashfree sandbox test unverified. No production/main changes.
+- Next: push checkpoint, verify SHA, await full browser run, fix any genuine failures. See docs/FINAL_INTEGRATION.md for launch steps.
+
+---
 # Upload and fulfilment checkpoint — 18 November 2026
 
 - Branch: feature/suhani-final-integration; last verified remote predecessor 254bdc823f1a4d9a4252f46a1764e22405b7fc2e. Draft PR #4. Main unchanged.
