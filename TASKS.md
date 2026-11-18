@@ -1,3 +1,11 @@
+# Premium redesign — 18 November 2026
+- [x] Inspect supplied visual reference and latest integration code.
+- [x] Original hero asset, brand mark, complete homepage and real product showcases.
+- [x] Shared catalog/product cards, responsive navigation and customer/admin surface polish.
+- [x] Loading/fallback player states and mobile/reduced-motion styles.
+- [ ] Full regression suite and visual screenshot review on latest redesign.
+- [ ] Hosted preview verification (external project/configuration access required).
+
 # Final integration — 18 November 2026
 
 - [x] Audit both feature branch heads and resolve merge conflicts preserving functionality.

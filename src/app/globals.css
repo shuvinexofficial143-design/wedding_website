@@ -1210,3 +1210,4 @@ body:has(.motion-player) .support-float,body:has(.wedding-site) .support-float{d
 
 /* Private production workspace: keep customer details and action buttons unobstructed. */
 body:has(.animated-admin-grid) .support-float{display:none}
+

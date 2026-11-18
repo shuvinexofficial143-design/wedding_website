@@ -40,5 +40,6 @@ jobs:
             test-results/motion-*.png
             test-results/website-*.png
             test-results/animated-*.png
+            test-results/luxury-*.png
           if-no-files-found: ignore
           retention-days: 7

@@ -2,7 +2,9 @@ import "@fontsource-variable/noto-sans";
 import "@fontsource-variable/noto-serif-devanagari";
 import type { Metadata } from "next";
 import Link from "next/link";
+import {LuxuryNav} from "@/components/luxury-nav";
 import "./globals.css";
+import "./luxury.css";
 export const metadata: Metadata = {
   title: "Suhani Wedding Studio | Invitations with a little forever",
   description:
@@ -12,24 +14,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body>
         <div className="announcement">
           A beautiful beginning deserves a beautiful invitation.
         </div>
-        <header>
-          <Link href="/" className="brand">
-            Suhani Wedding Studio<span>INVITATIONS & LITTLE FOREVERS</span>
-          </Link>
-          <nav aria-label="Main navigation">
-            <Link href="/catalog">Collections</Link>
-            <Link href="/#how-it-works">How it works</Link>
-            <Link href="/contact">Contact</Link>
-            <Link className="nav-pill" href="/dashboard">
-              My invitations ↗
-            </Link>
-          </nav>
-        </header>
+        <LuxuryNav/>
         <main>{children}</main>
         <Link
           href="/contact"
@@ -38,11 +28,11 @@ export default function RootLayout({
         >
           Need a hand? ↗
         </Link>
-        <footer>
+        <footer className="luxury-footer">
           <div className="brand">
             Suhani Wedding Studio<span>MADE FOR YOUR HAPPILY EVER AFTER</span>
           </div>
-          <p>Thoughtful invitations. Unforgettable beginnings.</p>
+          <p>Thoughtful invitations. Unforgettable beginnings.</p><div className="footer-services"><Link href="/catalog?category=cards">Wedding cards</Link><Link href="/catalog?category=animated">Animated invitations</Link><Link href="/catalog?category=websites">Wedding websites</Link><Link href="/#how-it-works">How it works</Link></div>
           <div className="footer-links">
             <Link href="/contact">Support</Link>
             {["terms", "privacy", "refund", "delivery"].map((p) => (

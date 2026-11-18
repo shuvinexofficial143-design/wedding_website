@@ -29,13 +29,12 @@ export default function Contact() {
       )}
       <h2>Before you order</h2>
       <p>
-        Digital cards and animated pages are self-edited after verified payment.
-        Wedding websites are prepared by our team in 3–4 days after receiving
-        your complete details. Video invitations are produced manually.
+        Digital cards, animated web invitations and self-service wedding websites are
+        editable after verified payment. Managed websites take 3–4 days after
+        complete details. Studio video invitations are personalised manually.
       </p>
       <p>
-        WhatsApp AI automation is not connected. Future integrations will use an
-        authenticated provider adapter and verified webhooks.
+        WhatsApp support is handled personally. Automated messaging is not connected.
       </p>
     </section>
   );

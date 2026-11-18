@@ -1,3 +1,14 @@
+# Premium redesign checkpoint — 18 November 2026
+
+- Branch: feature/suhani-final-integration. Base: 9fad2e5c2416be3afac0db63d176ade9d878983a. Main unchanged.
+- Implemented: original photographic hero, maroon/gold/ivory brand shell, responsive navigation, real catalog-backed homepage, five original collection covers, card and motion showcases, four laptop/mobile website covers, steps, honest reviews placeholder, FAQ and support CTA.
+- Shared product tiles have prices, service indicators, preview and checkout links. Catalog remains database-backed. Checkout/auth/dashboard/admin surfaces styled without changing authorization or storage/payment logic. YouTube player adds loading/retry and external playback fallback.
+- Assets: original AI-generated illustrative couple/stationery photograph optimized to 1600px and 800px WebP; original inline lotus mark and existing owned SVG artwork. See public/brand/ASSETS.md.
+- Validation so far: 42/42 unit tests and ESLint passed. Production build verification ongoing. Six additional desktop/mobile/reduced-motion browser tests added; full CI pending this push. Existing navigation test updated for new copy and category filter scope, not disabled.
+- Next: inspect actual GitHub Actions screenshots at 360/390/430/768/1440px, fix visual/regression failures, push verified result.
+- Hosted blockers unchanged: Vercel project access, verified preview DB backup/migration, configured S3 and real Cashfree sandbox acceptance. No production migration or live payment activation.
+
+---
 # Verified integration status — 18 November 2026
 
 ## Completed Features
