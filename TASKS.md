@@ -5,7 +5,7 @@
 - [x] Thumbnail computer upload and inline video preview implemented; browser acceptance pending.
 - [x] Private durable final MP4 upload, progress and owned download implemented; hosted S3 acceptance pending.
 - [x] Expanded API, storage and both-v3 migration regression tests; fixes for browser accessibility and image retry.
-- [ ] Confirm all browser tests pass on latest integration commit.
+- [x] Confirm application commit 17fa33a: 42/42 unit and 49/49 browser/API tests; lint/build passed (run 44286140320).
 - [ ] Safe preview database backup, migration and verification (never production main).
 - [ ] Verified Vercel preview and real Cashfree sandbox test.
 - [ ] Production merge requires explicit owner approval.

@@ -1,3 +1,46 @@
+# Verified integration status — 18 November 2026
+
+## Completed Features
+- Both original feature histories integrated on feature/suhani-final-integration; advanced cards, six animation timelines and four website layouts preserved.
+- Animated template computer thumbnail upload, YouTube preview, private Canva registry, one-click publish/unpublish and duplicate style protection.
+- Immutable order-template snapshot, separate Canva copy validation, 60-minute verified-payment queue, customer details/search and delivery states.
+- Private validated MP4 upload with progress/50 MB limit, owned download, explicit verified delivery and manual WhatsApp message. Legacy delivery reads preserved.
+- Combined PostgreSQL schema v4 and safe import/upgrade tests preserve paid records, ownership, animated jobs and RSVP details.
+
+## Testing Results
+- Tested application commit: 17fa33abdcb95b2893a1dffc8c3f05a4ff0ba0a9.
+- GitHub Actions https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/44286140320 — SUCCESS.
+- 42/42 unit/integration tests PASS, zero failures and zero skipped.
+- 49/49 Playwright browser/API tests PASS, zero failures. Includes thumbnail upload/publish, private MP4 delivery, mobile admin, six timelines, all legacy artwork export, website autosave/RSVP/revocation and paid access isolation.
+- ESLint, TypeScript and production build PASS. Two standalone local HTTP Playwright API tests also passed; they are included in the full CI count, not additional unique tests.
+- Local Chromium launch is restricted; browser evidence comes from GitHub Actions, not Vercel. Earlier transient local V8/PGlite crash did not recur in rerun or final CI. Earlier failed runs are retained below.
+
+## Latest Commit SHA
+- Latest verified application SHA: 17fa33abdcb95b2893a1dffc8c3f05a4ff0ba0a9. The following documentation-only checkpoint records these results; use git log -1 for its own SHA.
+- PR: https://github.com/shuvinexofficial143-design/wedding_website/pull/4 (draft; no production merge).
+
+## Currently Working On / Pending Tasks
+- Application code validation is complete for this checkpoint. Hosted acceptance is blocked by infrastructure prerequisites below.
+
+## Required Credentials / Blockers
+- Neon preview br-curly-bar-ao23mgo4 was inspected read-only: neondb.public has no relations/functions. Snapshot tool unavailable; verified backup prerequisite not fulfilled. No hosted migration or production data changes performed.
+- Connected Vercel personal scope and Avanti Verse team do not expose the wedding project. No verified preview deployment URL.
+- Private S3 configuration and hosted upload/download acceptance remain required. Local test assets do not prove hosted S3 connectivity.
+- Actual Cashfree sandbox merchant transaction/webhook still requires configured credentials. Automated fixture payments are not a real gateway transaction. Live payments remain disabled.
+
+## Known Bugs / Limitations
+- No failing application assertions in final CI. External deployment/storage/payment acceptance remains unverified.
+- Canva duplication and WhatsApp sending are deliberately manual; no unsupported automation claimed.
+- Original production customer records were not inspected or changed; preservation was verified with migration fixtures.
+
+## Exact Next Step
+- Connect the correct Vercel project and private preview configuration; create/verify a Neon backup, recheck preview branch identity, run guarded v4 migration and verification, then execute hosted S3 and real Cashfree sandbox acceptance. Obtain explicit owner approval before any production merge.
+- Operational details and changed-file inventory: docs/FINAL_INTEGRATION.md.
+- Verified unchanged main: 498e1abea9ecb1cf2713f836a4fdcbcdc7c23fe7. Both source branches remain unchanged.
+
+---
+Historical checkpoints follow:
+
 # Regression checkpoint — 18 November 2026
 
 - Latest verified remote predecessor: 5badd77ebf487bab8095b610fbeb3eadc23f4af7, feature/suhani-final-integration, PR #4.

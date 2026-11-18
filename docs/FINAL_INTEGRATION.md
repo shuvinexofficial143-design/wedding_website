@@ -35,3 +35,67 @@ Before hosted migration: take a verified provider snapshot or logical backup, re
 6. Production merge and real payments require the owner's explicit approval. Neither was enabled.
 
 See PROJECT_STATUS.md for current exact test counts and commit evidence. Browser tests run against an isolated local app on GitHub Actions, not a Vercel deployment.
+
+## Verified acceptance evidence
+
+Application commit `17fa33abdcb95b2893a1dffc8c3f05a4ff0ba0a9`: GitHub Actions run [44286140320](https://github.com/shuvinexofficial143-design/wedding_website/actions/runs/44286140320) passed **42 unit/integration and 49 Playwright browser/API tests**, with zero failures. Lint, TypeScript and production build passed. This is isolated CI acceptance, not a hosted deployment claim. Documentation-only checkpoint follows the tested application commit.
+
+## Changed-file inventory
+
+The following compares the integration to the original animation/website builder head `7bf813a`; it includes the merged advanced-branch features as well as this integration's additions (A = added, M = modified).
+
+```text
+M	.env.example
+M	.github/workflows/ci.yml
+M	PROJECT_STATUS.md
+M	TASKS.md
+A	docs/FINAL_INTEGRATION.md
+M	package.json
+M	scripts/migrate-preview.ts
+A	sql/neon-preview-v3-animated-reviewed.sql
+A	src/app/admin/animated/orders/[id]/page.tsx
+A	src/app/admin/animated/orders/page.tsx
+A	src/app/admin/animated/page.tsx
+M	src/app/admin/page.tsx
+A	src/app/api/admin/animated/[id]/route.ts
+A	src/app/api/admin/animated/orders/[id]/route.ts
+A	src/app/api/admin/animated/orders/route.ts
+A	src/app/api/admin/animated/route.ts
+M	src/app/api/assets/[id]/route.ts
+A	src/app/api/orders/[id]/animated/route.ts
+M	src/app/api/orders/[id]/video/route.ts
+M	src/app/api/orders/route.ts
+M	src/app/catalog/page.tsx
+M	src/app/checkout/[id]/page.tsx
+M	src/app/dashboard/page.tsx
+M	src/app/editor/[id]/page.tsx
+M	src/app/globals.css
+M	src/app/preview/[id]/page.tsx
+M	src/app/products/[id]/page.tsx
+A	src/components/animated/customer-details.tsx
+A	src/components/animated/order-fulfilment.tsx
+A	src/components/animated/order-queue.tsx
+A	src/components/animated/template-manager.tsx
+A	src/components/animated/video-preview.tsx
+M	src/components/animation/timeline-player.tsx
+M	src/components/studio/layer-card.tsx
+M	src/components/website/guest-rsvp.tsx
+M	src/components/website/website-editor.tsx
+A	src/lib/animated/repository.ts
+A	src/lib/animated/youtube.ts
+M	src/lib/cashfree.ts
+M	src/lib/database/import-sqlite.ts
+M	src/lib/database/preview-migration.ts
+M	src/lib/database/schema.ts
+M	src/lib/storage/validate.ts
+M	src/lib/upload-client.ts
+A	tests/animated-storage.test.ts
+A	tests/animated.test.ts
+A	tests/browser/animated.spec.ts
+M	tests/browser/api.spec.ts
+A	tests/browser/fulfilment-api.spec.ts
+M	tests/browser/studio-integration.spec.ts
+M	tests/migration.test.ts
+A	tests/mp4-fixture.ts
+M	tests/preview-migration.test.ts
+```
