@@ -1432,3 +1432,9 @@ body:has(.auth-layout) .support-float {
 }
 
 .luxury-home .luxury-cta h2 { color: #fff6e7; }
+
+/* Keep catalog section headings from overriding invitation typography. */
+.luxury-product :is(.art-palace, .art-rose) .artwork-names { font-size: var(--art-name-size); }
+.luxury-product .invite { padding: 5%; }
+.luxury-product .invite-border { padding: 4cqw; }
+.luxury-product .invite h2 { font-size: 14cqw; letter-spacing: -.05em; margin: 2cqw 0; }

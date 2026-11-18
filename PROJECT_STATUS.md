@@ -1,3 +1,10 @@
+# Mobile catalog typography follow-up — 18 November 2026
+
+- Reviewed full 360px catalog screenshot: legacy section heading styles were enlarging two artwork styles and old invite names inside narrow tiles. Scoped thumbnail-only font sizes/padding now preserve responsive name scaling; paid editors/export components unchanged.
+- Added font-to-card-width assertions for palace, rose and legacy invite thumbnails at five viewport widths. Full latest-head validation remains required.
+- Previous verified code 6ef20ed passed 42 unit + 55 browser tests; next step is inspect CI and regenerated screenshots on this follow-up. Previous CTA contrast fix retained.
+
+---
 # Final contrast follow-up — 18 November 2026
 
 - Verified code 6ef20edf5dc8eee543fce592c04abecb9e3177c7: CI run 44303101876 passed 42/42 unit/integration and 55/55 browser/API tests, lint, TypeScript and production build; zero failures/skipped tests.

@@ -7,6 +7,7 @@
 - [x] Diagnose six selector failures from run 44301009659; preserve all assertions and rerun.
 - [x] Inspect real desktop/login screenshots; isolate artwork typography and improve banner contrast.
 - [x] Pass 42 unit + 55 browser tests on 6ef20ed; inspect full desktop/mobile screenshots.
+- [x] Review 360px catalog and correct legacy thumbnail name scaling.
 - [ ] Verify final CTA contrast follow-up and save regenerated screenshots.
 - [ ] Full regression suite and visual screenshot review on latest redesign.
 - [ ] Hosted preview verification (external project/configuration access required).

@@ -63,6 +63,13 @@ for (const width of [360, 390, 430, 768, 1440])
     await page.getByRole("link", { name: /Browse Designs/ }).click();
     await expect(page).toHaveURL(/catalog/);
     await expect(page.locator(".luxury-product").first()).toBeVisible();
+    for (const selector of ['.art-palace .artwork-names', '.art-rose .artwork-names', '.invite h2']) {
+      const ratio = await page.locator('.luxury-product').locator(selector).first().evaluate(el => {
+        const card = el.closest('.artwork-card, .invite')!;
+        return parseFloat(getComputedStyle(el).fontSize) / card.getBoundingClientRect().width;
+      });
+      expect(ratio).toBeLessThan(0.16);
+    }
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
