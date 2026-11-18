@@ -9,8 +9,8 @@
 - [x] Pass 42 unit + 55 browser tests on 6ef20ed; inspect full desktop/mobile screenshots.
 - [x] Review 360px catalog and correct legacy thumbnail name scaling.
 - [x] Guard website editor inputs until client readiness after an autosave race surfaced in CI.
-- [ ] Verify final CTA contrast follow-up and save regenerated screenshots.
-- [ ] Full regression suite and visual screenshot review on latest redesign.
+- [x] Verify final CTA contrast and regenerated viewport screenshots on ff6a3ec.
+- [x] Full regression: ff6a3ec, 42 unit + 55 browser/API tests; lint, TypeScript/build pass; visual screenshot review.
 - [ ] Hosted preview verification (external project/configuration access required).
 
 # Final integration — 18 November 2026
